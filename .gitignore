@@ -1,0 +1,75 @@
+# ==========================================
+# 1. GLOBAL & BMad METHODOLOGY (BLOCKS)
+# ==========================================
+# Ignore everything by default to keep the repo clean
+/*
+
+# Allow Core Project Files/Folders
+!/backend/
+!/frontend/
+!/ai-service/
+!/_bmad-output/
+!/docker-compose.yml
+!/docker-compose.dev.yml
+!/.env.example
+!/README.md
+!/.github/
+!/.gitignore
+
+# Explicitly Ignore Methodology & Agent Folders
+_bmad/
+.agent/
+.claude/
+.gemini/
+.opencode/
+.qwen/
+
+# ==========================================
+# 2. SECRETS & ENVIRONMENT
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.log
+
+# ==========================================
+# 3. BACKEND (SPRING BOOT)
+# ==========================================
+backend/target/
+backend/*.jar
+backend/*.war
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/.rebel.xml.bak
+backend/bin/
+
+# ==========================================
+# 4. FRONTEND (NEXT.JS)
+# ==========================================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.DS_Store
+frontend/.env.local
+
+# ==========================================
+# 5. AI-SERVICE (FASTAPI/PYTHON)
+# ==========================================
+ai-service/__pycache__/
+ai-service/*.py[cod]
+ai-service/.venv/
+ai-service/venv/
+ai-service/env/
+ai-service/.pytest_cache/
+ai-service/.python-version
+    
+# ==========================================
+# 6. IDEs & SYSTEM
+# ==========================================
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

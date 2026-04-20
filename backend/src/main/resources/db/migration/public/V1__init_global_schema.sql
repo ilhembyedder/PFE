@@ -1,0 +1,41 @@
+-- V1__init_global_schema.sql
+-- Global Schema creation for Super Admins and Tenants Directory
+
+CREATE TABLE IF NOT EXISTS tenant (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    logo_url VARCHAR(512),
+    data_retention_months INT,
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+    version INT NOT NULL DEFAULT 0,
+    created_by VARCHAR(255),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS super_admin (
+    id UUID PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+    version INT NOT NULL DEFAULT 0,
+    created_by VARCHAR(255),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS global_configuration (
+    id UUID PRIMARY KEY,
+    config_key VARCHAR(100) NOT NULL UNIQUE,
+    config_value JSONB,
+    version INT NOT NULL DEFAULT 0,
+    created_by VARCHAR(255),
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

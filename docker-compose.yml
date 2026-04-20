@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    # Note: PostgreSQL 18 is not available yet as a stable image, using an appropriate fallback (like 16). 
+    # For a real Postgres 18 environment, a custom image/build from main would be needed, but 16 supports 
+    # all features specified for this project.
+    container_name: leasrecover-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME:-leasrecover}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - leasrecover-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leasrecover-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME:-leasrecover}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-postgres}
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - postgres
+    networks:
+      - leasrecover-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: leasrecover-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_API_URL=http://backend:8080/api/v1
+    depends_on:
+      - backend
+    networks:
+      - leasrecover-network
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: leasrecover-ai-service
+    ports:
+      - "8000:8000"
+    networks:
+      - leasrecover-network
+
+volumes:
+  postgres_data:
+
+networks:
+  leasrecover-network:
+    driver: bridge

@@ -394,6 +394,7 @@ pfe/
 │       │   ├── error.tsx           # Global error boundary
 │       │   ├── (auth)/             # Route group: /login, /forgot-password
 │       │   ├── (dashboard)/        # Route group: /dashboard, /cases, /settings
+│       │   ├── (admin)/            # Route group: /admin/tenants, /admin/users, system config
 │       │   └── api/                # BFF Route Handlers (Auth callbacks, SSE proxy)
 │       ├── components/             # Reusable UI components
 │       │   ├── ui/                 # Ant Design wrapped components
@@ -401,7 +402,8 @@ pfe/
 │       │   └── forms/              # Reusable form components
 │       ├── features/               # Domain-specific logic
 │       │   ├── cases/              # Recovery Case specific components & actions
-│       │   ├── tenants/            # Tenant config components
+│       │   ├── tenants/            # Tenant management & config components
+│       │   ├── users/              # User administration & role management
 │       │   └── auth/               # Login/Role logic
 │       ├── lib/                    # Utilities
 │       │   ├── api.ts              # Spring Boot Fetch wrapper with JWT injection
@@ -419,6 +421,8 @@ pfe/
 │   │   │   ├── modules/            # Domain Modules
 │   │   │   │   ├── auth/           # JWT Generation, Security Context
 │   │   │   │   ├── tenant/         # Tenant settings, routing datasource
+│   │   │   │   ├── superadmin/     # Platform administration, Tenant provisioning
+│   │   │   │   ├── users/          # Admin CRUD for Users and Role assignments
 │   │   │   │   ├── cases/          # Case CRUD, Workflow State Machine
 │   │   │   │   ├── document/       # File upload, FastAPI orchestrator
 │   │   │   │   └── notification/   # Alerts and SSE controllers
@@ -474,6 +478,9 @@ pfe/
 - Dashboard & Alerts (FR33–FR37)
   - Next.js: `src/app/(dashboard)/page.tsx`
   - Spring Boot: `modules/notification/`
+- Administration & Platform Management
+  - Next.js: `src/app/(admin)/`, `src/features/users/`
+  - Spring Boot: `modules/users/`, `modules/tenant/`
 
 ### Integration Points
 

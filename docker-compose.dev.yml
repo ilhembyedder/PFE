@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Local Development Overrides
+# Use this file with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  postgres:
+    # Exposing the port is already done in base, but explicitly keeping it here as a reminder
+    ports:
+      - "5432:5432"
+
+  backend:
+    # In development, you might run the backend native via `./mvnw spring-boot:run`
+    # You can comment out the port mapping here if you want to avoid conflicts, or keep it running in docker
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/target:/app/target
+
+  frontend:
+    # In development, Next.js is usually run native with `npm run dev`
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    # Override command to run the dev server with hot-reloading
+    command: npm run dev
+
+  ai-service:
+    # FastAPI development mode with reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai-service/app:/app/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
