@@ -44,8 +44,13 @@ public class TenantProvisioningService {
 
         flyway.migrate();
 
-        // 4. Create initial Admin user in the new schema
-        adminProvisioningService.provisionAdmin(tenant.getId(), schemaName, adminEmail, adminPassword);
+        // 4. Create initial Admin user and default config in the new schema
+        com.leasrecover.core.tenant.TenantContextHolder.setTenantId(schemaName);
+        try {
+            adminProvisioningService.provisionAdminAndConfig(tenant.getId(), schemaName, adminEmail, adminPassword);
+        } finally {
+            com.leasrecover.core.tenant.TenantContextHolder.clear();
+        }
 
         return tenant;
     }
@@ -56,5 +61,10 @@ public class TenantProvisioningService {
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));
         tenant.setStatus("INACTIVE");
         tenantRepository.save(tenant);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<Tenant> getAllTenants() {
+        return tenantRepository.findAll();
     }
 }

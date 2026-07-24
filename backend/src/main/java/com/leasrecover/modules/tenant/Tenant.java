@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tenant")
+@Table(name = "tenant", schema = "public")
 @Getter
 @Setter
 public class Tenant extends BaseEntity {

@@ -1,6 +1,6 @@
 # Story 1.2: Multi-tenant Database Infrastructure & Super Admin Provisioning
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -72,12 +72,15 @@ So that I can safely onboard new leasing companies while strictly physically sep
   - Implemented `TenantProvisioningService` combining Flyway schema run and calling `AdminProvisioningService` in a new transaction.
   - Added `TenantFilter` matching `X-Tenant-ID` header. Rejecting inactive tenants by throwing 403 Forbidden. Explicitly overriding context to `public` schema for `/super-admin` endpoints.
   - Written Mockito Unit Tests for logic coverage. Note: Test executions skipped in `mvn` due to missing `JAVA_HOME`.
+  - **Applied Code Review Fixes (2026-06-07):** Added `SuperAdmin` entity and repository. Corrected `TenantFilter` to enforce Super Admin isolation (blocking access to tenant schemas), tenant presence validation, and user tenant authorization checks. Resolved Spring Boot 4 `WebMvcTest` dependency and package relocation issues, separated JPA auditing to `JpaConfig`, and updated legacy `ObjectMapper` imports for Jackson 3 compatibility. All tests now compile and pass.
 - **Debug Log:** 
   - The project did not have separate Flyway migrations configured for tenants. Restructured DB migration folders from `global` to `public`/`tenant`.
   - To prevent Hibernate transaction cache issues, `AdminProvisioningService` executes in `REQUIRES_NEW` transaction explicitly switching schema.
   - Due to lack of `JAVA_HOME` configuration, backend could not be compiled successfully, tests written but unexecuted.
+  - Resolved test compilation and context loading errors caused by Spring Boot 4 package structure and Jackson 3 dependency updates.
 
 ### File List
+- `backend/pom.xml` (Modified)
 - `backend/src/main/resources/db/migration/public/V1__init_global_schema.sql` (Created/Modified)
 - `backend/src/main/resources/db/migration/tenant/V1__init_tenant_schema.sql` (Created)
 - `backend/src/main/resources/application.yml` (Modified)
@@ -85,6 +88,7 @@ So that I can safely onboard new leasing companies while strictly physically sep
 - `backend/src/main/java/com/leasrecover/_common/entity/BaseEntity.java` (Created)
 - `backend/src/main/java/com/leasrecover/_common/dto/JSendResponse.java` (Created)
 - `backend/src/main/java/com/leasrecover/config/SecurityConfig.java` (Created)
+- `backend/src/main/java/com/leasrecover/config/JpaConfig.java` (Created)
 - `backend/src/main/java/com/leasrecover/config/tenant/TenantIdentifierResolver.java` (Created)
 - `backend/src/main/java/com/leasrecover/config/tenant/TenantConnectionProvider.java` (Created)
 - `backend/src/main/java/com/leasrecover/config/tenant/TenantFilter.java` (Created)
@@ -95,10 +99,14 @@ So that I can safely onboard new leasing companies while strictly physically sep
 - `backend/src/main/java/com/leasrecover/modules/tenant/AdminProvisioningService.java` (Created)
 - `backend/src/main/java/com/leasrecover/modules/users/AppUser.java` (Created)
 - `backend/src/main/java/com/leasrecover/modules/users/AppUserRepository.java` (Created)
+- `backend/src/main/java/com/leasrecover/modules/superadmin/SuperAdmin.java` (Created)
+- `backend/src/main/java/com/leasrecover/modules/superadmin/SuperAdminRepository.java` (Created)
 - `backend/src/main/java/com/leasrecover/modules/superadmin/TenantCreateRequest.java` (Created)
 - `backend/src/main/java/com/leasrecover/modules/superadmin/SuperAdminTenantController.java` (Created)
 - `backend/src/test/java/com/leasrecover/modules/tenant/TenantProvisioningServiceTest.java` (Created)
 - `backend/src/test/java/com/leasrecover/config/tenant/TenantFilterTest.java` (Created)
+- `backend/src/test/java/com/leasrecover/modules/users/AdminUserManagementControllerTest.java` (Modified)
 
 ### Change Log
 - 2026-04-17: Implemented shared DB schema tenant isolation mapping, provision service, filter interception, and super admin endpoints.
+- 2026-06-07: Fixed database routing properties, test compilation packages, and isolation filters during adversarial code review.

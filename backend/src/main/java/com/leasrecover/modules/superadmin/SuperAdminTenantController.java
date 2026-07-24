@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,6 +18,12 @@ public class SuperAdminTenantController {
 
     public SuperAdminTenantController(TenantProvisioningService tenantProvisioningService) {
         this.tenantProvisioningService = tenantProvisioningService;
+    }
+
+    @GetMapping
+    public ResponseEntity<JSendResponse<List<Tenant>>> getAllTenants() {
+        List<Tenant> tenants = tenantProvisioningService.getAllTenants();
+        return ResponseEntity.ok(JSendResponse.success(tenants));
     }
 
     @PostMapping
