@@ -57,14 +57,15 @@ frontend/.env.local
 # ==========================================
 # 5. AI-SERVICE (FASTAPI/PYTHON)
 # ==========================================
-ai-service/__pycache__/
+ai-service/**/__pycache__/
 ai-service/*.py[cod]
 ai-service/.venv/
 ai-service/venv/
 ai-service/env/
 ai-service/.pytest_cache/
 ai-service/.python-version
-    
+backend/uploads/
+
 # ==========================================
 # 6. IDEs & SYSTEM
 # ==========================================
