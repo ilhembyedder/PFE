@@ -17,6 +17,21 @@ completedAt: '2026-03-09'
 
 _This document builds collaboratively through step-by-step discovery. Sections are appended as we work through each architectural decision together._
 
+> ### ⚠️ Frontend stack superseded — 2026-07-26
+>
+> The backend, AI service, database, multi-tenancy and integration decisions in this document remain authoritative. **The frontend stack does not.**
+>
+> | This document specifies | Now |
+> |---|---|
+> | Ant Design v5 | Tailwind + Radix/shadcn |
+> | React Server Components + Server Actions for all data | Client components + **TanStack Query v5**. Server prefetch remains available later. |
+> | JavaScript | **TypeScript** |
+> | TypeScript interfaces generated from an OpenAPI 3 spec | Hand-written types per domain. No OpenAPI spec was ever produced, and SpringDoc is not installed. |
+>
+> See [`docs/DESIGN_SCREENS.md`](../../docs/DESIGN_SCREENS.md) §11–§13 for the replacement stack, and [`PRODUCT.md`](../../PRODUCT.md) for the decision log.
+>
+> **Also note:** several decisions recorded here were never implemented as written. `docs/CODE_REVIEW.md` §7 tabulates the full drift, including PostgreSQL 18 (16 shipped), the access/refresh token pattern (a single 24-hour token shipped), method-level Spring Security authorisation (none exists), the FastAPI LLM pipeline (simulated), and the GitHub Actions CI pipeline (absent).
+
 ## Project Context Analysis
 
 ### Requirements Overview

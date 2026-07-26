@@ -15,6 +15,27 @@ inputDocuments:
 
 ---
 
+> ### ⚠️ Superseded for visual design — 2026-07-26
+>
+> This document remains the historical record of the original UX direction and is **not** the specification to build from.
+>
+> | Concern | Authority |
+> |---|---|
+> | Strategy, users, principles, anti-references | [`PRODUCT.md`](../../PRODUCT.md) |
+> | Colour, typography, elevation, components | [`DESIGN.md`](../../DESIGN.md) |
+> | Screen layouts, states, copy, data layer | [`docs/DESIGN_SCREENS.md`](../../docs/DESIGN_SCREENS.md) |
+>
+> **What was superseded and why**
+>
+> - **Theme.** This document chose "Direction A — Command Center (Light & Dark)" with a light default (§Design Direction Decision). That decision was correct and was never implemented; the build shipped dark-only. The new specification restores light-first and adds a real dark theme.
+> - **Palette.** The slate-800 / blue-500 palette here is the default answer for a B2B fintech dashboard and is deliberately rejected. Independently, its five core colours **all fail WCAG AA as text on white** — `#EF4444` 3.76, `#F59E0B` 2.15, `#10B981` 2.54, `#3B82F6` 3.68, `#94A3B8` 2.56 — despite §Accessibility Considerations and §Accessibility Strategy both stating every combination had been verified.
+> - **Component library.** Ant Design v5 is replaced by Tailwind with Radix/shadcn.
+> - **Typography.** Inter is replaced by IBM Plex Sans.
+>
+> **What is retained and still authoritative:** the five Experience Principles, the emotional journey mapping, the anti-pattern analysis, the component strategy (including the two signature components), the user journey flows, and the accessibility *targets*.
+
+---
+
 <!-- UX design content will be appended sequentially through collaborative workflow steps -->
 
 ## Executive Summary

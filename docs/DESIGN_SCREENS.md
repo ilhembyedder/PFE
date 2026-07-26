@@ -265,6 +265,36 @@ The aside is a plain bordered sheet, not a stack of cards, and it is sticky so t
 | Valuation pending | The valuation card is replaced by the pipeline progress state, never by a bare spinner. |
 | Valuation failed | Inline Overdue Red block inside the card slot: the specific message, plus `Téléverser un nouveau rapport`. Data is never lost. |
 | No valuation, phase ≥ SAISIE | Empty state in the card slot: *"Aucune estimation. Téléversez un rapport d'expertise pour lancer l'analyse."* plus an action that opens the Documents tab focused on the upload zone. |
+| **Residual value is zero or absent** | See below. The card must **not** render a reliability band. |
+| **Deviation exceeds 100%** | See below. The hero figure switches from percentage to absolute. |
+
+### Valuation card guard states
+
+Two edge cases that the backend currently handles wrongly and the interface must not propagate.
+
+**1. Non-computable comparison.** When `initialResidualValueCents` is `0` or absent, no meaningful comparison exists. The backend nevertheless returns `RELIABLE`, because the percentage stays at its initialiser of `0.0` and falls through the band comparison (`CODE_REVIEW.md` H-21). A green *Fiable* badge on a comparison that was never performed is the single most damaging thing this screen could display.
+
+The card renders a distinct fourth state:
+
+- Hero slot shows the **market value** at Figure Hero size, since that number is real and useful on its own.
+- In place of the reliability chip, a neutral chip reading `Non calculable`.
+- Beneath: *"La valeur résiduelle du contrat est nulle. L'écart ne peut pas être calculé."* plus a `Corriger le dossier` action opening the edit sheet focused on the residual value field.
+- The card surface stays Leaf. This is not an error; it is missing input.
+
+The frontend detects this itself from `initialResidualValueCents <= 0` and **never trusts the returned `reliabilityIndicator`** in that case. The backend fix is specified in H-21, but the interface must be correct whether or not it lands, because this is reachable today through valid input: `@Min(0)` permits zero.
+
+The phase stepper must also treat this case as **not satisfying** the `→ VENTE` prerequisite, and say so in the inline blocker: *"L'estimation n'est pas exploitable : la valeur résiduelle du contrat est nulle."*
+
+**2. Deviation above 100%.** Representable and unhandled. `deviation_percentage` is `NUMERIC(5,2)` and the service caps storage at 999.99, while the threshold configuration in §9 only permits values up to 100. So any deviation over the critical threshold is correctly banded `CRITICAL_RISK`; only the *display* needs a rule.
+
+Above 100%, a percentage stops communicating. `−412,7 %` is noise; the reader cannot picture it.
+
+- The hero switches to the **absolute deviation** in currency at Figure Hero size, with the percentage demoted to the sub-line.
+- The sub-line reads as a multiple rather than a percentage: *"la valeur de marché est 5,1 fois inférieure à la valeur résiduelle"*.
+- A deviation above 100% is far more often a data-entry error than a real valuation, so the card adds a quiet Approaching Amber note: *"Écart inhabituel. Vérifiez la valeur résiduelle du contrat."* with the same `Corriger le dossier` action. Advisory, not blocking.
+- At exactly 999.99 the stored value is clamped, so the percentage is displayed as `> 999 %` rather than a precise figure that is not precise.
+
+**3. Source provenance.** The inline provenance line specified in `DESIGN.md` (extracted brand, model, year, mileage, condition) is retained as the default, and a `Voir le rapport source` link is added to the card header, opening the originating PDF in a side sheet beside the card so the figure and its source are visible together. No page anchoring at MVP: the extraction service returns no page numbers. Should per-field page references become available, the provenance line should link each field to its page. A permanent split view is not warranted — the manager needs the source occasionally, not always, and a persistent PDF pane would halve the space available to the number that matters.
 | Export in progress | Button spinner, then the browser download. |
 
 **Interaction model.** Editing opens a side sheet, not a modal, so the case stays visible behind it. The assignee select in the aside saves on change with an inline confirmation, no save button. Tab selection writes to the URL (`?tab=notes`) so alert deep-links work and the back button behaves. The `?focus=` parameter moves focus to the note composer, the stepper, or the upload zone, and must move real DOM focus rather than only scrolling.
@@ -747,13 +777,15 @@ The product language is French. Enum values never reach the screen raw. This tab
 
 One qualification, because it is a real risk rather than a formality: for a thesis, an unmarked contradiction between two specification documents reads as an oversight rather than a decision. A three-line note at the top of `ux-design-specification.md` pointing here would cost nothing and remove the ambiguity. The same applies to `architecture.md`, which additionally names Ant Design as a locked technology choice.
 
+**Both valuation-card questions are now closed** with specified behaviour in §5, "Valuation card guard states":
+
+- *Deviation above 100%* — the hero switches from percentage to absolute currency, the sub-line expresses a multiple, and an advisory note prompts a check of the residual value. Clamped at `> 999 %`.
+- *Provenance* — the inline line is retained, plus a `Voir le rapport source` link opening the PDF in a side sheet. A permanent split view is rejected: the source is needed occasionally, not always, and a persistent pane would halve the space given to the number that matters.
+
+Closing the first question surfaced a third case that had not been considered, now also specified: **a residual value of zero yields a false `RELIABLE` badge** (`CODE_REVIEW.md` H-21). Reachable today through valid input, because `@Min(0)` permits zero. The card renders a `Non calculable` state and never trusts the returned indicator in that case, whether or not the backend is fixed.
+
 ### Open
 
-**The valuation card cannot honestly be called finished until the AI is real.** It currently receives a hardcoded BMW 520d for every upload (`CODE_REVIEW.md` C7), so the reliability bands, the realistic deviation ranges and the vehicle-discrepancy alert have never been observed against genuine data. Two specific unknowns the design will need to answer once extraction works:
+**Nothing blocking.** One item stays deliberately unfinished:
 
-- What a deviation above 100% looks like. `deviation_percentage` is `NUMERIC(5,2)` and the service caps at 999.99, but the threshold configuration in §9 only permits values up to 100. A 400% deviation is representable in the database and unhandled in the interface.
-- Whether the extracted-data provenance line is sufficient, or whether the manager needs to see the source PDF page alongside the figure to trust it. That is the difference between a card and a split view, and it cannot be decided against fabricated output.
-
-The component should be built to this specification, then reviewed against ten real appraisal reports before it is signed off. That review is also MVP success criterion #1 in the product brief, which remains unmeetable until the extraction exists.
-
-**Deliberately deferred until the rest is built:** revisiting this card. It is the last thing to finalise, not the first.
+**Validate the valuation card against real extractions before signing it off.** It currently receives a hardcoded BMW 520d for every upload (`CODE_REVIEW.md` C7), so realistic deviation distributions, the usefulness of the extracted-condition string, and the vehicle-discrepancy alert have never been observed against genuine data. The component should be **built to this specification now** — the specification is complete and the edge cases are handled — and then reviewed against ten real appraisal reports. That review is MVP success criterion #1 in the product brief, and it remains unmeetable until the extraction is real. It is the last thing to confirm, not a reason to delay building.

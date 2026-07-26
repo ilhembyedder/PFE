@@ -531,6 +531,39 @@ No `USER`, no `HEALTHCHECK` (despite `/health` existing), no `.dockerignore`, no
 
 **Fix:** remove both `--trusted-host` flags, pin the base image by digest, add a non-root `USER`, add a `HEALTHCHECK` hitting `/health`, set `PYTHONUNBUFFERED=1`.
 
+### Backend (addendum)
+
+#### H-21. A residual value of zero produces a confident, false "reliable" valuation
+
+*Found while specifying the valuation card. Not present in the original pass.*
+
+**Locations:** `AIValuationService.java:131-144` · `CaseCreateRequest.java:60-62` · `CaseUpdateRequest.java:20-22`
+
+```java
+double deviationPercentage = 0.0;
+if (initialResidualVal > 0) {
+    deviationPercentage = ((double) Math.abs(deviationValueCents) / initialResidualVal) * 100.0;
+}
+// ...
+if (deviationPercentage < moderate) {
+    reliabilityIndicator = "RELIABLE";
+}
+```
+
+When `initialResidualValueCents` is `0` or `null`, the percentage is never computed and stays at its initialiser of `0.0`. That value is then compared against the moderate threshold, `0.0 < 10.0` is true, and the case is labelled **`RELIABLE`**.
+
+**This is reachable through the normal interface.** `@Min(value = 0)` explicitly permits zero, despite the validation message reading *"Initial residual value must be positive"*. A manager who enters `0` as the residual value, or leaves it at zero, and then uploads an appraisal report receives a green *Fiable* indicator on a comparison that was never performed.
+
+**Why this ranks High rather than Medium.** Every other defect in this document either fails loudly or fails safe. This one fails *silently in the reassuring direction*, on the single screen the product exists to produce, and it feeds the prerequisite that gates the transition to `VENTE`. `PRODUCT.md` states the success condition as *"the valuation result is trusted enough to be acted on without re-checking the source PDF"*; this defect makes that trust actively dangerous.
+
+**Fix:**
+1. Change both DTOs to `@Positive`, and correct the message, which already claims that constraint.
+2. Introduce a fourth reliability value, `NOT_COMPUTABLE`, returned whenever the residual is absent or non-positive. Do not fall through to a band.
+3. Never derive a band from an uncomputed percentage. Guard on the computation, not on the value.
+4. Treat `NOT_COMPUTABLE` as *not satisfying* the `→ VENTE` prerequisite. `CasePrerequisiteService` currently counts any valuation with status `SUCCESS`, so a zero-residual case can currently be advanced to sale on the strength of a meaningless comparison.
+
+The corresponding interface behaviour is specified in `DESIGN_SCREENS.md` §5.
+
 ---
 
 ## 4. 🟡 Medium findings

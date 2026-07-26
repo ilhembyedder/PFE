@@ -408,7 +408,12 @@ The single most important component in the product and the only place that earns
 - **Provenance:** extracted brand, model, year, mileage and condition are shown inside the same block, per **The Sourced Number Rule**.
 - **Reveal:** a 300ms fade with a 6px upward translate on `ease-out-quart`, the only animation in the product permitted above 200ms. Under `prefers-reduced-motion` it becomes a plain opacity fade.
 - **Semantics:** `role="region"` with an `aria-label` naming the vehicle.
+- **Guard states:** a residual value of zero renders `Non calculable` and **no reliability band**; a deviation above 100% promotes the absolute figure and demotes the percentage. Both are specified in `docs/DESIGN_SCREENS.md` §5.
 - **Prohibited:** it must not become the hero-metric template. No big-number-plus-sparkline-plus-three-supporting-stats, no gradient, no glass.
+
+### Named Rule
+
+**The Uncomputed Value Rule.** A reliability indicator is only ever rendered from a comparison that actually happened. When the inputs are missing or non-viable the card says so and shows no band. A green *Fiable* badge on an uncomputed comparison is the worst single output this product can produce, and the backend emits exactly that today (`docs/CODE_REVIEW.md` H-21), so the interface guards it independently.
 
 ### Phase stepper (signature)
 
