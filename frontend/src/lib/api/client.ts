@@ -14,7 +14,9 @@ import type { JSend } from "@/types/api";
  * server-side.
  */
 
-const MESSAGES: Record<number, string> = {
+const FALLBACK_MESSAGE = "Une erreur est survenue.";
+
+const MESSAGES: Record<number, string | undefined> = {
   401: "Session expirée. Reconnectez-vous.",
   403: "Vous n'avez pas les droits nécessaires.",
   404: "Ressource introuvable.",
@@ -31,21 +33,24 @@ async function parse<T>(response: Response): Promise<T> {
 
   if (!text) {
     if (response.ok) return undefined as T;
-    throw new ApiError(response.status, MESSAGES[response.status] ?? "Erreur.");
+    throw new ApiError(
+      response.status,
+      MESSAGES[response.status] ?? FALLBACK_MESSAGE,
+    );
   }
 
   let payload: JSend<T>;
   try {
     payload = JSON.parse(text) as JSend<T>;
   } catch {
-    throw new ApiError(502, MESSAGES[502]);
+    throw new ApiError(502, MESSAGES[502] ?? FALLBACK_MESSAGE);
   }
 
   if (!response.ok || payload.status !== "success") {
     const message =
       payload.status !== "success" && payload.message
         ? payload.message
-        : (MESSAGES[response.status] ?? "Une erreur est survenue.");
+        : (MESSAGES[response.status] ?? FALLBACK_MESSAGE);
     throw new ApiError(response.status, message);
   }
 
@@ -101,9 +106,10 @@ export const api = {
     }
     const disposition = response.headers.get("Content-Disposition") ?? "";
     const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+    const encoded = match?.[1];
     return {
       blob: await response.blob(),
-      filename: match ? decodeURIComponent(match[1]) : undefined,
+      filename: encoded ? decodeURIComponent(encoded) : undefined,
     };
   },
 };

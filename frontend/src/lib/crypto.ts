@@ -84,8 +84,11 @@ export async function decrypt(sealed: string | undefined): Promise<string | null
   const parts = sealed.split(SEPARATOR);
   if (parts.length !== 2) return null;
 
-  const iv = fromHex(parts[0]);
-  const ciphertext = fromHex(parts[1]);
+  const [ivHex, cipherHex] = parts;
+  if (!ivHex || !cipherHex) return null;
+
+  const iv = fromHex(ivHex);
+  const ciphertext = fromHex(cipherHex);
   if (!iv || !ciphertext || iv.length !== IV_BYTES) return null;
 
   try {

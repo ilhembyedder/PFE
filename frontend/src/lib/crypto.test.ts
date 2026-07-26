@@ -38,9 +38,11 @@ describe("crypto", () => {
     const { encrypt, decrypt } = await load();
     const sealed = await encrypt("token");
     const [iv, cipher] = sealed.split(":");
+    expect(iv).toBeDefined();
+    expect(cipher).toBeDefined();
     // Flip one nibble. AES-GCM's auth tag must catch it.
-    const flipped = cipher[0] === "a" ? "b" : "a";
-    expect(await decrypt(`${iv}:${flipped}${cipher.slice(1)}`)).toBeNull();
+    const flipped = cipher!.startsWith("a") ? "b" : "a";
+    expect(await decrypt(`${iv}:${flipped}${cipher!.slice(1)}`)).toBeNull();
   });
 
   it("rejects a value sealed under a different key", async () => {

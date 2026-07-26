@@ -42,11 +42,11 @@ const ROLES: readonly string[] = [
  * for the tenant headers.
  */
 function decodeClaims(token: string): JwtClaims | null {
-  const segments = token.split(".");
-  if (segments.length !== 3) return null;
+  const [, payload, signature] = token.split(".");
+  if (!payload || !signature) return null;
   try {
     // JWT uses base64url, not base64.
-    const json = Buffer.from(segments[1], "base64url").toString("utf-8");
+    const json = Buffer.from(payload, "base64url").toString("utf-8");
     const parsed: unknown = JSON.parse(json);
     if (typeof parsed !== "object" || parsed === null) return null;
     return parsed as JwtClaims;
