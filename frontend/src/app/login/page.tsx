@@ -46,14 +46,28 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
+/**
+ * Only this reads the query string, so only this needs a Suspense boundary.
+ * Wrapping the whole form meant the page server-rendered as blank.
+ */
+function ExpiredNotice() {
+  const params = useSearchParams();
+  if (!params.get("expired")) return null;
+  return (
+    <div
+      role="status"
+      className="bg-warning-surface border-warning-border type-body-sm mb-5 flex items-start gap-2 rounded-md border p-3"
+    >
+      <TriangleAlert className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
+      Votre session a expiré. Reconnectez-vous.
+    </div>
+  );
+}
+
 function LoginForm() {
   const router = useRouter();
-  const params = useSearchParams();
   const [revealed, setRevealed] = useState(false);
-  const [formError, setFormError] = useState<string | null>(
-    params.get("expired") ? "Votre session a expiré. Reconnectez-vous." : null,
-  );
-  const expired = Boolean(params.get("expired"));
+  const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -118,25 +132,16 @@ function LoginForm() {
           ))}
         </div>
 
+        <Suspense fallback={null}>
+          <ExpiredNotice />
+        </Suspense>
+
         {formError ? (
           <div
             role="alert"
-            className={cn(
-              "type-body-sm mb-5 flex items-start gap-2 rounded-md border p-3",
-              expired && !form.formState.isSubmitted
-                ? "bg-warning-surface border-warning-border text-foreground"
-                : "bg-destructive-surface border-destructive-border text-foreground",
-            )}
+            className="bg-destructive-surface border-destructive-border text-foreground type-body-sm mb-5 flex items-start gap-2 rounded-md border p-3"
           >
-            <TriangleAlert
-              className={cn(
-                "mt-0.5 size-4 shrink-0",
-                expired && !form.formState.isSubmitted
-                  ? "text-warning"
-                  : "text-destructive",
-              )}
-              aria-hidden
-            />
+            <TriangleAlert className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden />
             {formError}
           </div>
         ) : null}
@@ -223,9 +228,5 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={null}>
-      <LoginForm />
-    </Suspense>
-  );
+  return <LoginForm />;
 }
