@@ -9,6 +9,7 @@
 !/frontend/
 !/ai-service/
 !/_bmad-output/
+!/docs/
 !/docker-compose.yml
 !/docker-compose.dev.yml
 !/.env.example
