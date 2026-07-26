@@ -1,0 +1,502 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-26T08:48:28.696Z",
+  "title": "Design System: LeasRecover",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(97.5% 0.006 340)",
+        "hex": "#FAF5F8",
+        "purpose": "Application background. Warm, faintly rosy, never clinical white.",
+        "tonalRamp": [
+          "#0D0A0C",
+          "#272426",
+          "#444143",
+          "#646062",
+          "#858183",
+          "#A8A4A6",
+          "#CCC8CA",
+          "#F1EDF0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Leaf",
+        "canonical": "oklch(99.2% 0.003 340)",
+        "hex": "#FEFCFD",
+        "purpose": "Cards, panels, table body, dialogs. Sits above Paper by being lighter.",
+        "tonalRamp": [
+          "#0C0B0C",
+          "#262425",
+          "#434142",
+          "#626062",
+          "#848283",
+          "#A6A4A5",
+          "#CAC8CA",
+          "#F0EEEF"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Board",
+        "canonical": "oklch(94.5% 0.008 340)",
+        "hex": "#F1EBEE",
+        "purpose": "Second neutral layer: sidebar, toolbars, table headers.",
+        "tonalRamp": [
+          "#0E0A0C",
+          "#282426",
+          "#454043",
+          "#655F63",
+          "#868084",
+          "#A9A3A6",
+          "#CDC7CB",
+          "#F2ECF0"
+        ]
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(91.0% 0.008 340)",
+        "hex": "#E5DFE3",
+        "purpose": "Card edges and row dividers. Low contrast on purpose.",
+        "tonalRamp": [
+          "#0E0A0C",
+          "#282426",
+          "#454043",
+          "#655F63",
+          "#868084",
+          "#A9A3A6",
+          "#CDC7CB",
+          "#F2ECF0"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "oklch(85.0% 0.01 340)",
+        "hex": "#D3CBD0",
+        "purpose": "Decorative separators only. Does NOT meet 3:1.",
+        "tonalRamp": [
+          "#0E0A0C",
+          "#292327",
+          "#464044",
+          "#655F63",
+          "#878084",
+          "#AAA3A7",
+          "#CEC7CB",
+          "#F3ECF0"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Edge",
+        "canonical": "oklch(64.0% 0.012 340)",
+        "hex": "#91898E",
+        "purpose": "Form control boundaries. 3.14:1 on Paper, the non-text minimum.",
+        "tonalRamp": [
+          "#0F090D",
+          "#292327",
+          "#474044",
+          "#665F63",
+          "#888085",
+          "#ABA2A7",
+          "#CFC6CB",
+          "#F4EBF1"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "oklch(54.0% 0.012 340)",
+        "hex": "#746C71",
+        "purpose": "Placeholders, disabled labels, timestamps. 4.73:1.",
+        "tonalRamp": [
+          "#0F090D",
+          "#292327",
+          "#474044",
+          "#665F63",
+          "#888085",
+          "#ABA2A7",
+          "#CFC6CB",
+          "#F4EBF1"
+        ]
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Ink Secondary",
+        "canonical": "oklch(45.0% 0.015 340)",
+        "hex": "#5B5258",
+        "purpose": "Field labels, metadata, secondary columns. 6.96:1.",
+        "tonalRamp": [
+          "#10090D",
+          "#2A2227",
+          "#483F44",
+          "#675E64",
+          "#897F85",
+          "#ACA2A8",
+          "#D0C5CC",
+          "#F6EBF2"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(22.0% 0.018 340)",
+        "hex": "#20171D",
+        "purpose": "All primary content. 16.16:1. Near-black with a warm cast.",
+        "tonalRamp": [
+          "#10080E",
+          "#2B2228",
+          "#493E45",
+          "#695D64",
+          "#8A7E86",
+          "#ADA1A9",
+          "#D2C5CD",
+          "#F7EAF2"
+        ]
+      },
+      "plum": {
+        "role": "primary",
+        "displayName": "Dossier Plum",
+        "canonical": "oklch(42.0% 0.13 310)",
+        "hex": "#633481",
+        "purpose": "The only non-semantic colour. Primary actions, selection, focus. 8.38:1.",
+        "tonalRamp": [
+          "#1B0032",
+          "#380252",
+          "#572874",
+          "#784998",
+          "#9A6ABC",
+          "#BE8DE2",
+          "#E3B1FF",
+          "#FFD6FF"
+        ]
+      },
+      "critical": {
+        "role": "tertiary",
+        "displayName": "Overdue Red",
+        "canonical": "oklch(50.0% 0.19 25)",
+        "hex": "#B71824",
+        "purpose": "Breached deadline, dormancy, blocked transition, destructive action. 6.16:1.",
+        "tonalRamp": [
+          "#3D0000",
+          "#650000",
+          "#8C0000",
+          "#B41421",
+          "#DD4444",
+          "#FF6B66",
+          "#FF9188",
+          "#FFB7AC"
+        ]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Approaching Amber",
+        "canonical": "oklch(52.0% 0.13 70)",
+        "hex": "#975800",
+        "purpose": "Deadline warning window, moderate deviation, vehicle discrepancy. 5.25:1.",
+        "tonalRamp": [
+          "#280000",
+          "#490D00",
+          "#6B2F00",
+          "#8E5000",
+          "#B37206",
+          "#D8953D",
+          "#FFB964",
+          "#FFDF8A"
+        ]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Settled Green",
+        "canonical": "oklch(48.0% 0.12 155)",
+        "hex": "#00713E",
+        "purpose": "Completed phase, reliable valuation, successful action. 5.71:1.",
+        "tonalRamp": [
+          "#001600",
+          "#003404",
+          "#005323",
+          "#067442",
+          "#3A9762",
+          "#60BB84",
+          "#86E0A7",
+          "#ABFFCB"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "figure-hero": {
+        "displayName": "Figure Hero",
+        "purpose": "The valuation deviation, and nothing else. One per product."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Market and residual value. Deliberately smaller than the hero."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headers."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and panel titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default. Prose caps at 70ch."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Secondary columns, metadata, helper text. The readable floor."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, table headers, chips. Sentence case, never all-caps."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Timestamps and footnotes only."
+      },
+      "identifier": {
+        "displayName": "Identifier",
+        "purpose": "Case references, VIN, plates. Plex Mono. Never money or dates."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 4px 12px -2px rgba(32,23,29,0.10), 0 2px 4px -2px rgba(32,23,29,0.06)",
+        "purpose": "Dropdowns, selects, popovers, tooltips. Ink-tinted, never pure black."
+      },
+      {
+        "name": "dialog",
+        "value": "0 16px 40px -8px rgba(32,23,29,0.18), 0 4px 12px -4px rgba(32,23,29,0.10)",
+        "purpose": "Modal dialogs and drawers only."
+      },
+      {
+        "name": "focus",
+        "value": "0 0 0 3px rgba(99,52,129,0.20)",
+        "purpose": "Soft halo behind the focus ring. Paired with, never replacing, the 2px outline."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "purpose": "The only easing curve in the system."
+      },
+      {
+        "name": "duration-fast",
+        "value": "120ms",
+        "purpose": "Hover and focus."
+      },
+      {
+        "name": "duration-base",
+        "value": "180ms",
+        "purpose": "State changes, tab switches, disclosure."
+      },
+      {
+        "name": "duration-reveal",
+        "value": "300ms",
+        "purpose": "The valuation reveal. The single exception above 200ms."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "All durations collapse under prefers-reduced-motion; opacity fades only."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "768px"
+      },
+      {
+        "name": "md",
+        "value": "1024px"
+      },
+      {
+        "name": "lg",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action on a view. Plum fill, no gradient, no lift.",
+      "html": "<button class=\"ds-btn-primary\">Avancer la phase</button>",
+      "css": ".ds-btn-primary{background:#633481;color:#FEFCFD;font-family:'IBM Plex Sans', system-ui, sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.01em;height:36px;padding:0 16px;border:none;border-radius:5px;cursor:pointer;transition:background 120ms cubic-bezier(0.25, 1, 0.5, 1);}\n.ds-btn-primary:hover{background:#521D71;}\n.ds-btn-primary:focus-visible{outline: 2px solid #633481; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(99,52,129,0.20);}\n.ds-btn-primary:active{background:#521D71;}\n.ds-btn-primary:disabled{opacity:.45;cursor:not-allowed;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The default for most actions. Leaf fill with an Edge hairline.",
+      "html": "<button class=\"ds-btn-secondary\">Exporter le dossier</button>",
+      "css": ".ds-btn-secondary{background:#FEFCFD;color:#20171D;font-family:'IBM Plex Sans', system-ui, sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.01em;height:36px;padding:0 16px;border:1px solid #91898E;border-radius:5px;cursor:pointer;transition:background 120ms cubic-bezier(0.25, 1, 0.5, 1);}\n.ds-btn-secondary:hover{background:#F1EBEE;}\n.ds-btn-secondary:focus-visible{outline: 2px solid #633481; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(99,52,129,0.20);}\n.ds-btn-secondary:disabled{opacity:.45;cursor:not-allowed;}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label always above, never placeholder-only. Edge border meets the 3:1 boundary minimum.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-vr\">Valeur résiduelle initiale</label><input class=\"ds-field-input\" id=\"ds-vr\" value=\"22 000,00\" inputmode=\"decimal\"></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;font-family:'IBM Plex Sans', system-ui, sans-serif;}\n.ds-field-label{font-size:.75rem;font-weight:500;letter-spacing:.01em;color:#5B5258;}\n.ds-field-input{background:#FEFCFD;color:#20171D;font-family:'IBM Plex Sans', system-ui, sans-serif;font-size:.875rem;font-variant-numeric:tabular-nums;text-align:right;height:36px;padding:0 12px;border:1px solid #91898E;border-radius:5px;transition:border-color 120ms cubic-bezier(0.25, 1, 0.5, 1);}\n.ds-field-input::placeholder{color:#746C71;}\n.ds-field-input:focus{border-color:#633481;outline: 2px solid #633481; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(99,52,129,0.20);}\n.ds-field-input:disabled{background:#F1EBEE;color:#746C71;}"
+    },
+    {
+      "name": "Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Active state is a filled shape, never a coloured left stripe.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-active\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><path d=\"M14 2v6h6\"/></svg>Dossiers</a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg>Paramètres</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:2px;background:#F1EBEE;padding:8px;width:240px;font-family:'IBM Plex Sans', system-ui, sans-serif;}\n.ds-nav-item{display:flex;align-items:center;gap:10px;height:34px;padding:0 12px;border-radius:5px;font-size:.875rem;color:#5B5258;text-decoration:none;transition:background 120ms cubic-bezier(0.25, 1, 0.5, 1);}\n.ds-nav-item:hover{background:#FEFCFD;}\n.ds-nav-item:focus-visible{outline: 2px solid #633481; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(99,52,129,0.20);}\n.ds-nav-item.is-active{background:#F3EBFA;color:#633481;font-weight:500;}"
+    },
+    {
+      "name": "Semantic Chip",
+      "kind": "chip",
+      "refersTo": "tag-critical",
+      "description": "Icon plus colour plus text, always. Meaning must survive greyscale.",
+      "html": "<div class=\"ds-chips\"><span class=\"ds-chip ds-chip-critical\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 8v4M12 16h.01\"/></svg>Échéance dépassée</span><span class=\"ds-chip ds-chip-warning\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/><path d=\"M12 9v4M12 17h.01\"/></svg>Écart modéré</span><span class=\"ds-chip ds-chip-success\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg>Fiable</span><span class=\"ds-chip ds-chip-neutral\">Pré-contentieux</span></div>",
+      "css": ".ds-chips{display:flex;gap:8px;flex-wrap:wrap;font-family:'IBM Plex Sans', system-ui, sans-serif;}\n.ds-chip{display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;letter-spacing:.01em;padding:2px 8px;border-radius:3px;border:1px solid transparent;white-space:nowrap;}\n.ds-chip-critical{background:#FFECE9;color:#B71824;border-color:#FDC9C4;}\n.ds-chip-warning{background:#FDF1D9;color:#975800;border-color:#F2D5A5;}\n.ds-chip-success{background:#E1F8EB;color:#00713E;border-color:#BAE3CA;}\n.ds-chip-neutral{background:#F1EBEE;color:#5B5258;border-color:#E5DFE3;}"
+    },
+    {
+      "name": "Data Table Row",
+      "kind": "card",
+      "refersTo": "table-row",
+      "description": "48px rows, tabular numerics right-aligned, hover shifts ground only.",
+      "html": "<table class=\"ds-table\"><thead><tr><th>Client</th><th>Référence</th><th>Phase</th><th class=\"num\">Valeur résiduelle</th></tr></thead><tbody><tr><td>Dupont Logistics</td><td class=\"mono\">LC-2024-0892</td><td><span class=\"ds-t-chip\">Saisie</span></td><td class=\"num\">22 000,00 €</td></tr><tr><td>Medina Transport</td><td class=\"mono\">LC-2024-0913</td><td><span class=\"ds-t-chip\">Vente</span></td><td class=\"num\">8 450,00 €</td></tr></tbody></table>",
+      "css": ".ds-table{border-collapse:collapse;width:100%;font-family:'IBM Plex Sans', system-ui, sans-serif;font-size:.875rem;background:#FEFCFD;border:1px solid #E5DFE3;border-radius:5px;overflow:hidden;}\n.ds-table th{background:#FAF5F8;color:#746C71;font-size:.75rem;font-weight:500;letter-spacing:.01em;text-align:left;height:36px;padding:0 16px;border-bottom:1px solid #E5DFE3;}\n.ds-table td{color:#20171D;height:48px;padding:0 16px;border-bottom:1px solid #E5DFE3;}\n.ds-table tbody tr:last-child td{border-bottom:none;}\n.ds-table tbody tr{transition:background 120ms cubic-bezier(0.25, 1, 0.5, 1);}\n.ds-table tbody tr:hover{background:#FAF5F8;}\n.ds-table .num{text-align:right;font-variant-numeric:tabular-nums;}\n.ds-table .mono{font-family:'IBM Plex Mono', ui-monospace, monospace;font-size:.8125rem;letter-spacing:-.01em;color:#5B5258;}\n.ds-t-chip{display:inline-block;font-size:.6875rem;padding:2px 8px;border-radius:3px;background:#F1EBEE;color:#5B5258;border:1px solid #E5DFE3;}"
+    },
+    {
+      "name": "AI Valuation Card",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Signature component. The deviation is the hero; market and residual are its inputs. Never a hero-metric template.",
+      "html": "<section class=\"ds-val\" role=\"region\" aria-label=\"Résultat de l'analyse pour BMW 520d 2020\"><header class=\"ds-val-head\"><h3 class=\"ds-val-title\">Estimation de valeur</h3><span class=\"ds-chip ds-chip-warning\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/><path d=\"M12 9v4M12 17h.01\"/></svg>Écart modéré</span></header><p class=\"ds-val-hero\">&minus;16,4 %</p><p class=\"ds-val-heroSub\">soit &minus;3 600,00 € sous la valeur résiduelle</p><dl class=\"ds-val-grid\"><div><dt>Valeur de marché</dt><dd>18 400,00 €</dd></div><div><dt>Valeur résiduelle</dt><dd class=\"muted\">22 000,00 €</dd></div></dl><p class=\"ds-val-src\">Extrait du rapport : BMW 520d &middot; 2020 &middot; 87 000 km &middot; Bon état</p></section>",
+      "css": ".ds-val{background:#FEFCFD;border:1px solid #E5DFE3;border-radius:5px;padding:20px;font-family:'IBM Plex Sans', system-ui, sans-serif;max-width:440px;animation:ds-val-in 300ms cubic-bezier(0.25, 1, 0.5, 1) both;}\n@keyframes ds-val-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}\n@media (prefers-reduced-motion: reduce){.ds-val{animation-duration:.01ms;animation-name:ds-val-fade;}@keyframes ds-val-fade{from{opacity:0;}to{opacity:1;}}}\n.ds-val-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}\n.ds-val-title{font-size:1rem;font-weight:600;color:#20171D;margin:0;}\n.ds-val-hero{font-size:2.5rem;font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#975800;margin:0;}\n.ds-val-heroSub{font-size:.8125rem;color:#5B5258;margin:6px 0 20px;font-variant-numeric:tabular-nums;}\n.ds-val-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 16px;padding-top:16px;border-top:1px solid #E5DFE3;}\n.ds-val-grid dt{font-size:.75rem;font-weight:500;letter-spacing:.01em;color:#5B5258;margin-bottom:4px;}\n.ds-val-grid dd{font-size:1.5rem;font-weight:600;line-height:1.1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:#20171D;margin:0;}\n.ds-val-grid dd.muted{color:#746C71;}\n.ds-val-src{font-size:.6875rem;color:#746C71;margin:0;}\n.ds-chip{display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;padding:2px 8px;border-radius:3px;border:1px solid transparent;white-space:nowrap;}\n.ds-chip-warning{background:#FDF1D9;color:#975800;border-color:#F2D5A5;}"
+    },
+    {
+      "name": "Blocked Phase Notice",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Blocking reasons rendered inline as text, not hidden in a tooltip. Full border, never a left stripe.",
+      "html": "<div class=\"ds-block\" role=\"status\"><svg class=\"ds-block-i\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/></svg><div><p class=\"ds-block-t\">Passage en Vente bloqué</p><ul class=\"ds-block-l\"><li>Aucune estimation IA validée pour ce dossier</li></ul><a class=\"ds-block-a\" href=\"#\">Téléverser un rapport d'expertise</a></div></div>",
+      "css": ".ds-block{display:flex;gap:10px;background:#FFECE9;border:1px solid #FDC9C4;border-radius:5px;padding:12px 14px;font-family:'IBM Plex Sans', system-ui, sans-serif;max-width:440px;}\n.ds-block-i{color:#B71824;flex:none;margin-top:1px;}\n.ds-block-t{font-size:.875rem;font-weight:600;color:#B71824;margin:0 0 4px;}\n.ds-block-l{margin:0 0 8px;padding-left:16px;font-size:.8125rem;color:#20171D;}\n.ds-block-a{font-size:.8125rem;font-weight:500;color:#633481;text-decoration:underline;text-underline-offset:2px;}\n.ds-block-a:focus-visible{outline: 2px solid #633481; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(99,52,129,0.20);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Open Dossier",
+    "overview": "A case file laid open on a desk. Warm paper stock, ink that has dried into it, tabbed sections, a chronological record you can trust because it is complete. Everything findable, nothing decorated. That is the object this software is trying to be, and the object it is replacing: the incumbent here is not a competing SaaS product, it is a paper folder and a spreadsheet.\n\nThe register is deliberately institutional. This platform sits between a leasing company and a court, handling formal notices, seizure records and statutory deadlines under two legal regimes, carrying an immutable audit trail that exists so decisions can be defended later. It should feel like a well-kept official record: authoritative, unhurried, exact.\n\nThis explicitly rejects the reflex answer for its own category: no slate-900 shell, no blue-500 accent, no dark operations-console theme. Where it does not reject convention is structure. Side navigation, breadcrumbs, dense tables, tabs and standard forms are used exactly as expected, because in a tool someone operates for eight hours a day, strangeness is a cost paid every day. Distinctiveness is spent only where it is free: the ground, the ink, the typeface, and the single reveal that earns a moment.",
+    "keyCharacteristics": [
+      "Warm paper ground, ink text. Light by default; dark is a real second theme, not an afterthought.",
+      "Restrained colour. One plum accent under 10% of any screen; everything else chromatic is semantic state.",
+      "Flat surfaces separated by hairlines. Shadows only for things genuinely floating.",
+      "Dense but breathable. 48px table rows, designed to scan 60 cases without scrolling.",
+      "Tabular figures everywhere a number can be compared vertically.",
+      "One family, IBM Plex Sans, carrying the entire interface.",
+      "Motion under 200ms, except once."
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "section": "colors",
+        "body": "Exactly one non-semantic colour exists in this system, and it appears on no more than 10% of any screen. Its rarity is what makes an active nav item or a primary button unmistakable. If a screen needs a second accent, the screen has a hierarchy problem, not a palette problem."
+      },
+      {
+        "name": "The Signal Rule",
+        "section": "colors",
+        "body": "Red, amber and green are reserved. They may only appear where they carry state. A red that means \"brand\" or \"emphasis\" destroys the red that means \"this deadline has passed.\" Every use of the triad carries an icon and a text label alongside the colour, always."
+      },
+      {
+        "name": "The Verified Contrast Rule",
+        "section": "colors",
+        "body": "No colour enters this system until its ratio is computed against every surface it will sit on. The previous specification's five core colours all fail AA as text on white while claiming every combination had been verified. Bright is not the same as legible."
+      },
+      {
+        "name": "The Ledger Rule",
+        "section": "typography",
+        "body": "Every number that can be compared vertically is set in tabular figures. In a sixty-row table of amounts, proportional digits are a defect: the eye cannot compare columns whose digits do not align. Functional, not stylistic, and not optional."
+      },
+      {
+        "name": "The Sourced Number Rule",
+        "section": "typography",
+        "body": "A figure never appears without its provenance within the same visual block. An unsourced number in a financial tool invites scepticism, and scepticism is the emotion this product most needs to avoid."
+      },
+      {
+        "name": "The Thirteen Pixel Floor",
+        "section": "typography",
+        "body": "No readable content below 13px. Caption at 11px is permitted only for timestamps and footnotes, never for a value, a label or an instruction."
+      },
+      {
+        "name": "The Paper Rule",
+        "section": "elevation",
+        "body": "Surfaces are flat at rest and separated by 1px hairlines. A shadow means the element is actually floating and dismissible. If it cannot be dismissed, it does not cast a shadow. Cards, panels, tables, sidebars and headers are flat, permanently."
+      },
+      {
+        "name": "The No Glass Rule",
+        "section": "elevation",
+        "body": "backdrop-filter is prohibited except on a modal scrim. Translucency and blur used as surface decoration are forbidden outright. Audit test: if a panel's background shifts when the content behind it scrolls, it is wrong."
+      },
+      {
+        "name": "The One Moment Rule",
+        "section": "components",
+        "body": "Exactly one animation in this product exceeds 200ms: the valuation reveal, at 300ms. Everything else is state feedback, fast enough to feel instant. A product used for eight hours a day must never make its user wait for choreography."
+      },
+      {
+        "name": "The Seven States Rule",
+        "section": "components",
+        "body": "Default, hover, focus-visible, active, disabled, loading, error. Every interactive component, every time. Shipping four of them is shipping a bug."
+      },
+      {
+        "name": "The One Vocabulary Rule",
+        "section": "components",
+        "body": "A save button looks identical on every screen. One upload implementation, one error-surfacing pattern, one empty state pattern, one date format. Each divergence is a defect to be closed, not a variation to be preserved."
+      }
+    ],
+    "dos": [
+      "Do use OKLCH as the canonical colour format, with hue 340 for neutrals at chroma 0.006-0.018 and hue 310 for the accent.",
+      "Do verify every text and background pairing against WCAG AA (4.5:1 body, 3:1 large text and UI boundaries) before adding a colour, and record the ratio.",
+      "Do use #91898E (Edge) for form control boundaries and #D3CBD0 (Rule) for decorative dividers. They are not interchangeable: only one of them meets the 3:1 requirement.",
+      "Do pair every semantic colour with an icon and a text label, everywhere, without exception.",
+      "Do set every vertically comparable number in tabular figures.",
+      "Do show extracted source data alongside any AI-produced value.",
+      "Do keep the accent under 10% of any screen.",
+      "Do ship all seven interaction states on every component.",
+      "Do use skeletons that match real row heights for loading, never a spinner over content.",
+      "Do write empty states that teach the interface and offer the action that resolves them.",
+      "Do use conventional patterns for navigation, breadcrumbs, tables, tabs and forms. Predictability is the feature.",
+      "Do default to light. Ship dark as a real, fully specified second theme.",
+      "Do declare lang=\"fr\", localise the component library to French, and map every enum to a French label.",
+      "Do honour prefers-reduced-motion completely."
+    ],
+    "donts": [
+      "Don't use the B2B fintech reflex palette: slate-900 shell, blue-500 accent, dark operations-console theme. It is the first answer to this category and therefore not ours.",
+      "Don't use decorative gradients. The current build has twenty-four gradient buttons in two subtly different blues; every one of them is wrong. Gradient text is prohibited outright.",
+      "Don't use glassmorphism. backdrop-filter is permitted only on a modal scrim. The five blurred surfaces in the current build must all go.",
+      "Don't use a coloured border-left or border-right greater than 1px as an accent stripe. This appears three times today, on AlertCard and on both sidebar active states.",
+      "Don't nest cards. Ever. A card inside a card means the outer one should have been a section with a heading.",
+      "Don't build uniform grids of identical icon-plus-heading-plus-text cards. If it is a list, render a list.",
+      "Don't reach for a modal first. Exhaust inline and progressive alternatives.",
+      "Don't build the hero-metric template: big number, small label, three supporting stats, gradient accent.",
+      "Don't let red mean anything other than critical.",
+      "Don't use bright semantic colours as text. #EF4444, #F59E0B and #10B981 all fail AA on white.",
+      "Don't ship a disabled control without adjacent text explaining what would enable it.",
+      "Don't ship a generic error. \"Quelque chose a mal tourné\" is prohibited.",
+      "Don't show an empty state while a request is in flight.",
+      "Don't use all-caps for labels, or letter-spacing above 0.02em.",
+      "Don't put text below 13px anywhere a user needs to read it to complete a task.",
+      "Don't animate layout properties, and don't exceed 200ms anywhere except the valuation reveal.",
+      "Don't hardcode a hex value in a component. The current build contains 565 inline hex literals across eighteen distinct values; that number must reach zero.",
+      "Don't hardcode a currency. Tenants operate in both TND and EUR."
+    ]
+  }
+}
