@@ -29,11 +29,12 @@ Design briefs for every surface in LeasRecover. Produced with `impeccable shape`
 - [9. Settings — Compliance](#9-settings--compliance)
 - [10. Admin — Tenants](#10-admin--tenants)
 - [11. Component build inventory](#11-component-build-inventory)
-- [12. Token implementation reference](#12-token-implementation-reference)
-- [13. Responsive specification](#13-responsive-specification)
-- [14. Accessibility conformance checklist](#14-accessibility-conformance-checklist)
-- [15. Copy register](#15-copy-register)
-- [16. Open questions](#16-open-questions)
+- [12. Data layer](#12-data-layer)
+- [13. Token implementation reference](#13-token-implementation-reference)
+- [14. Responsive specification](#14-responsive-specification)
+- [15. Accessibility conformance checklist](#15-accessibility-conformance-checklist)
+- [16. Copy register](#16-copy-register)
+- [17. Decisions and open questions](#17-decisions-and-open-questions)
 
 ---
 
@@ -49,7 +50,9 @@ These apply to every screen. Individual briefs note only their deviations.
 
 **Scope, for every screen.** Fidelity: production-ready specification. Breadth: the whole surface, 9 screens plus 2 shells. Interactivity: shipped-quality components with all seven states. Time intent: polish until it ships.
 
-**Constraints.** Next.js 16 App Router, React 19, Tailwind + Radix/shadcn (Ant Design is being removed). French UI. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
+**Constraints.** Next.js 16 App Router, React 19, **TypeScript**, Tailwind + Radix/shadcn (Ant Design is being removed), **TanStack Query v5** for all server state, `next-themes` for the light/dark switch. French UI. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
+
+Every "loading", "empty" and "error" state named in the briefs below maps onto a specific TanStack Query state. See [§12](#12-data-layer) for that mapping; the briefs describe what the user sees, §12 describes what drives it.
 
 **Anti-goals, every screen.** Not an operations console. Not a CRM. Not Excel. No gradient, no glass, no side-stripe, no nested card, no modal-first, no hero-metric template. The biggest single risk across the product is *flat hierarchy*: sixty cases where nothing looks more urgent than anything else. That failure mode is what most of these layouts are designed against.
 
@@ -424,19 +427,173 @@ What to build, in what order, and on what primitive. Ordered so that nothing is 
 | `HistoryTimeline` | Day-grouped Envers events with before/after value rendering. |
 | `ThresholdPreview` | The live consequence readout in §9. |
 
+### Tier 0 — Foundation
+
+Not components, but nothing above works without them.
+
+| Item | Notes |
+|---|---|
+| TypeScript | Adopted with this rebuild. shadcn is TypeScript-first, and typed API responses close a documented drift finding: `architecture.md` mandated OpenAPI-generated types that were never produced. |
+| Token layer | §13. CSS custom properties plus the Tailwind mapping. |
+| `ThemeProvider` | `next-themes`, see §13. |
+| `QueryProvider` | TanStack Query client with the defaults in §12, plus the global 401 handler. Devtools in development only. |
+| `queryKeys` factory | §12. One module. Keys are never written inline. |
+| `apiClient` | Typed fetch wrapper over the BFF routes. Normalises the JSend envelope, maps HTTP status onto the error taxonomy in §12, and throws a typed `ApiError` carrying `status` and `code`. |
+| API types | Hand-written to start, one module per domain, mirroring the backend DTOs. Generate from an OpenAPI spec later if SpringDoc is ever added. |
+
+### Query hooks
+
+One hook per resource, colocated with its feature, wrapping `useQuery` / `useMutation` with the correct key, options and invalidation set from §12. **Components never call `useQuery` directly.** This is what stops the invalidation table from silently rotting: a mutation's invalidation set lives in exactly one place.
+
+`useCases` · `useCase` · `useCaseNotes` · `useCaseHistory` · `useCasePrerequisites` · `useCaseDocuments` · `useCaseValuation` · `useValuationStream` · `usePriorityAlerts` · `useAssignees` · `useClients` · `useClient` · `useContracts` · `useContract` · `useVehicle` · `useEntityDocuments` · `useTenant` · `useTenantConfig` · `useThresholds` · `useTenants` · `useSession`
+
 ### Build order
 
-1. Token layer (§12), fonts, base reset.
+1. Tier 0: TypeScript, token layer, fonts, base reset, `ThemeProvider`, `QueryProvider`, `apiClient`, `queryKeys`.
 2. Tier 1 primitives.
-3. `AppShell` + `Breadcrumb`, then login. Proves the shell and the auth flow.
-4. `DataTable`, `FilterBar`, `EmptyState`, `ErrorState`. Then the case registry.
-5. `PhaseStepper`, `ValuationCard`, `AIUploadZone`, tabs. Then case detail.
+3. `AppShell` + `Breadcrumb` + `useSession` + `useTenant`, then login. Proves the shell, the auth flow and the data layer end to end.
+4. `DataTable`, `FilterBar`, `EmptyState`, `ErrorState`, `useCases`, `usePriorityAlerts`. Then the case registry.
+5. `PhaseStepper`, `ValuationCard`, `AIUploadZone`, `useValuationStream`, tabs. Then case detail.
 6. Forms: case creation, both settings screens.
 7. Leasing registry and admin tenants, which reuse everything above.
 
+Step 3 is the vertical slice that de-risks the rest: if the shell, the session query, the theme switch and one mutation all work, every remaining screen is a variation on machinery that already exists.
+
 ---
 
-## 12. Token implementation reference
+## 12. Data layer
+
+**TanStack Query v5 owns all server state.** Every loading, empty and error state described in the screen briefs is driven by a query state, and this section is the contract between the two. Nothing in the briefs is achievable without it: skeletons that match real content, two distinct empty states, specific errors with retry, and alerts that disappear the moment the action that heals them completes.
+
+### State ownership
+
+Three owners, no overlap. Getting this boundary right is what makes a global client store unnecessary.
+
+| State | Owner | Examples |
+|---|---|---|
+| Server data | **TanStack Query** | Cases, alerts, valuation, documents, notes, history, clients, contracts, tenant config, session |
+| Navigational state | **The URL** | Page, page size, sort, filters, active tab, `?focus=` target |
+| Ephemeral UI state | **`useState`** | Sheet open, disclosure expanded, form draft (via react-hook-form), password reveal |
+| Theme | **`next-themes`** | Light / dark / system |
+
+**No Redux, no Zustand, no Jotai, and no new React context.** The existing `branding-context.js` is deleted: tenant branding is server data and becomes a query like everything else, which also fixes the crash-outside-provider defect (`CODE_REVIEW.md` M-18). If something feels like it needs global client state, it is almost certainly server state that belongs in the query cache or navigational state that belongs in the URL.
+
+### Query keys
+
+Hierarchical, so a single invalidation can drop an entire subtree. Centralised in one factory; keys are never written inline at a call site.
+
+```
+['session']
+['tenant']                      ['tenant','config']      ['tenant','thresholds']
+['cases', filters]              ← the registry list, filters object in the key
+['cases', id]                   ← one case
+['cases', id, 'notes' | 'history' | 'prerequisites' | 'documents' | 'valuation' | 'alerts']
+['cases', id, 'valuation', 'progress']   ← written by SSE, never fetched
+['assignees']                   ['alerts','priority']
+['clients', filters]            ['clients', id]
+['contracts', filters]          ['contracts', id]        ['contracts', id, 'vehicle']
+['documents', entityType, entityId]
+['tenants']                     ← super admin only
+```
+
+Because `['cases', id]` prefixes every sub-resource, advancing a phase invalidates the case and all of its children in one call.
+
+### Client defaults
+
+| Option | Value | Why |
+|---|---|---|
+| `staleTime` | 30s | An operational tool. Fresh enough to trust, quiet enough not to thrash. |
+| `gcTime` | 5min | Navigating back to the registry should be instant. |
+| `retry` | 2, **5xx and network only** | Never retry a 4xx. Retrying a 403 or a validation failure just delays the message. |
+| `retryDelay` | exponential, capped 5s | |
+| `refetchOnWindowFocus` | `true` | Explicitly wanted here: PRODUCT.md's *"returning from leave"* journey. Coming back from a meeting should show current alerts. |
+| `refetchOnReconnect` | `true` | |
+| `throwOnError` | `false` | Errors render inline with a specific cause, never as a thrown boundary. PRODUCT.md prohibits generic error screens. |
+
+Reference data that rarely changes (`['tenant']`, `['tenant','config']`, `['assignees']`) overrides `staleTime` to 5 minutes.
+
+### Query state → UI state
+
+This is the mapping every screen brief depends on.
+
+| Query state | UI |
+|---|---|
+| `isPending` | Skeleton at real content dimensions. Never a spinner over content, never an empty state. |
+| `isPending && isPlaceholderData` | Previous page's rows stay visible at 60% opacity with a thin top progress bar. Table pagination must not flash to skeleton. |
+| `isSuccess && data.length === 0 && noFiltersActive` | The no-data empty state, which teaches the interface and offers the primary action. |
+| `isSuccess && data.length === 0 && filtersActive` | The no-results empty state, which offers to clear filters. **A different component.** Conflating the two is a defect. |
+| `isError` | `ErrorState` with the specific cause and a retry wired to `refetch()`. |
+| `isFetching && !isPending` | A 2px indeterminate bar at the top of the affected region. Never a blocking overlay. |
+| `isRefetching` after a mutation | Nothing. The mutation's own feedback already fired; a second signal is noise. |
+
+### Mutations and invalidation
+
+The invalidation column is not optional bookkeeping. The backend **auto-heals dormancy alerts** on update, assign, note and upload; if those mutations do not invalidate `['alerts','priority']`, a resolved alert stays on screen and the product looks broken.
+
+| Mutation | Endpoint | Invalidates | Optimistic |
+|---|---|---|---|
+| Create case | `POST /api/cases` | `['cases']`, `['clients']`, `['contracts']` | No — needs the server id |
+| Update case | `PUT /api/cases/:id` | `['cases', id]`, `['cases']`, `['alerts','priority']` | No — optimistic lock can reject |
+| Assign case | `PUT /api/cases/:id/assign` | `['cases', id]`, `['cases']`, `['alerts','priority']` | **Yes** |
+| Add note | `POST /api/cases/:id/notes` | `['cases', id]` subtree, `['alerts','priority']` | **Yes** |
+| Advance phase | `POST /api/cases/:id/next-phase` | `['cases', id]` subtree, `['cases']`, `['alerts','priority']` | **No** |
+| Upload case document | `POST /api/cases/:id/documents` | `['cases', id]` subtree, `['alerts','priority']` | No |
+| Upload entity document | `POST /api/documents` | `['documents', type, id]` | No |
+| Create / update / delete client | `/api/clients…` | `['clients']`, `['contracts']`, `['cases']` | No |
+| Create / update / delete contract | `/api/contracts…` | `['contracts']`, `['cases']` | No |
+| Link vehicle | `POST /api/contracts/:id/vehicle` | `['contracts', id, 'vehicle']`, `['contracts', id]`, `['cases']` | No |
+| Update branding | `PUT /api/admin/tenant` | `['tenant']` | **Yes** — the sidebar updates live |
+| Update config / thresholds | `PUT /api/admin/tenant/config…` | `['tenant','config']`, `['tenant','thresholds']` | No |
+| Provision tenant | `POST /api/super-admin/tenants` | `['tenants']` | No |
+| Deactivate tenant | `PUT /api/super-admin/tenants/:id/deactivate` | `['tenants']` | No |
+
+**Where optimism is refused, and why.** Phase advance is the important one: the server enforces prerequisites, so an optimistic transition that rolls back would show the case advancing and then snapping backwards. That is worse than a 200ms wait, and it directly undermines *"a small, clean win"*. Optimism is only used where the server cannot reasonably refuse: reassignment and note posting.
+
+**Optimistic pattern.** `onMutate` cancels in-flight queries for the key, snapshots, writes the optimistic value; `onError` restores the snapshot **and** surfaces the specific failure; `onSettled` invalidates. A silent revert is prohibited: if an optimistic update fails, the user is told.
+
+### The valuation stream
+
+TanStack Query does not model server-sent events, and this pipeline should not be forced into a polling query. A dedicated `useValuationStream(caseId)` hook owns the `EventSource` and writes into the cache:
+
+1. Opens `/api/cases/:id/progress` when the case is in `SAISIE`.
+2. Each event is written to `['cases', id, 'valuation', 'progress']` with `setQueryData`. That key is never fetched; it exists so the progress UI reads from one place and re-renders normally.
+3. On `SUCCESS`, invalidate `['cases', id, 'valuation']` and `['cases', id, 'prerequisites']` — the latter because a successful valuation unblocks the transition to `VENTE`.
+4. On `FAILED`, write the failure to the progress key; the card renders the retry state.
+5. Closes on unmount, and on terminal status.
+
+**A polling fallback is required, not optional.** `ValuationProgressService` keeps emitters in an in-memory map on a single JVM, so the stream breaks the moment a second backend instance exists, and the webhook may land on a node holding no emitter (`CODE_REVIEW.md` H-3, H-4). If no event arrives within 15 seconds, fall back to polling `['cases', id, 'valuation']` every 3 seconds for 60 seconds, then show the failure state with a retry. The current UI treats a 15-second silence as *success*, which will eventually show a stale or absent valuation as though it were a real one.
+
+### Error taxonomy
+
+One global handler, for one case only. Everything else is local, so the message can be specific.
+
+| Status | Handling |
+|---|---|
+| `401` | **Global**, via `QueryCache.onError`. Clear the cache, redirect to `/login?expired=1`. The only global case. |
+| `403` | Local. *"Vous n'avez pas les droits nécessaires pour cette action."* |
+| `404` | Local. The screen's not-found state. Never a blank page. |
+| `409` | Local, inline. Prerequisite not met or a concurrent edit. Refetch and show what changed. |
+| `400` / `422` | Local. Field-level errors mapped from the response onto the form. |
+| `413` | Local. *"Ce fichier dépasse la taille maximale de 10 Mo."* The backend currently returns 500 for this (`CODE_REVIEW.md` H-5); until that is fixed, the upload components must detect the size client-side and never let the request leave. |
+| `5xx` | Retried twice, then `ErrorState` with retry. |
+| Network | Distinct message: *"Connexion au serveur impossible."* Not conflated with a server error. |
+
+### Performance behaviours
+
+- **Prefetch on intent.** Hovering or focusing a registry row prefetches `['cases', id]`. Opening a case then feels instantaneous, which is most of what "fast" means here.
+- **Prefetch the next page** once the current page settles.
+- **Parallel, not sequential.** Case detail currently fires six requests one after another. All six mount together as independent queries; each region skeletons and resolves on its own.
+- **`select` for derived data**, so a filter or a computed deviation does not re-render subscribers that did not change.
+
+### Explicitly not doing at MVP
+
+- **No server-side prefetch / `HydrationBoundary`.** It is the better pattern with the App Router and it stays available later, starting with the registry. It is not worth adding while the BFF cookie flow is being rebuilt.
+- **No `useSuspenseQuery`.** Suspense would move loading state into boundaries and away from the region-level skeletons these screens specify.
+- **No infinite scroll.** The registry is paginated and stays paginated. Sixty cases with statutory deadlines need a stable, addressable, shareable page, not a feed.
+
+---
+
+## 13. Token implementation reference
 
 Normative values live in [`../DESIGN.md`](../DESIGN.md) frontmatter. This is the naming contract between that file and the code, so the two cannot drift.
 
@@ -472,13 +629,23 @@ The accent is named `accent`, not `plum`, in code. A future palette change must 
 - The focus ring is a single `.focus-ring` utility used by every interactive component. It must not be reimplemented per component.
 - **Zero raw hex in components.** The current build has 565. Add an ESLint rule failing on hex literals in `src/**` so this cannot regress.
 
+### Theming
+
+`next-themes` with `attribute="data-theme"`, `defaultTheme="light"`, `enableSystem`, and `disableTransitionOnChange` so switching does not animate every colour on the page at once.
+
+Because every colour is a custom property redefined under `[data-theme='dark']`, dark mode requires **no component changes and no Tailwind changes**. That is the whole reason for the naming contract above, and it is why dark ships from the start rather than later: once the token layer exists, the second theme is a second block of custom properties, already specified in `DESIGN.md`.
+
+The switch lives in the sidebar account menu (§1) as three options, `Clair` / `Sombre` / `Système`. Light is the default; system preference is honoured only when the user selects `Système` explicitly, because a manager on a machine set to dark should still get the light default this product is designed around.
+
+Guard against the flash of incorrect theme with the standard blocking inline script, and set `suppressHydrationWarning` on `<html>`.
+
 ### Fonts
 
 IBM Plex Sans and IBM Plex Mono, self-hosted via `next/font/local` rather than a Google Fonts request, subset to `latin` and `latin-ext` (the latter is required for French diacritics). Weights 400, 500, 600 only; 700 is not used anywhere in the scale and must not be loaded.
 
 ---
 
-## 13. Responsive specification
+## 14. Responsive specification
 
 Desktop-first, three breakpoints, structural rather than fluid. The current build has no responsive behaviour at all: no media queries in application code, no breakpoint hook, and a fixed 240px sidebar.
 
@@ -500,7 +667,7 @@ Typography does **not** scale fluidly. No `clamp()` on UI text. Users view this 
 
 ---
 
-## 14. Accessibility conformance checklist
+## 15. Accessibility conformance checklist
 
 WCAG 2.1 AA is a release gate. Every item is verifiable, and every one of them currently fails.
 
@@ -544,7 +711,7 @@ WCAG 2.1 AA is a release gate. Every item is verifiable, and every one of them c
 
 ---
 
-## 15. Copy register
+## 16. Copy register
 
 The product language is French. Enum values never reach the screen raw. This table is normative; deviations are defects.
 
@@ -566,14 +733,27 @@ The product language is French. Enum values never reach the screen raw. This tab
 
 ---
 
-## 16. Open questions
+## 17. Decisions and open questions
 
-Genuinely unresolved. Everything else has been decided and is written above.
+### Resolved
 
-1. **TypeScript.** shadcn is TypeScript-first and the frontend is plain JavaScript with no shared API types. Adopting TS during this rebuild would also close a documented drift finding, at the cost of scope. This is the one decision that materially changes the build and it is not a design decision.
+**TypeScript is adopted.** The rebuild is TypeScript from the first file. shadcn is TypeScript-first, so this removes friction rather than adding it, and typed API responses close a drift finding of their own: `architecture.md` mandated OpenAPI-generated types and none were ever produced. Types are hand-written per domain to start, mirroring the backend DTOs; generation can follow if SpringDoc is ever added. See Tier 0 in §11.
 
-2. **Revising the BMad specs.** `architecture.md` and `ux-design-specification.md` both name Ant Design, a slate/blue palette and a dark-first build. They now contradict `PRODUCT.md` and this document. For a thesis, that inconsistency is a defect in its own right. Options: revise both, or add a superseding-decision appendix to each.
+**TanStack Query v5 owns server state.** Specified in full in §12. No additional client-state library. The consequence worth restating: `branding-context.js` is deleted, because tenant branding is server data and belongs in the query cache.
 
-3. **Dark mode timing.** Fully specified, roughly a day of work once the token layer exists, and not required for the MVP. Ship with light only and add it later, or build both from the start.
+**Dark mode ships from the start.** Once the token layer exists, the second theme is a second block of custom properties and a `next-themes` provider. No component changes, no Tailwind changes. Deferring it would only have created a migration later. Light remains the default. See §13.
 
-4. **The valuation card cannot be honestly designed until the AI is real.** It currently receives a hardcoded BMW for every upload (`CODE_REVIEW.md` C7), so the reliability bands, the deviation ranges and the vehicle-discrepancy alert have never been seen with real data. The component can be built to this spec, but it should be reviewed against genuine extractions before it is called finished.
+**The BMad UI specification is superseded, not revised.** `ux-design-specification.md` stays as the historical record of the original direction; `PRODUCT.md`, `DESIGN.md` and this document are authoritative for anything built from here. Where the two disagree — theme, palette, typography, component library — this document wins.
+
+One qualification, because it is a real risk rather than a formality: for a thesis, an unmarked contradiction between two specification documents reads as an oversight rather than a decision. A three-line note at the top of `ux-design-specification.md` pointing here would cost nothing and remove the ambiguity. The same applies to `architecture.md`, which additionally names Ant Design as a locked technology choice.
+
+### Open
+
+**The valuation card cannot honestly be called finished until the AI is real.** It currently receives a hardcoded BMW 520d for every upload (`CODE_REVIEW.md` C7), so the reliability bands, the realistic deviation ranges and the vehicle-discrepancy alert have never been observed against genuine data. Two specific unknowns the design will need to answer once extraction works:
+
+- What a deviation above 100% looks like. `deviation_percentage` is `NUMERIC(5,2)` and the service caps at 999.99, but the threshold configuration in §9 only permits values up to 100. A 400% deviation is representable in the database and unhandled in the interface.
+- Whether the extracted-data provenance line is sufficient, or whether the manager needs to see the source PDF page alongside the figure to trust it. That is the difference between a card and a split view, and it cannot be decided against fabricated output.
+
+The component should be built to this specification, then reviewed against ten real appraisal reports before it is signed off. That review is also MVP success criterion #1 in the product brief, which remains unmeetable until the extraction exists.
+
+**Deliberately deferred until the rest is built:** revisiting this card. It is the last thing to finalise, not the first.
