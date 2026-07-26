@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/components/states/page-header";
 import { cn } from "@/lib/utils";
 
@@ -13,21 +14,22 @@ import { cn } from "@/lib/utils";
  * is grouped and sectioned rather than presented as one wall of fields.
  */
 const TABS = [
-  { href: "/settings/tenant", label: "Société" },
-  { href: "/settings/compliance", label: "Conformité" },
-];
+  { href: "/settings/tenant", key: "tenant" },
+  { href: "/settings/compliance", key: "compliance" },
+] as const;
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("settings");
   const pathname = usePathname();
 
   return (
     <div>
       <PageHeader
-        title="Paramètres"
-        subtitle="Configuration de votre société et des règles de conformité."
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
-      <nav aria-label="Sections des paramètres" className="border-border mb-6 flex gap-1 border-b">
+      <nav aria-label={t("sections")} className="border-border mb-6 flex gap-1 border-b">
         {TABS.map((tab) => {
           const active = pathname === tab.href;
           return (
@@ -43,7 +45,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
               )}
               style={{ transitionDuration: "var(--duration-fast)" }}
             >
-              {tab.label}
+              {t(`tabs.${tab.key}`)}
             </Link>
           );
         })}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   FileUp,
@@ -35,6 +36,9 @@ export function AIUploadZone({
   phase: string;
   onUploaded?: () => void;
 }) {
+  const t = useTranslations("upload");
+  const tErr = useTranslations("errors");
+  const tCommon = useTranslations("common");
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -49,12 +53,12 @@ export function AIUploadZone({
 
     // Checked here as well as in the BFF: the backend enforces 10MB in code
     // but never configures multipart, so Boot's 1MB default returns a raw 500.
-    if (file.size === 0) return setError("Ce fichier est vide.");
+    if (file.size === 0) return setError(tErr("emptyFile"));
     if (file.size > MAX_BYTES) {
-      return setError("Ce fichier dépasse la taille maximale de 10 Mo.");
+      return setError(tErr("tooLarge"));
     }
     if (file.type !== "application/pdf") {
-      return setError("Le rapport d'expertise doit être un fichier PDF.");
+      return setError(t("pdfOnly"));
     }
 
     const formData = new FormData();
@@ -87,7 +91,7 @@ export function AIUploadZone({
           }}
         >
           <RotateCcw aria-hidden />
-          Réessayer
+          {tCommon("retry")}
         </Button>
       </div>
     );
@@ -100,9 +104,9 @@ export function AIUploadZone({
         className="bg-success-surface border-success-border flex items-center gap-3 rounded-md border p-4"
       >
         <CheckCircle2 className="text-success size-4 shrink-0" aria-hidden />
-        <p className="type-body-sm flex-1">Analyse terminée. L&apos;estimation est disponible.</p>
+        <p className="type-body-sm flex-1">{t("done")}</p>
         <Button variant="ghost" size="sm" onClick={stream.reset}>
-          Téléverser un autre document
+          {t("uploadAnother")}
         </Button>
       </div>
     );
@@ -116,11 +120,11 @@ export function AIUploadZone({
         <div className="mb-3 flex items-center gap-2.5">
           <Loader2 className="text-primary size-4 animate-spin" aria-hidden />
           <p className="type-body-sm font-medium">
-            {running?.message ?? "Envoi du document…"}
+            {running?.message ?? t("sending")}
           </p>
         </div>
         {/* aria-live so each stage is announced as it arrives. */}
-        <Progress value={value} aria-label="Progression de l'analyse" />
+        <Progress value={value} aria-label={t("progress")} />
         <p className="type-caption text-muted-foreground mt-2 tabular" aria-live="polite">
           {value}&nbsp;%
         </p>
@@ -156,14 +160,10 @@ export function AIUploadZone({
           <UploadCloud className="text-muted-foreground size-5" aria-hidden />
         )}
         <span className="type-body-sm font-medium">
-          {isExpertise
-            ? "Téléverser le rapport d'expertise"
-            : "Téléverser un document"}
+          {isExpertise ? t("expertise") : t("document")}
         </span>
         <span className="type-caption text-muted-foreground">
-          {isExpertise
-            ? "PDF uniquement, 10 Mo maximum. L'analyse démarre automatiquement."
-            : "PDF, JPEG ou PNG, 10 Mo maximum."}
+          {isExpertise ? t("expertiseHint") : t("documentHint")}
         </span>
         <input
           ref={inputRef}

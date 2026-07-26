@@ -20,7 +20,8 @@ import { Panel } from "@/components/states/panel";
 import { DefinitionList } from "@/components/states/definition-list";
 import { ErrorState, messageFor } from "@/components/states/error-state";
 import { useClients, useContracts, useCreateCase } from "@/lib/query/hooks";
-import { formatDate } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useFormat, useLabels } from "@/lib/use-format";
 
 /**
  * Case creation.
@@ -32,11 +33,7 @@ import { formatDate } from "@/lib/format";
  */
 
 const CURRENCIES = ["TND", "EUR"] as const;
-const CONTRACT_STATUS = [
-  ["ACTIVE", "Actif"],
-  ["SUSPENDED", "Suspendu"],
-  ["TERMINATED", "Résilié"],
-] as const;
+const CONTRACT_STATUS = ["ACTIVE", "SUSPENDED", "TERMINATED"] as const;
 
 interface FormState {
   clientName: string;
@@ -89,6 +86,12 @@ function SectionTitle({ index, children }: { index: number; children: React.Reac
 }
 
 export default function NewCasePage() {
+  const t = useTranslations("newCase");
+  const tCase = useTranslations("caseDetail");
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
+  const format = useFormat();
+  const labels = useLabels();
   const router = useRouter();
   const create = useCreateCase();
   const clients = useClients();
@@ -150,13 +153,13 @@ export default function NewCasePage() {
 
   const validate = (): string[] => {
     const found: string[] = [];
-    if (!form.clientName.trim()) found.push("Le nom du client est requis.");
-    if (!form.contractReference.trim()) found.push("La référence du contrat est requise.");
-    if (!form.vehicleVin.trim()) found.push("Le VIN du véhicule est requis.");
+    if (!form.clientName.trim()) found.push(t("nameRequired"));
+    if (!form.contractReference.trim()) found.push(t("referenceRequired"));
+    if (!form.vehicleVin.trim()) found.push(t("vinRequired"));
     // Zero passes the backend's @Min(0) and produces a false "Fiable"
     // indicator (H-21). Refused here.
     if (residual === null || residual <= 0) {
-      found.push("La valeur résiduelle initiale doit être strictement positive.");
+      found.push(t("residualPositive"));
     }
     if (
       form.contractStartDate &&
@@ -164,12 +167,12 @@ export default function NewCasePage() {
       form.contractEndDate <= form.contractStartDate
     ) {
       // The backend does not check this at all.
-      found.push("La date de fin doit être postérieure à la date de début.");
+      found.push(t("endAfterStart"));
     }
     if (form.vehicleYear !== null) {
       const year = new Date().getFullYear();
       if (form.vehicleYear < 1900 || form.vehicleYear > year + 1) {
-        found.push(`L'année du véhicule doit être comprise entre 1900 et ${year + 1}.`);
+        found.push(t("yearRange", { max: year + 1 }));
       }
     }
     return found;
@@ -202,27 +205,27 @@ export default function NewCasePage() {
     <div className="mx-auto max-w-[720px]">
       <nav aria-label="Fil d'Ariane" className="type-body-sm mb-4 flex items-center gap-1.5">
         <Link href="/cases" className="text-muted-foreground hover:text-foreground">
-          Dossiers
+          {tNav("cases")}
         </Link>
         <ChevronRight className="text-muted-foreground size-3.5" aria-hidden />
-        <span>Nouveau dossier</span>
+        <span>{t("title")}</span>
       </nav>
 
       <PageHeader
-        title="Nouveau dossier"
-        subtitle="Renseignez le client, le contrat et le véhicule concernés."
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       <div className="space-y-5 pb-24">
-        <Panel title={<SectionTitle index={1}>Contrat existant</SectionTitle>}>
+        <Panel title={<SectionTitle index={1}>{t("sections.existing")}</SectionTitle>}>
           <div className="space-y-1.5">
-            <Label htmlFor="existing">Reprendre un contrat déjà enregistré</Label>
+            <Label htmlFor="existing">{t("existingLabel")}</Label>
             <Select value={contractId || "none"} onValueChange={(v) => v && v !== "none" && prefill(v)}>
               <SelectTrigger id="existing" className="w-full">
-                <SelectValue placeholder="Optionnel — saisir manuellement ci-dessous" />
+                <SelectValue placeholder={t("existingPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Saisir manuellement</SelectItem>
+                <SelectItem value="none">{t("existingManual")}</SelectItem>
                 {(contracts.data ?? []).map((contract) => (
                   <SelectItem key={contract.id} value={contract.id}>
                     {contract.referenceNumber} — {contract.clientName}
@@ -231,12 +234,12 @@ export default function NewCasePage() {
               </SelectContent>
             </Select>
             <p className="type-caption text-muted-foreground">
-              Les sections suivantes seront pré-remplies.
+              {t("existingHint")}
             </p>
           </div>
         </Panel>
 
-        <Panel title={<SectionTitle index={2}>Client</SectionTitle>}>
+        <Panel title={<SectionTitle index={2}>{t("sections.client")}</SectionTitle>}>
           {matchedClient ? (
             /* Existing client: read-only, and the form says why. */
             <div className="space-y-4">
@@ -244,26 +247,26 @@ export default function NewCasePage() {
                 <Info className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
                 <div>
                   <p className="type-body-sm">
-                    Client existant. Ses informations ne seront pas modifiées.
+                    {t("matchedClient")}
                   </p>
                   <Link
                     href="/leasing"
                     className="type-body-sm text-primary mt-1 inline-block font-medium underline underline-offset-4"
                   >
-                    Modifier ce client
+                    {t("editClient")}
                   </Link>
                 </div>
               </div>
               <DefinitionList
                 items={[
-                  { label: "Nom ou raison sociale", value: matchedClient.fullNameOrCompany },
+                  { label: tCase("client.name"), value: matchedClient.fullNameOrCompany },
                   {
-                    label: "Numéro d'immatriculation",
+                    label: tCase("client.registration"),
                     value: matchedClient.registrationNumber,
                     mono: true,
                   },
-                  { label: "E-mail", value: matchedClient.contactEmail },
-                  { label: "Téléphone", value: matchedClient.contactPhone },
+                  { label: tCase("client.email"), value: matchedClient.contactEmail },
+                  { label: tCase("client.phone"), value: matchedClient.contactPhone },
                 ]}
               />
               <Button
@@ -274,13 +277,13 @@ export default function NewCasePage() {
                   set("clientContactEmail", "");
                 }}
               >
-                Saisir un autre client
+                {t("otherClient")}
               </Button>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="clientName">Nom ou raison sociale</Label>
+                <Label htmlFor="clientName">{tCase("client.name")}</Label>
                 <Input
                   id="clientName"
                   value={form.clientName}
@@ -288,7 +291,7 @@ export default function NewCasePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="clientReg">Numéro d&apos;immatriculation</Label>
+                <Label htmlFor="clientReg">{tCase("client.registration")}</Label>
                 <Input
                   id="clientReg"
                   className="type-identifier"
@@ -297,7 +300,7 @@ export default function NewCasePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="clientEmail">E-mail</Label>
+                <Label htmlFor="clientEmail">{tCase("client.email")}</Label>
                 <Input
                   id="clientEmail"
                   type="email"
@@ -306,7 +309,7 @@ export default function NewCasePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="clientPhone">Téléphone</Label>
+                <Label htmlFor="clientPhone">{tCase("client.phone")}</Label>
                 <Input
                   id="clientPhone"
                   value={form.clientContactPhone}
@@ -314,7 +317,7 @@ export default function NewCasePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="clientAddress">Adresse</Label>
+                <Label htmlFor="clientAddress">{tCase("client.address")}</Label>
                 <Input
                   id="clientAddress"
                   value={form.clientAddress}
@@ -325,10 +328,10 @@ export default function NewCasePage() {
           )}
         </Panel>
 
-        <Panel title={<SectionTitle index={3}>Contrat</SectionTitle>}>
+        <Panel title={<SectionTitle index={3}>{t("sections.contract")}</SectionTitle>}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="reference">Référence</Label>
+              <Label htmlFor="reference">{tCase("contract.reference")}</Label>
               <Input
                 id="reference"
                 className="type-identifier"
@@ -337,7 +340,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contractStatus">Statut</Label>
+              <Label htmlFor="contractStatus">{tCase("contract.status")}</Label>
               <Select
                 value={form.contractStatus}
                 onValueChange={(v) => set("contractStatus", v ?? "ACTIVE")}
@@ -346,16 +349,16 @@ export default function NewCasePage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {CONTRACT_STATUS.map(([value, label]) => (
+                  {CONTRACT_STATUS.map((value) => (
                     <SelectItem key={value} value={value}>
-                      {label}
+                      {labels.status(value)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="startDate">Date de début</Label>
+              <Label htmlFor="startDate">{tCase("contract.startDate")}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -364,7 +367,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="endDate">Date de fin</Label>
+              <Label htmlFor="endDate">{tCase("contract.endDate")}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -375,10 +378,10 @@ export default function NewCasePage() {
           </div>
         </Panel>
 
-        <Panel title={<SectionTitle index={4}>Véhicule</SectionTitle>}>
+        <Panel title={<SectionTitle index={4}>{t("sections.vehicle")}</SectionTitle>}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="vin">VIN</Label>
+              <Label htmlFor="vin">{tCase("vehicle.vin")}</Label>
               <Input
                 id="vin"
                 className="type-identifier uppercase"
@@ -387,7 +390,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="plate">Immatriculation</Label>
+              <Label htmlFor="plate">{tCase("vehicle.plate")}</Label>
               <Input
                 id="plate"
                 className="type-identifier"
@@ -396,7 +399,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="brand">Marque</Label>
+              <Label htmlFor="brand">{tCase("vehicle.brand")}</Label>
               <Input
                 id="brand"
                 value={form.vehicleBrand}
@@ -404,7 +407,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="model">Modèle</Label>
+              <Label htmlFor="model">{tCase("vehicle.model")}</Label>
               <Input
                 id="model"
                 value={form.vehicleModel}
@@ -412,7 +415,7 @@ export default function NewCasePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="year">Année</Label>
+              <Label htmlFor="year">{tCase("vehicle.year")}</Label>
               <NumericInput
                 id="year"
                 integer
@@ -425,10 +428,10 @@ export default function NewCasePage() {
           </div>
         </Panel>
 
-        <Panel title={<SectionTitle index={5}>Données financières</SectionTitle>}>
+        <Panel title={<SectionTitle index={5}>{t("sections.financial")}</SectionTitle>}>
           <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
             <div className="space-y-1.5">
-              <Label htmlFor="residual">Valeur résiduelle initiale</Label>
+              <Label htmlFor="residual">{tCase("residualValue")}</Label>
               <NumericInput
                 id="residual"
                 value={residual}
@@ -437,11 +440,11 @@ export default function NewCasePage() {
                 min={0}
               />
               <p className="type-caption text-muted-foreground">
-                Référence de toute comparaison avec la valeur de marché estimée.
+                {t("residualHint")}
               </p>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="currency">Devise</Label>
+              <Label htmlFor="currency">{tCase("edit.currency")}</Label>
               <Select
                 value={form.currencyCode}
                 onValueChange={(v) => set("currencyCode", v ?? "TND")}
@@ -461,7 +464,7 @@ export default function NewCasePage() {
           </div>
           {form.contractStartDate ? (
             <p className="type-caption text-muted-foreground mt-3">
-              Contrat démarré le {formatDate(form.contractStartDate)}.
+              {t("startedOn", { date: format.date(form.contractStartDate) })}
             </p>
           ) : null}
         </Panel>
@@ -476,7 +479,7 @@ export default function NewCasePage() {
               className="bg-destructive-surface border-destructive-border mb-3 rounded-md border p-3"
             >
               <p className="type-body-sm text-destructive font-semibold">
-                {errors.length} champ{errors.length > 1 ? "s" : ""} à corriger
+                {t("validation", { count: errors.length })}
               </p>
               <ul className="type-body-sm mt-1 list-disc space-y-0.5 pl-4">
                 {errors.map((message) => (
@@ -489,7 +492,7 @@ export default function NewCasePage() {
 
           <div className="flex items-center justify-end gap-2">
             <Button variant="ghost" render={<Link href="/cases" />}>
-              Annuler
+              {tCommon("cancel")}
             </Button>
             <Button onClick={() => void submit()} disabled={create.isPending}>
               {create.isPending ? (
@@ -497,7 +500,7 @@ export default function NewCasePage() {
               ) : (
                 <CheckCircle2 aria-hidden />
               )}
-              Créer le dossier
+              {t("submit")}
             </Button>
           </div>
         </div>

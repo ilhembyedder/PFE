@@ -1,5 +1,8 @@
 "use client";
 
+"use client";
+
+import { useTranslations } from "next-intl";
 import { RotateCcw, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isApiError } from "@/lib/api/api-error";
@@ -10,10 +13,11 @@ import { cn } from "@/lib/utils";
  * PRODUCT.md prohibits "Quelque chose a mal tourné".
  */
 
+/** Falls back to a generic key only when the error carries no message. */
 export function messageFor(error: unknown): string {
   if (isApiError(error)) return error.message;
   if (error instanceof Error && error.message) return error.message;
-  return "Une erreur est survenue.";
+  return "";
 }
 
 export function ErrorState({
@@ -27,7 +31,9 @@ export function ErrorState({
   variant?: "inline" | "page";
   className?: string;
 }) {
-  const message = messageFor(error);
+  const t = useTranslations("errors");
+  const tCommon = useTranslations("common");
+  const message = messageFor(error) || t("generic");
 
   if (variant === "page") {
     return (
@@ -39,12 +45,12 @@ export function ErrorState({
         )}
       >
         <TriangleAlert className="text-destructive mb-4 size-6" aria-hidden />
-        <p className="type-title">Cette page n&apos;a pas pu être chargée</p>
+        <p className="type-title">{t("pageTitle")}</p>
         <p className="type-body-sm text-muted-foreground mt-1 max-w-sm">{message}</p>
         {onRetry ? (
           <Button variant="outline" className="mt-5" onClick={onRetry}>
             <RotateCcw aria-hidden />
-            Réessayer
+            {tCommon("retry")}
           </Button>
         ) : null}
       </div>
@@ -68,7 +74,7 @@ export function ErrorState({
             onClick={onRetry}
             className="type-label text-primary mt-2 underline underline-offset-4"
           >
-            Réessayer
+            {tCommon("retry")}
           </button>
         ) : null}
       </div>

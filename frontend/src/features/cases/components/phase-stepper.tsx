@@ -2,7 +2,8 @@
 
 import { Check, Lock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { PHASE_SHORT } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useLabels } from "@/lib/use-format";
 import { PHASES, type Phase, type Prerequisites } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,8 @@ export function PhaseStepper({
   prerequisites?: Prerequisites;
   className?: string;
 }) {
+  const t = useTranslations("caseDetail");
+  const labels = useLabels();
   const currentIndex = PHASES.indexOf(currentPhase);
   const blockedPhase =
     prerequisites?.isBlocked && prerequisites.nextPhase ? prerequisites.nextPhase : null;
@@ -59,7 +62,7 @@ export function PhaseStepper({
                 !done && !active && !blocked && "text-muted-foreground",
               )}
             >
-              {PHASE_SHORT[phase]}
+              {labels.phaseShort(phase)}
             </span>
           );
 
@@ -116,8 +119,11 @@ export function PhaseStepper({
       </ol>
 
       <p className="sr-only">
-        Phase actuelle : {PHASE_SHORT[currentPhase]}, étape {currentIndex + 1} sur{" "}
-        {PHASES.length}.
+        {t("currentPhase", {
+          phase: labels.phaseShort(currentPhase),
+          index: currentIndex + 1,
+          total: PHASES.length,
+        })}
       </p>
     </div>
   );

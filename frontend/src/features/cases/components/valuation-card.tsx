@@ -4,13 +4,9 @@ import Link from "next/link";
 import { AlertTriangle, FileText, Info } from "lucide-react";
 import { Chip, chipIcons } from "@/components/ui/chip";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  RELIABILITY_LABELS,
-  formatMoney,
-  formatPercent,
-  resolveReliability,
-  reliabilityTone,
-} from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { resolveReliability, reliabilityTone } from "@/lib/format";
+import { useFormat, useLabels } from "@/lib/use-format";
 import type { Valuation } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -77,6 +73,10 @@ export function ValuationCard({
   documentId?: string | null;
   className?: string;
 }) {
+  const t = useTranslations("valuation");
+  const format = useFormat();
+  const labels = useLabels();
+
   const state = resolveReliability(valuation);
   const tone = reliabilityTone(state);
   const currency = valuation.currencyCode;
@@ -101,7 +101,7 @@ export function ValuationCard({
         extracted.brand,
         extracted.model,
         extracted.year,
-        extracted.mileage ? `${new Intl.NumberFormat("fr-FR").format(extracted.mileage)} km` : null,
+        extracted.mileage ? `${format.number(extracted.mileage)} km` : null,
         extracted.condition,
       ]
         .filter(Boolean)
@@ -111,7 +111,9 @@ export function ValuationCard({
   return (
     <section
       role="region"
-      aria-label={`Résultat de l'analyse${provenance ? ` pour ${provenance}` : ""}`}
+      aria-label={
+        provenance ? t("regionLabelFor", { vehicle: provenance }) : t("regionLabel")
+      }
       className={cn(
         "bg-card border-border animate-in fade-in slide-in-from-bottom-1 rounded-md border p-5",
         className,
@@ -122,10 +124,10 @@ export function ValuationCard({
       }}
     >
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="type-title">Estimation de valeur</h2>
+        <h2 className="type-title">{t("title")}</h2>
         <div className="flex items-center gap-2">
           {state === "NOT_COMPUTABLE" ? (
-            <Chip>{RELIABILITY_LABELS.NOT_COMPUTABLE}</Chip>
+            <Chip>{labels.reliability("NOT_COMPUTABLE")}</Chip>
           ) : (
             <Chip
               tone={tone === "neutral" ? "neutral" : tone}
@@ -139,7 +141,7 @@ export function ValuationCard({
                       : undefined
               }
             >
-              {RELIABILITY_LABELS[state]}
+              {labels.reliability(state)}
             </Chip>
           )}
           {documentId ? (
@@ -150,7 +152,7 @@ export function ValuationCard({
               className="type-body-sm text-primary focus-visible:focus-ring inline-flex items-center gap-1 rounded-sm underline underline-offset-4 outline-none [&_svg]:size-3.5"
             >
               <FileText aria-hidden />
-              Voir le rapport source
+              {t("viewSource")}
             </Link>
           ) : null}
         </div>
@@ -164,23 +166,20 @@ export function ValuationCard({
            market value stands alone and no band is rendered. */
         <>
           <p className="type-figure-hero text-foreground">
-            {formatMoney(valuation.marketValueCents, currency)}
+            {format.money(valuation.marketValueCents, currency)}
           </p>
           <p className="type-body-sm text-muted-foreground mt-1.5">
-            Valeur de marché estimée
+            {t("marketValueEstimated")}
           </p>
           <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
             <Info className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
             <div>
-              <p className="type-body-sm">
-                La valeur résiduelle du contrat est nulle. L&apos;écart ne peut pas être
-                calculé.
-              </p>
+              <p className="type-body-sm">{t("notComputable")}</p>
               <Link
                 href={`/cases/${caseId}?edit=1`}
                 className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
               >
-                Corriger le dossier
+                {t("fixCase")}
               </Link>
             </div>
           </div>
@@ -193,31 +192,29 @@ export function ValuationCard({
               capped at 999.99 and is no longer precise. */}
           <p className={cn("type-figure-hero", TONE_TEXT[tone])}>
             {extreme && deviationCents !== null
-              ? formatMoney(deviationCents, currency)
+              ? format.money(deviationCents, currency)
               : clamped
-                ? "> 999 %"
-                : formatPercent(percent, deviationCents)}
+                ? t("clamped")
+                : format.percent(percent, deviationCents)}
           </p>
 
           <p className="type-body-sm text-muted-foreground mt-1.5">
             {extreme && ratio
-              ? `la valeur de marché est ${new Intl.NumberFormat("fr-FR", {
-                  maximumFractionDigits: 1,
-                }).format(ratio)} fois inférieure à la valeur résiduelle`
+              ? t("timesLower", {
+                  ratio: format.number(ratio, { maximumFractionDigits: 1 }),
+                })
               : deviationCents === null
-                ? "écart indisponible"
-                : `soit ${formatMoney(deviationCents, currency)} ${
-                    deviationCents < 0 ? "sous" : "au-dessus de"
-                  } la valeur résiduelle`}
+                ? t("unavailable")
+                : t(deviationCents < 0 ? "below" : "above", {
+                    amount: format.money(Math.abs(deviationCents), currency),
+                  })}
           </p>
 
           {extreme ? (
             <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
               <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
               <div>
-                <p className="type-body-sm">
-                  Écart inhabituel. Vérifiez la valeur résiduelle du contrat.
-                </p>
+                <p className="type-body-sm">{t("unusual")}</p>
                 <Link
                   href={`/cases/${caseId}?edit=1`}
                   className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
@@ -230,15 +227,15 @@ export function ValuationCard({
 
           <dl className="border-border mt-5 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2">
             <div>
-              <dt className="type-label text-muted-foreground">Valeur de marché</dt>
+              <dt className="type-label text-muted-foreground">{t("marketValue")}</dt>
               <dd className="type-figure text-foreground mt-1">
-                {formatMoney(valuation.marketValueCents, currency)}
+                {format.money(valuation.marketValueCents, currency)}
               </dd>
             </div>
             <div>
-              <dt className="type-label text-muted-foreground">Valeur résiduelle</dt>
+              <dt className="type-label text-muted-foreground">{t("residualValue")}</dt>
               <dd className="type-figure text-muted-foreground mt-1">
-                {formatMoney(valuation.initialResidualValueCents, currency)}
+                {format.money(valuation.initialResidualValueCents, currency)}
               </dd>
             </div>
           </dl>
@@ -249,7 +246,7 @@ export function ValuationCard({
           provenance in the same block. */}
       {provenance ? (
         <p className="type-caption text-muted-foreground mt-4">
-          Extrait du rapport&nbsp;: {provenance}
+          {t("provenance", { details: provenance })}
         </p>
       ) : null}
     </section>

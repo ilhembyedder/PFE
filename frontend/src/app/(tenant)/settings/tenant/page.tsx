@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Panel } from "@/components/states/panel";
 import { ErrorState, messageFor } from "@/components/states/error-state";
 import { useTenant, useUpdateBranding } from "@/lib/query/hooks";
+import { useTranslations } from "next-intl";
 import { initials } from "@/lib/format";
 
 /**
@@ -18,6 +19,8 @@ import { initials } from "@/lib/format";
  * renders at the sidebar's real size on the sidebar's real surface.
  */
 export default function BrandingPage() {
+  const t = useTranslations("settings.branding");
+  const tCommon = useTranslations("common");
   const tenant = useTenant();
   const update = useUpdateBranding();
 
@@ -54,9 +57,9 @@ export default function BrandingPage() {
 
   const submit = async () => {
     setError(null);
-    if (!value.name.trim()) return setError("Le nom de la société est requis.");
+    if (!value.name.trim()) return setError(t("nameRequired"));
     if (value.logoUrl && !/^https?:\/\/\S+$/i.test(value.logoUrl.trim())) {
-      return setError("L'URL du logo doit commencer par http:// ou https://.");
+      return setError(t("urlInvalid"));
     }
     try {
       await update.mutateAsync({ name: value.name.trim(), logoUrl: value.logoUrl.trim() });
@@ -69,12 +72,12 @@ export default function BrandingPage() {
 
   return (
     <div className="max-w-[560px] space-y-5">
-      <Panel title="Identité de la société">
+      <Panel title={t("title")}>
         <div className="space-y-4">
           {error ? <ErrorState error={new Error(error)} /> : null}
 
           <div className="space-y-1.5">
-            <Label htmlFor="name">Nom de la société</Label>
+            <Label htmlFor="name">{t("name")}</Label>
             <Input
               id="name"
               value={value.name}
@@ -83,7 +86,7 @@ export default function BrandingPage() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="logoUrl">URL du logo</Label>
+            <Label htmlFor="logoUrl">{t("logoUrl")}</Label>
             <Input
               id="logoUrl"
               type="url"
@@ -92,13 +95,13 @@ export default function BrandingPage() {
               onChange={(event) => set({ logoUrl: event.target.value })}
             />
             <p className="type-caption text-muted-foreground">
-              Affiché dans la barre latérale. Format carré recommandé.
+              {t("logoHint")}
             </p>
           </div>
         </div>
       </Panel>
 
-      <Panel title="Aperçu">
+      <Panel title={t("preview")}>
         <div className="bg-sidebar border-sidebar-border rounded-md border p-3">
           <div className="flex items-center gap-2.5">
             {value.logoUrl && !imageFailed ? (
@@ -124,7 +127,7 @@ export default function BrandingPage() {
         </div>
         {imageFailed ? (
           <p className="type-body-sm text-warning mt-2">
-            L&apos;image n&apos;a pas pu être chargée. Les initiales seront utilisées.
+            {t("imageFailed")}
           </p>
         ) : null}
       </Panel>
@@ -132,16 +135,16 @@ export default function BrandingPage() {
       <div className="flex items-center justify-end gap-3">
         {dirty ? (
           <span className="type-body-sm text-muted-foreground">
-            Modifications non enregistrées
+            {tCommon("unsavedChanges")}
           </span>
         ) : saved ? (
           <span className="type-body-sm text-success" role="status">
-            Enregistré
+            {tCommon("saved")}
           </span>
         ) : null}
         <Button onClick={() => void submit()} disabled={!dirty || update.isPending}>
           {update.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          Enregistrer
+          {tCommon("save")}
         </Button>
       </div>
     </div>

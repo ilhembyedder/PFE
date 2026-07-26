@@ -15,7 +15,8 @@ import {
   useUpdateTenantConfig,
   useUpdateThresholds,
 } from "@/lib/query/hooks";
-import { PHASE_LABELS } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useLabels } from "@/lib/use-format";
 import { PHASES, type Phase } from "@/types/api";
 
 /**
@@ -37,6 +38,9 @@ const toNumber = (value: number | string | null | undefined): number | null => {
 };
 
 export default function CompliancePage() {
+  const t = useTranslations("settings.compliance");
+  const tCommon = useTranslations("common");
+  const labels = useLabels();
   const config = useTenantConfig();
   const thresholds = useThresholds();
   const updateConfig = useUpdateTenantConfig();
@@ -104,22 +108,22 @@ export default function CompliancePage() {
   const validate = (): string[] => {
     const found: string[] = [];
     if (dormancyValue === null || dormancyValue <= 0) {
-      found.push("Le seuil de dormance doit être un nombre de jours positif.");
+      found.push(t("dormancyPositive"));
     }
     for (const phase of DELAY_PHASES) {
       const value = delayFor(phase);
       if (value === null || value <= 0) {
-        found.push(`Le délai de la phase « ${PHASE_LABELS[phase]} » doit être positif.`);
+        found.push(t("delayPositive", { phase: labels.phase(phase) }));
       }
     }
     if (moderateValue === null || moderateValue < 0 || moderateValue > 100) {
-      found.push("Le seuil d'écart modéré doit être compris entre 0 et 100.");
+      found.push(t("moderateRange"));
     }
     if (criticalValue === null || criticalValue < 0 || criticalValue > 100) {
-      found.push("Le seuil d'écart critique doit être compris entre 0 et 100.");
+      found.push(t("criticalRange"));
     }
     if (bandsInvalid) {
-      found.push("Le seuil modéré doit être strictement inférieur au seuil critique.");
+      found.push(t("moderateBelowCritical"));
     }
     return found;
   };
@@ -153,15 +157,15 @@ export default function CompliancePage() {
       setPartial(messageFor((results[0] as PromiseRejectedResult).reason));
     } else if (failedDelays) {
       setPartial(
-        `Les seuils d'écart IA ont été enregistrés, mais les délais n'ont pas pu l'être : ${messageFor(
-          (results[0] as PromiseRejectedResult).reason,
-        )}`,
+        t("partialDelays", {
+          reason: messageFor((results[0] as PromiseRejectedResult).reason),
+        }),
       );
     } else if (failedThresholds) {
       setPartial(
-        `Les délais ont été enregistrés, mais les seuils d'écart IA n'ont pas pu l'être : ${messageFor(
-          (results[1] as PromiseRejectedResult).reason,
-        )}`,
+        t("partialThresholds", {
+          reason: messageFor((results[1] as PromiseRejectedResult).reason),
+        }),
       );
     } else {
       setTouched(false);
@@ -173,16 +177,16 @@ export default function CompliancePage() {
 
   return (
     <div className="max-w-[720px] space-y-5">
-      <Panel title="Dormance">
+      <Panel title={t("dormancyTitle")}>
         <p className="type-body-sm text-muted-foreground mb-4">
-          Un dossier sans action pendant cette durée déclenche une alerte.
+          {t("dormancyHint")}
         </p>
         <div className="max-w-[200px] space-y-1.5">
-          <Label htmlFor="dormancy">Seuil de dormance</Label>
+          <Label htmlFor="dormancy">{t("dormancyLabel")}</Label>
           <NumericInput
             id="dormancy"
             integer
-            suffix="jours"
+            suffix={tCommon("days")}
             value={dormancyValue}
             onValueChange={(value) => {
               begin();
@@ -193,22 +197,21 @@ export default function CompliancePage() {
         </div>
       </Panel>
 
-      <Panel title="Délais légaux par phase">
+      <Panel title={t("delaysTitle")}>
         <p className="type-body-sm text-muted-foreground mb-4">
-          Durée maximale d&apos;une phase avant alerte d&apos;échéance. Une alerte
-          d&apos;avertissement est émise 2 jours avant l&apos;expiration.
+          {t("delaysHint")}
         </p>
         <div className="space-y-3">
           {DELAY_PHASES.map((phase) => (
             <div key={phase} className="flex items-center justify-between gap-4">
               <Label htmlFor={`delay-${phase}`} className="type-body-sm font-normal">
-                {PHASE_LABELS[phase]}
+                {labels.phase(phase)}
               </Label>
               <div className="w-[180px]">
                 <NumericInput
                   id={`delay-${phase}`}
                   integer
-                  suffix="jours"
+                  suffix={tCommon("days")}
                   value={delayFor(phase)}
                   onValueChange={(value) => {
                     begin();
@@ -222,14 +225,14 @@ export default function CompliancePage() {
         </div>
       </Panel>
 
-      <Panel title="Seuils d'écart IA">
+      <Panel title={t("thresholdsTitle")}>
         <p className="type-body-sm text-muted-foreground mb-4">
-          Détermine l&apos;indicateur de fiabilité affiché sur chaque estimation.
+          {t("thresholdsHint")}
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="moderate">Écart modéré à partir de</Label>
+            <Label htmlFor="moderate">{t("moderateFrom")}</Label>
             <NumericInput
               id="moderate"
               suffix="%"
@@ -244,7 +247,7 @@ export default function CompliancePage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="critical">Écart critique à partir de</Label>
+            <Label htmlFor="critical">{t("criticalFrom")}</Label>
             <NumericInput
               id="critical"
               suffix="%"
@@ -263,36 +266,38 @@ export default function CompliancePage() {
         {/* The consequence preview: the values restated as the outcome they
             produce, using the real chips. */}
         <div className="bg-background border-border mt-5 rounded-md border p-4">
-          <p className="type-label text-muted-foreground mb-3">Résultat de cette configuration</p>
+          <p className="type-label text-muted-foreground mb-3">{t("previewTitle")}</p>
           {bandsInvalid ? (
             <p role="alert" className="type-body-sm text-destructive">
-              Configuration invalide : le seuil modéré doit être inférieur au seuil
-              critique.
+              {t("previewInvalid")}
             </p>
           ) : (
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="success" icon={chipIcons.success}>
-                  Fiable
+                  {labels.reliability("RELIABLE")}
                 </Chip>
                 <span className="text-muted-foreground tabular">
-                  écart &lt; {moderateValue ?? "—"}&nbsp;%
+                  {t("bandReliable", { value: moderateValue ?? "—" })}
                 </span>
               </span>
               <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="warning" icon={chipIcons.warning}>
-                  Écart modéré
+                  {labels.reliability("MODERATE_RISK")}
                 </Chip>
                 <span className="text-muted-foreground tabular">
-                  de {moderateValue ?? "—"} à {criticalValue ?? "—"}&nbsp;%
+                  {t("bandModerate", {
+                    from: moderateValue ?? "—",
+                    to: criticalValue ?? "—",
+                  })}
                 </span>
               </span>
               <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="critical" icon={chipIcons.critical}>
-                  Écart critique
+                  {labels.reliability("CRITICAL_RISK")}
                 </Chip>
                 <span className="text-muted-foreground tabular">
-                  &ge; {criticalValue ?? "—"}&nbsp;%
+                  {t("bandCritical", { value: criticalValue ?? "—" })}
                 </span>
               </span>
             </div>
@@ -306,7 +311,7 @@ export default function CompliancePage() {
           className="bg-destructive-surface border-destructive-border rounded-md border p-4"
         >
           <p className="type-body-sm text-destructive font-semibold">
-            {errors.length} valeur{errors.length > 1 ? "s" : ""} à corriger
+            {t("validation", { count: errors.length })}
           </p>
           <ul className="type-body-sm mt-1 list-disc space-y-0.5 pl-4">
             {errors.map((message) => (
@@ -321,16 +326,16 @@ export default function CompliancePage() {
       <div className="flex items-center justify-end gap-3">
         {touched ? (
           <span className="type-body-sm text-muted-foreground">
-            Modifications non enregistrées
+            {tCommon("unsavedChanges")}
           </span>
         ) : saved ? (
           <span className="type-body-sm text-success" role="status">
-            Enregistré
+            {tCommon("saved")}
           </span>
         ) : null}
         <Button onClick={() => void submit()} disabled={!touched || busy}>
           {busy ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          Enregistrer
+          {tCommon("save")}
         </Button>
       </div>
     </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { FileQuestion, SearchX } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -57,11 +60,12 @@ export function NoResultsState({
   onReset: () => void;
   className?: string;
 }) {
+  const t = useTranslations("empty");
   return (
     <Shell
       icon={<SearchX aria-hidden />}
-      title="Aucun résultat"
-      body="Aucun élément ne correspond aux filtres appliqués."
+      title={t("noResultsTitle")}
+      body={t("noResultsBody")}
       className={className}
       action={
         <button
@@ -69,7 +73,7 @@ export function NoResultsState({
           onClick={onReset}
           className="type-label text-primary underline underline-offset-4"
         >
-          Réinitialiser les filtres
+          {t("resetFilters")}
         </button>
       }
     />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Car, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,9 @@ import type { Contract } from "@/types/api";
  * prohibited outright.
  */
 export function VehicleForm({ contract }: { contract: Contract }) {
+  const t = useTranslations("leasing.vehicle");
+  const tCase = useTranslations("caseDetail.vehicle");
+  const tCommon = useTranslations("common");
   const save = useSaveVehicle(contract.id);
   const hasVehicle = Boolean(contract.vehicleId && contract.vehicleVin);
   const [editing, setEditing] = useState(false);
@@ -33,13 +37,13 @@ export function VehicleForm({ contract }: { contract: Contract }) {
 
   const submit = async () => {
     setError(null);
-    if (!form.vin.trim()) return setError("Le VIN est requis.");
+    if (!form.vin.trim()) return setError(t("vinRequired"));
     if (!/^[A-Za-z0-9]+$/.test(form.vin.trim())) {
-      return setError("Le VIN ne doit contenir que des lettres et des chiffres.");
+      return setError(t("vinAlphanumeric"));
     }
     const currentYear = new Date().getFullYear();
     if (form.year !== null && (form.year < 1900 || form.year > currentYear + 1)) {
-      return setError(`L'année doit être comprise entre 1900 et ${currentYear + 1}.`);
+      return setError(t("yearRange", { max: currentYear + 1 }));
     }
     try {
       await save.mutateAsync({ ...form, vin: form.vin.trim().toUpperCase() });
@@ -55,15 +59,15 @@ export function VehicleForm({ contract }: { contract: Contract }) {
         <DefinitionList
           columns={2}
           items={[
-            { label: "VIN", value: contract.vehicleVin, mono: true },
-            { label: "Immatriculation", value: contract.vehicleLicensePlate, mono: true },
-            { label: "Marque", value: contract.vehicleBrand },
-            { label: "Modèle", value: contract.vehicleModel },
-            { label: "Année", value: contract.vehicleYear },
+            { label: tCase("vin"), value: contract.vehicleVin, mono: true },
+            { label: tCase("plate"), value: contract.vehicleLicensePlate, mono: true },
+            { label: tCase("brand"), value: contract.vehicleBrand },
+            { label: tCase("model"), value: contract.vehicleModel },
+            { label: tCase("year"), value: contract.vehicleYear },
           ]}
         />
         <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
-          Modifier le véhicule
+          {t("edit")}
         </Button>
       </div>
     );
@@ -73,11 +77,11 @@ export function VehicleForm({ contract }: { contract: Contract }) {
     return (
       <div className="flex flex-col items-start gap-3">
         <p className="type-body-sm text-muted-foreground">
-          Aucun véhicule rattaché à ce contrat.
+          {t("none")}
         </p>
         <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
           <Car aria-hidden />
-          Lier un véhicule
+          {t("link")}
         </Button>
       </div>
     );
@@ -89,7 +93,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="vehicle-vin">VIN</Label>
+          <Label htmlFor="vehicle-vin">{tCase("vin")}</Label>
           <Input
             id="vehicle-vin"
             className="type-identifier uppercase"
@@ -99,7 +103,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="vehicle-plate">Immatriculation</Label>
+          <Label htmlFor="vehicle-plate">{tCase("plate")}</Label>
           <Input
             id="vehicle-plate"
             className="type-identifier"
@@ -109,7 +113,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="vehicle-brand">Marque</Label>
+          <Label htmlFor="vehicle-brand">{tCase("brand")}</Label>
           <Input
             id="vehicle-brand"
             maxLength={100}
@@ -118,7 +122,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="vehicle-model">Modèle</Label>
+          <Label htmlFor="vehicle-model">{tCase("model")}</Label>
           <Input
             id="vehicle-model"
             maxLength={100}
@@ -127,7 +131,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="vehicle-year">Année</Label>
+          <Label htmlFor="vehicle-year">{tCase("year")}</Label>
           <NumericInput
             id="vehicle-year"
             integer
@@ -142,11 +146,11 @@ export function VehicleForm({ contract }: { contract: Contract }) {
       <div className="flex gap-2">
         <Button size="sm" onClick={() => void submit()} disabled={save.isPending}>
           {save.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          Enregistrer
+          {tCommon("save")}
         </Button>
         {hasVehicle ? (
           <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
-            Annuler
+            {tCommon("cancel")}
           </Button>
         ) : null}
       </div>

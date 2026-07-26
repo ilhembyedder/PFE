@@ -114,7 +114,11 @@ The interface should feel like a well-kept official record: authoritative, unhur
 | **Colour vision** | The reliability indicator and the alert hierarchy must remain unambiguous under deuteranopia and protanopia simulation. |
 | **Touch targets** | 44×44px minimum on tablet. |
 
-**Language and locale.** The product language is **French**. The document language must be declared as `fr`, the component library localised to French, and every enum value mapped to a French label rather than rendered raw. Currency is per-tenant (TND and EUR both in use) and must never be hardcoded. Dates and numbers follow French formatting.
+**Language and locale.** **French is the default; English is fully supported.** French is the default because the product is built for Tunisian and French leasing companies and its domain vocabulary is French. English exists so the platform can be demonstrated and operated outside that market.
+
+The locale is a per-user preference held in a cookie, resolved as: explicit choice, then `Accept-Language`, then French. It is deliberately *not* a URL prefix — this is an authenticated internal tool where users sign in and stay, so language behaves like the theme.
+
+`<html lang>` is declared from the resolved locale, never hardcoded. Every domain enum is translated in both catalogues rather than rendered raw. Dates, numbers and relative times are formatted per locale via `Intl`. Currency is per-tenant (TND and EUR both in use) and must never be hardcoded. The time zone is fixed to `Europe/Paris` rather than inferred from the reader's environment: a statutory deadline is a fact about the contract, not about where it is being read.
 
 **Platform.** Desktop-first, and unapologetically so: this is an all-day professional tool used on a monitor. Tablet is fully functional. Mobile is consultation-only and out of MVP scope.
 
@@ -132,4 +136,5 @@ Decisions taken during design setup that supersede earlier project documents.
 | **TanStack Query v5 owns all server state** | Every loading, empty and error state in the screen specs is driven by a query state. Backend alert auto-healing in particular requires disciplined cache invalidation to stay visually correct. | No Redux, Zustand or Jotai. The URL owns navigational state, `useState` owns ephemeral state. `branding-context.js` is deleted: branding is server data. Specified in `docs/DESIGN_SCREENS.md` §12. |
 | **Light and dark ship together** | Once the token layer exists the second theme is a second block of custom properties plus a `next-themes` provider. Deferring it would only create a migration later. | Light stays the default. No component or Tailwind changes required for dark. |
 | **The UX specification is superseded, not revised** | The new direction is derived from the product rather than from the existing UI. | `ux-design-specification.md` remains as the historical record of the original direction. `PRODUCT.md`, `DESIGN.md` and `docs/DESIGN_SCREENS.md` are authoritative from here. Worth adding a pointer note to that file and to `architecture.md` so the contradiction reads as a decision rather than an oversight. |
+| **French and English, French default** | The market is francophone, but the platform must be demonstrable and operable in English. | Locale held in a cookie rather than a URL prefix, so the auth guard's matcher and every link are unaffected. Two catalogues under `messages/`, kept in sync by a test that fails on a missing key, an empty message, or a mismatched placeholder. |
 | **All nine screens are in scope** | Login, admin tenants, case registry, case detail, case creation, leasing registry, and both settings pages. | The redesign is a full frontend rebuild, not a reskin. |

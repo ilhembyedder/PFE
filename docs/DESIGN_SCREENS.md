@@ -50,7 +50,7 @@ These apply to every screen. Individual briefs note only their deviations.
 
 **Scope, for every screen.** Fidelity: production-ready specification. Breadth: the whole surface, 9 screens plus 2 shells. Interactivity: shipped-quality components with all seven states. Time intent: polish until it ships.
 
-**Constraints.** Next.js 16 App Router, React 19, **TypeScript**, Tailwind v4 + **shadcn on Base UI** (style `base-nova`; Ant Design is being removed), **TanStack Query v5** for all server state, `next-themes` on the `.dark` class strategy. French UI. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
+**Constraints.** Next.js 16 App Router, React 19, **TypeScript**, Tailwind v4 + **shadcn on Base UI** (style `base-nova`; Ant Design is being removed), **TanStack Query v5** for all server state, `next-themes` on the `.dark` class strategy, **next-intl** for French and English. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
 
 Every "loading", "empty" and "error" state named in the briefs below maps onto a specific TanStack Query state. See [§12](#12-data-layer) for that mapping; the briefs describe what the user sees, §12 describes what drives it.
 
@@ -781,7 +781,13 @@ WCAG 2.1 AA is a release gate. Every item is verifiable, and every one of them c
 
 ## 16. Copy register
 
-The product language is French. Enum values never reach the screen raw. This table is normative; deviations are defects.
+**French is the default language; English is fully supported.** Every user-facing string lives in `messages/fr.json` and `messages/en.json`; nothing is written inline. The table below is the French column of that catalogue, kept here because it is the domain vocabulary the code, the specs and the backend share. Enum values never reach the screen raw in either language.
+
+**Locale resolution:** explicit cookie choice, then `Accept-Language`, then French. Held in a cookie rather than a URL prefix, because language is a per-user preference on an authenticated tool — like the theme — and prefixing would mean touching the auth guard's matcher and every link in the app.
+
+**Catalogue integrity is enforced by test, not review.** `src/i18n/messages.test.ts` fails the build if a key exists in one language but not the other, if any message is empty, if matching keys use different placeholders, or if the two catalogues are more than 15% identical, which would mean a section was copied rather than translated.
+
+**Fixed time zone:** `Europe/Paris`, not the reader's. A statutory deadline is a fact about the contract, and an unset time zone also causes server/client hydration mismatches.
 
 **Phases** — `PRE_CONTENTIEUX` → Pré-contentieux · `MISE_EN_DEMEURE` → Mise en demeure · `SAISIE` → Saisie du véhicule · `VENTE` → Vente · `CLOTURE` → Clôture
 

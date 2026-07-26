@@ -94,8 +94,8 @@ export function useValuationStream(caseId: string, enabled: boolean) {
       ceilingTimer = setTimeout(() => {
         finish({
           phase: "failed",
-          message:
-            "L'analyse n'a pas répondu. Le traitement est peut-être toujours en cours ; réessayez dans un instant.",
+          // Translated by the consumer via the "upload.timedOut" key.
+          message: "upload.timedOut",
         });
       }, POLL_CEILING);
     };

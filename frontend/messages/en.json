@@ -1,0 +1,460 @@
+{
+  "app": {
+    "name": "LeasRecover",
+    "tagline": "Recovery management",
+    "description": "Recovery management platform for vehicle leasing companies"
+  },
+
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "retry": "Try again",
+    "open": "View",
+    "download": "Download",
+    "search": "Search",
+    "reset": "Reset",
+    "publish": "Publish",
+    "none": "None",
+    "dash": "—",
+    "days": "days",
+    "months": "months",
+    "loading": "Loading…",
+    "unsavedChanges": "Unsaved changes",
+    "saved": "Saved",
+    "irreversible": "This action cannot be undone.",
+    "skipToContent": "Skip to content",
+    "breadcrumb": "Breadcrumb",
+    "pagination": "Pagination",
+    "paginationRange": "{from}–{to} of {total}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+
+  "errors": {
+    "generic": "Something failed.",
+    "network": "Could not reach the server.",
+    "unauthorized": "Your session has expired. Please sign in again.",
+    "forbidden": "You do not have permission for this action.",
+    "notFound": "Not found.",
+    "conflict": "This is no longer possible: the case has changed.",
+    "tooLarge": "This file exceeds the 10 MB limit.",
+    "unsupportedType": "File format not accepted.",
+    "badGateway": "Invalid response from the server.",
+    "unavailable": "Could not reach the server.",
+    "pageTitle": "This page could not be loaded",
+    "renderTitle": "This page could not be displayed",
+    "renderBody": "The error has been logged. You can try again without losing your session.",
+    "reference": "Reference",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "This address does not match any page on the platform.",
+    "backToCases": "Back to cases",
+    "downloadFailed": "The file could not be downloaded.",
+    "emptyFile": "This file is empty.",
+    "noFile": "No file provided."
+  },
+
+  "empty": {
+    "noResultsTitle": "No results",
+    "noResultsBody": "Nothing matches the filters applied.",
+    "resetFilters": "Clear filters"
+  },
+
+  "nav": {
+    "main": "Main navigation",
+    "sidebar": "Sidebar",
+    "openNav": "Open navigation",
+    "cases": "Cases",
+    "leasing": "Clients & contracts",
+    "settings": "Settings",
+    "tenants": "Companies",
+    "account": "Account and preferences",
+    "signOut": "Sign out",
+    "platformNotice": "Platform console — access to client case data is disabled.",
+    "idleWarning": "Your session expires in 1 minute.",
+    "stayConnected": "Stay signed in"
+  },
+
+  "theme": {
+    "toggle": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+
+  "language": {
+    "label": "Language",
+    "change": "Change language"
+  },
+
+  "roles": {
+    "SUPER_ADMIN": "Super administrator",
+    "ADMIN": "Administrator",
+    "GESTIONNAIRE": "Recovery manager"
+  },
+
+  "phases": {
+    "PRE_CONTENTIEUX": "Pre-litigation",
+    "MISE_EN_DEMEURE": "Formal notice",
+    "SAISIE": "Vehicle repossession",
+    "VENTE": "Sale",
+    "CLOTURE": "Closure"
+  },
+
+  "phasesShort": {
+    "PRE_CONTENTIEUX": "Pre-litigation",
+    "MISE_EN_DEMEURE": "Formal notice",
+    "SAISIE": "Repossession",
+    "VENTE": "Sale",
+    "CLOTURE": "Closure"
+  },
+
+  "reliability": {
+    "RELIABLE": "Reliable",
+    "MODERATE_RISK": "Moderate deviation",
+    "CRITICAL_RISK": "Critical deviation",
+    "NOT_COMPUTABLE": "Not computable",
+    "NOT_VALUED": "Not valued"
+  },
+
+  "alertTypes": {
+    "DORMANCY": "Dormant case",
+    "DEADLINE": "Deadline",
+    "MISSING_PREREQUISITE": "Missing prerequisite",
+    "VEHICLE_DISCREPANCY": "Vehicle mismatch"
+  },
+
+  "criticality": {
+    "CRITICAL": "Critical",
+    "WARNING": "Warning"
+  },
+
+  "status": {
+    "ACTIVE": "Active",
+    "SUSPENDED": "Suspended",
+    "TERMINATED": "Terminated",
+    "INACTIVE": "Inactive"
+  },
+
+  "login": {
+    "accountType": "Account type",
+    "tenant": "Company",
+    "platform": "Platform",
+    "email": "Email address",
+    "password": "Password",
+    "tenantId": "Company identifier",
+    "tenantIdHint": "Provided by your administrator.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Sign in",
+    "expired": "Your session has expired. Please sign in again.",
+    "emailRequired": "Email address is required.",
+    "emailInvalid": "Invalid email address.",
+    "passwordRequired": "Password is required.",
+    "tenantIdInvalid": "Invalid company identifier.",
+    "rejected": "Incorrect email address, password or company identifier.",
+    "suspended": "This account is disabled. Contact your administrator.",
+    "unreachable": "Could not reach the server. Try again in a moment."
+  },
+
+  "cases": {
+    "title": "Cases",
+    "subtitle": "{count, plural, =0 {No cases} one {# case in total} other {# cases in total}}",
+    "new": "New case",
+    "priorityAlerts": "Priority alerts",
+    "alertsFailed": "Alerts could not be loaded.",
+    "filterPlaceholder": "Filter this page by client or reference",
+    "filterLabel": "Filter by client or reference",
+    "filterPhase": "Filter by phase",
+    "filterStatus": "Filter by status",
+    "filterReliability": "Filter by reliability",
+    "allPhases": "All phases",
+    "allStatuses": "All statuses",
+    "allReliabilities": "All reliability levels",
+    "emptyTitle": "No cases yet",
+    "emptyBody": "Create a recovery case to start tracking a contract in default.",
+    "openCase": "Open the case for {client}",
+    "columns": {
+      "client": "Client",
+      "reference": "Reference",
+      "phase": "Phase",
+      "assignee": "Assignee",
+      "reliability": "Reliability",
+      "lastAction": "Last action"
+    },
+    "unassigned": "Unassigned",
+    "actions": {
+      "addNote": "Add a note",
+      "advancePhase": "Advance the phase",
+      "uploadReport": "Upload a report",
+      "checkVehicle": "Check the vehicle",
+      "openCase": "Open the case"
+    }
+  },
+
+  "caseDetail": {
+    "fallbackTitle": "Case",
+    "export": "Export",
+    "advance": "Advance phase",
+    "advanceTo": "Move to {phase}",
+    "closed": "Case closed",
+    "currentPhase": "Current phase: {phase}, step {index} of {total}.",
+    "blockedTitle": "Move to “{phase}” is blocked",
+    "blockedGeneric": "Progress is blocked",
+    "blockedAction": "Upload an appraisal report",
+    "summary": "Summary",
+    "assignee": "Assignee",
+    "residualValue": "Initial residual value",
+    "openedOn": "Opened on",
+    "lastAction": "Last action",
+    "phaseSince": "In phase since",
+    "tabs": {
+      "details": "Details",
+      "notes": "Notes",
+      "history": "History",
+      "documents": "Documents"
+    },
+    "client": {
+      "title": "Client",
+      "name": "Name or company",
+      "registration": "Registration number",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "contract": {
+      "title": "Contract",
+      "reference": "Reference",
+      "status": "Status",
+      "startDate": "Start date",
+      "endDate": "End date"
+    },
+    "vehicle": {
+      "title": "Vehicle",
+      "vin": "VIN",
+      "plate": "Licence plate",
+      "brand": "Make",
+      "model": "Model",
+      "year": "Year",
+      "none": "No vehicle linked to this contract. Link one from",
+      "linkHere": "Clients & contracts"
+    },
+    "notes": {
+      "add": "Add a note",
+      "placeholder": "Describe the action taken or the information worth keeping.",
+      "empty": "No notes yet. Notes are the record of actions taken on this case."
+    },
+    "history": {
+      "empty": "No events recorded for this case.",
+      "system": "System"
+    },
+    "documents": {
+      "emptyPhase": "No documents for this phase.",
+      "emptyEntity": "No documents attached."
+    },
+    "edit": {
+      "title": "Edit case",
+      "description": "Changes are recorded in the case history.",
+      "clientName": "Client name",
+      "contractReference": "Contract reference",
+      "currency": "Currency",
+      "nameRequired": "Client name is required.",
+      "referenceRequired": "Contract reference is required.",
+      "residualPositive": "Residual value must be greater than zero."
+    }
+  },
+
+  "valuation": {
+    "title": "Value estimate",
+    "marketValue": "Market value",
+    "marketValueEstimated": "Estimated market value",
+    "residualValue": "Residual value",
+    "regionLabel": "Analysis result",
+    "regionLabelFor": "Analysis result for {vehicle}",
+    "viewSource": "View source report",
+    "provenance": "Extracted from the report: {details}",
+    "below": "{amount} below the residual value",
+    "above": "{amount} above the residual value",
+    "unavailable": "deviation unavailable",
+    "timesLower": "market value is {ratio} times lower than the residual value",
+    "clamped": "> 999%",
+    "notComputable": "The contract's residual value is zero. The deviation cannot be calculated.",
+    "unusual": "Unusual deviation. Check the contract's residual value.",
+    "fixCase": "Correct the case",
+    "none": "No estimate yet. Upload an appraisal report to start the analysis.",
+    "goToDocuments": "Go to documents"
+  },
+
+  "upload": {
+    "expertise": "Upload the appraisal report",
+    "document": "Upload a document",
+    "expertiseHint": "PDF only, 10 MB maximum. Analysis starts automatically.",
+    "documentHint": "PDF, JPEG or PNG, 10 MB maximum.",
+    "pdfOnly": "The appraisal report must be a PDF file.",
+    "sending": "Uploading…",
+    "progress": "Analysis progress",
+    "done": "Analysis complete. The estimate is available.",
+    "uploadAnother": "Upload another document",
+    "failedGeneric": "The document is unreadable or is not a valid appraisal report.",
+    "timedOut": "The analysis did not respond. It may still be running; try again in a moment."
+  },
+
+  "newCase": {
+    "title": "New case",
+    "subtitle": "Enter the client, contract and vehicle concerned.",
+    "submit": "Create case",
+    "sections": {
+      "existing": "Existing contract",
+      "client": "Client",
+      "contract": "Contract",
+      "vehicle": "Vehicle",
+      "financial": "Financial data"
+    },
+    "existingLabel": "Reuse an already registered contract",
+    "existingPlaceholder": "Optional — enter manually below",
+    "existingManual": "Enter manually",
+    "existingHint": "The sections below will be pre-filled.",
+    "matchedClient": "Existing client. Their information will not be modified.",
+    "editClient": "Edit this client",
+    "otherClient": "Enter a different client",
+    "residualHint": "The reference for every comparison against the estimated market value.",
+    "startedOn": "Contract started on {date}.",
+    "validation": "{count, plural, one {# field to correct} other {# fields to correct}}",
+    "nameRequired": "Client name is required.",
+    "referenceRequired": "Contract reference is required.",
+    "vinRequired": "Vehicle VIN is required.",
+    "residualPositive": "Initial residual value must be greater than zero.",
+    "endAfterStart": "The end date must be after the start date.",
+    "yearRange": "Vehicle year must be between 1900 and {max}."
+  },
+
+  "leasing": {
+    "title": "Clients & contracts",
+    "subtitle": "Reference data behind the recovery cases.",
+    "tabs": { "clients": "Clients", "contracts": "Contracts" },
+    "newClient": "New client",
+    "newContract": "New contract",
+    "searchClient": "Search clients",
+    "searchContract": "Search contracts",
+    "clientsEmptyTitle": "No clients registered",
+    "clientsEmptyBody": "Add a client so you can create contracts and cases.",
+    "contractsEmptyTitle": "No contracts registered",
+    "contractsEmptyBody": "Create a contract to link a vehicle and open a case.",
+    "clientColumns": { "client": "Client", "registration": "Registration", "email": "Email" },
+    "contractColumns": { "reference": "Reference", "client": "Client", "status": "Status", "vehicle": "Vehicle" },
+    "vehicleNotLinked": "Not linked",
+    "clientNew": "New client",
+    "clientNewHint": "Clients can then be linked to contracts.",
+    "clientNoRegistration": "No registration number",
+    "createdOn": "Created on",
+    "contractsCount": "Contracts ({count})",
+    "noContracts": "No contracts linked to this client.",
+    "documents": "Documents",
+    "contractDocuments": "Contract documents",
+    "vehicleDocuments": "Vehicle documents",
+    "contractNew": "New contract",
+    "contractNewHint": "Linked to a client",
+    "selectClient": "Select a client",
+    "clientRequired": "A client must be selected.",
+    "nameRequired": "Name is required.",
+    "referenceRequired": "Reference is required.",
+    "endAfterStart": "The end date must be after the start date.",
+    "deleteTitle": "Delete {name}?",
+    "deleteClientLinked": "{count, plural, one {This client is linked to # contract.} other {This client is linked to # contracts.}}",
+    "deleteClientNone": "No contracts are linked to this client.",
+    "deleteContractVehicle": "A vehicle is linked to this contract.",
+    "deleteContractNone": "No vehicle is linked to this contract.",
+    "deleteClientAria": "Delete {name}",
+    "deleteContractAria": "Delete contract {reference}",
+    "vehicle": {
+      "none": "No vehicle linked to this contract.",
+      "link": "Link a vehicle",
+      "edit": "Edit vehicle",
+      "vinRequired": "VIN is required.",
+      "vinAlphanumeric": "VIN may contain only letters and digits.",
+      "yearRange": "Year must be between 1900 and {max}."
+    }
+  },
+
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configuration for your company and its compliance rules.",
+    "sections": "Settings sections",
+    "tabs": { "tenant": "Company", "compliance": "Compliance" },
+    "branding": {
+      "title": "Company identity",
+      "name": "Company name",
+      "logoUrl": "Logo URL",
+      "logoHint": "Shown in the sidebar. A square format is recommended.",
+      "preview": "Preview",
+      "nameRequired": "Company name is required.",
+      "urlInvalid": "The logo URL must start with http:// or https://.",
+      "imageFailed": "The image could not be loaded. Initials will be used instead."
+    },
+    "compliance": {
+      "dormancyTitle": "Dormancy",
+      "dormancyHint": "A case with no action for this long raises an alert.",
+      "dormancyLabel": "Dormancy threshold",
+      "delaysTitle": "Statutory delays per phase",
+      "delaysHint": "Maximum duration of a phase before a deadline alert. A warning is raised 2 days before expiry.",
+      "thresholdsTitle": "AI deviation thresholds",
+      "thresholdsHint": "Determines the reliability indicator shown on every estimate.",
+      "moderateFrom": "Moderate deviation from",
+      "criticalFrom": "Critical deviation from",
+      "previewTitle": "What this configuration produces",
+      "previewInvalid": "Invalid configuration: the moderate threshold must be below the critical one.",
+      "bandReliable": "deviation < {value}%",
+      "bandModerate": "{from} to {to}%",
+      "bandCritical": "≥ {value}%",
+      "validation": "{count, plural, one {# value to correct} other {# values to correct}}",
+      "dormancyPositive": "The dormancy threshold must be a positive number of days.",
+      "delayPositive": "The delay for the “{phase}” phase must be positive.",
+      "moderateRange": "The moderate deviation threshold must be between 0 and 100.",
+      "criticalRange": "The critical deviation threshold must be between 0 and 100.",
+      "moderateBelowCritical": "The moderate threshold must be strictly below the critical one.",
+      "partialDelays": "The AI deviation thresholds were saved, but the delays could not be: {reason}",
+      "partialThresholds": "The delays were saved, but the AI deviation thresholds could not be: {reason}"
+    }
+  },
+
+  "tenants": {
+    "title": "Companies",
+    "subtitle": "Leasing companies provisioned on the platform.",
+    "new": "New company",
+    "emptyTitle": "No companies registered",
+    "emptyBody": "Provision a leasing company to give it access to the platform.",
+    "columns": {
+      "company": "Company",
+      "identifier": "Identifier",
+      "status": "Status",
+      "createdAt": "Created on"
+    },
+    "active": "Active",
+    "deactivate": "Deactivate",
+    "deactivateTitle": "Deactivate {name}?",
+    "deactivateBody": "Its users will no longer be able to sign in. Data is retained.",
+    "provisionHint": "Provisions an isolated schema and the first administrator account.",
+    "companySection": "Company",
+    "adminSection": "First administrator",
+    "name": "Name",
+    "logoUrl": "Logo URL",
+    "retention": "Data retention",
+    "adminEmail": "Email address",
+    "adminPassword": "Password",
+    "generatePassword": "Generate a password",
+    "passwordHint": "{min} characters minimum. It will only be shown once.",
+    "provision": "Provision",
+    "nameRequired": "Company name is required.",
+    "emailInvalid": "The administrator's email address is invalid.",
+    "passwordTooShort": "The password must be at least {min} characters.",
+    "copy": "Copy {label}",
+    "handoffTitle": "{name} has been provisioned",
+    "handoffHint": "Pass these credentials to the company's administrator.",
+    "handoffWarning": "The password will not be shown again and cannot be reset from the platform. Pass it on now.",
+    "handoffTenantId": "Company identifier",
+    "handoffNote": "The company identifier is required at sign-in, in addition to the email address and password.",
+    "handoffDone": "I have passed on the credentials"
+  }
+}

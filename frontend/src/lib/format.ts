@@ -1,96 +1,49 @@
-import type {
-  AlertType,
-  Criticality,
-  Phase,
-  Reliability,
-  ReliabilityDisplay,
-} from "@/types/api";
+import type { Reliability, ReliabilityDisplay } from "@/types/api";
+import type { Locale } from "@/i18n/config";
+import { DEFAULT_LOCALE } from "@/i18n/config";
 
 /**
- * Display formatting and the copy register.
+ * Locale-aware value formatting.
  *
- * The product language is French and raw enum values must never reach the
- * screen. This module is the single mapping; docs/DESIGN_SCREENS.md §16 is
- * its specification.
+ * Enum LABELS are not here: they live in messages/{fr,en}.json and are read
+ * through useTranslations, so a raw enum can never reach the screen in either
+ * language. This module holds only the formatting that depends on Intl.
+ *
+ * Every function takes the locale explicitly rather than reading a global, so
+ * it is testable and usable from both server and client components.
  */
 
-// ------------------------------------------------------------ copy register
-
-export const PHASE_LABELS: Record<Phase, string> = {
-  PRE_CONTENTIEUX: "Pré-contentieux",
-  MISE_EN_DEMEURE: "Mise en demeure",
-  SAISIE: "Saisie du véhicule",
-  VENTE: "Vente",
-  CLOTURE: "Clôture",
+/** BCP 47 tags. `fr-FR` rather than bare `fr` so grouping and currency behave. */
+const INTL_LOCALE: Record<Locale, string> = {
+  fr: "fr-FR",
+  en: "en-GB",
 };
 
-/** Short forms for the stepper, where horizontal space is scarce. */
-export const PHASE_SHORT: Record<Phase, string> = {
-  PRE_CONTENTIEUX: "Pré-contentieux",
-  MISE_EN_DEMEURE: "Mise en demeure",
-  SAISIE: "Saisie",
-  VENTE: "Vente",
-  CLOTURE: "Clôture",
-};
+export const intlLocale = (locale: string | undefined): string =>
+  INTL_LOCALE[(locale ?? DEFAULT_LOCALE) as Locale] ?? INTL_LOCALE[DEFAULT_LOCALE];
 
-export const RELIABILITY_LABELS: Record<ReliabilityDisplay, string> = {
-  RELIABLE: "Fiable",
-  MODERATE_RISK: "Écart modéré",
-  CRITICAL_RISK: "Écart critique",
-  NOT_COMPUTABLE: "Non calculable",
-  NOT_VALUED: "Non estimé",
-};
-
-export const ALERT_LABELS: Record<AlertType, string> = {
-  DORMANCY: "Dossier dormant",
-  DEADLINE: "Échéance",
-  MISSING_PREREQUISITE: "Prérequis manquant",
-  VEHICLE_DISCREPANCY: "Incohérence véhicule",
-};
-
-export const CRITICALITY_LABELS: Record<Criticality, string> = {
-  CRITICAL: "Critique",
-  WARNING: "Avertissement",
-};
-
-export const CASE_STATUS_LABELS: Record<string, string> = {
-  ACTIVE: "Actif",
-  SUSPENDED: "Suspendu",
-  TERMINATED: "Résilié",
-  INACTIVE: "Inactive",
-};
-
-export const ROLE_LABELS: Record<string, string> = {
-  SUPER_ADMIN: "Super administrateur",
-  ADMIN: "Administrateur",
-  GESTIONNAIRE: "Gestionnaire",
-};
-
-export const phaseLabel = (p: string | null | undefined) =>
-  p ? (PHASE_LABELS[p as Phase] ?? p) : "—";
-
-export const statusLabel = (s: string | null | undefined) =>
-  s ? (CASE_STATUS_LABELS[s] ?? s) : "—";
-
-export const roleLabel = (r: string | null | undefined) =>
-  r ? (ROLE_LABELS[r] ?? r) : "";
+export const EM_DASH = "—";
 
 // -------------------------------------------------------------------- money
 
 /**
- * Money is stored in cents as an integer. It is divided only here.
- * The currency always comes from the record; tenants operate in TND and EUR
- * and a hardcoded symbol would be wrong for one of them.
+ * Money is stored in cents as an integer and divided only here.
+ *
+ * The currency always comes from the record: tenants operate in both TND and
+ * EUR, so a hardcoded symbol would be wrong for one of them.
  */
 export function formatMoney(
   cents: number | null | undefined,
   currency: string | null | undefined,
+  locale?: string,
 ): string {
-  if (cents === null || cents === undefined) return "—";
+  if (cents === null || cents === undefined) return EM_DASH;
+
   const code = currency && /^[A-Z]{3}$/.test(currency) ? currency : undefined;
   const amount = cents / 100;
+
   try {
-    return new Intl.NumberFormat("fr-FR", {
+    return new Intl.NumberFormat(intlLocale(locale), {
       style: code ? "currency" : "decimal",
       currency: code,
       minimumFractionDigits: 2,
@@ -101,44 +54,44 @@ export function formatMoney(
   }
 }
 
+export function formatNumber(
+  value: number | null | undefined,
+  locale?: string,
+  options?: Intl.NumberFormatOptions,
+): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return EM_DASH;
+  return new Intl.NumberFormat(intlLocale(locale), options).format(value);
+}
+
 /**
- * Signed percentage with a true minus sign and a non-breaking space before
- * the sign, per French typography.
+ * Signed percentage using a true minus sign.
+ *
+ * The stored percentage is absolute; direction comes from the signed deviation
+ * in cents. French inserts a non-breaking space before the percent sign;
+ * English does not.
  */
 export function formatPercent(
   value: number | string | null | undefined,
   signFrom?: number | null,
+  locale?: string,
 ): string {
-  if (value === null || value === undefined) return "—";
-  const magnitude = typeof value === "string" ? Number.parseFloat(value) : value;
-  if (!Number.isFinite(magnitude)) return "—";
+  if (value === null || value === undefined) return EM_DASH;
 
-  // The stored percentage is absolute; direction comes from the deviation.
+  const magnitude = typeof value === "string" ? Number.parseFloat(value) : value;
+  if (!Number.isFinite(magnitude)) return EM_DASH;
+
   const negative = typeof signFrom === "number" && signFrom < 0;
   const sign = magnitude === 0 ? "" : negative ? "\u2212" : "+";
-  const formatted = new Intl.NumberFormat("fr-FR", {
+  const formatted = new Intl.NumberFormat(intlLocale(locale), {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   }).format(Math.abs(magnitude));
 
-  return `${sign}${formatted}\u00A0%`;
+  const separator = (locale ?? DEFAULT_LOCALE).startsWith("fr") ? "\u00A0" : "";
+  return `${sign}${formatted}${separator}%`;
 }
 
 // -------------------------------------------------------------------- dates
-
-const DATE = new Intl.DateTimeFormat("fr-FR", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-
-const DATE_TIME = new Intl.DateTimeFormat("fr-FR", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 const parse = (iso: string | null | undefined): Date | null => {
   if (!iso) return null;
@@ -146,41 +99,60 @@ const parse = (iso: string | null | undefined): Date | null => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
-export const formatDate = (iso: string | null | undefined) => {
+export function formatDate(iso: string | null | undefined, locale?: string): string {
   const date = parse(iso);
-  return date ? DATE.format(date) : "—";
-};
-
-export const formatDateTime = (iso: string | null | undefined) => {
-  const date = parse(iso);
-  return date ? DATE_TIME.format(date).replace(" ", " à ") : "—";
-};
-
-/**
- * Relative under seven days, absolute beyond. The absolute value always goes
- * in a title attribute so the exact date is never lost.
- */
-export function formatRelative(iso: string | null | undefined): string {
-  const date = parse(iso);
-  if (!date) return "—";
-
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (seconds < 60) return "à l'instant";
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `il y a ${minutes} min`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `il y a ${hours} h`;
-
-  const days = Math.floor(hours / 24);
-  if (days === 1) return "hier";
-  if (days < 7) return `il y a ${days} jours`;
-
-  return DATE.format(date);
+  if (!date) return EM_DASH;
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
 }
 
-/** Days since a timestamp, for the dormancy highlight. */
+export function formatDateTime(iso: string | null | undefined, locale?: string): string {
+  const date = parse(iso);
+  if (!date) return EM_DASH;
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+export function formatTime(iso: string | null | undefined, locale?: string): string {
+  const date = parse(iso);
+  if (!date) return EM_DASH;
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+/**
+ * Relative under a week, absolute beyond, via Intl.RelativeTimeFormat so both
+ * locales read naturally. Callers put the absolute date in a title attribute
+ * so the exact value is never lost.
+ */
+export function formatRelative(iso: string | null | undefined, locale?: string): string {
+  const date = parse(iso);
+  if (!date) return EM_DASH;
+
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  const relative = new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: "auto" });
+
+  if (seconds < 60) return relative.format(0, "second");
+  if (seconds < 3600) return relative.format(-Math.floor(seconds / 60), "minute");
+  if (seconds < 86_400) return relative.format(-Math.floor(seconds / 3600), "hour");
+
+  const days = Math.floor(seconds / 86_400);
+  if (days < 7) return relative.format(-days, "day");
+
+  return formatDate(iso, locale);
+}
+
+/** Whole days since a timestamp, for the dormancy highlight. */
 export function daysSince(iso: string | null | undefined): number | null {
   const date = parse(iso);
   if (!date) return null;
@@ -194,36 +166,49 @@ export function daysSince(iso: string | null | undefined): number | null {
  * backend's indicator.
  *
  * When the residual value is zero or absent no comparison happened, but the
- * backend still returns RELIABLE because the uncomputed 0.0 falls through
- * its band check (CODE_REVIEW.md H-21). A green "Fiable" badge on a
- * comparison that never ran is the most damaging thing this screen could
- * show, so the UI derives the state itself.
+ * backend still returns RELIABLE because the uncomputed 0.0 falls through its
+ * band check (CODE_REVIEW.md H-21). A green badge on a comparison that never
+ * ran is the most damaging thing this screen could show, so the UI derives the
+ * state itself.
  */
-export function resolveReliability(valuation: {
-  reliabilityIndicator?: Reliability | null;
-  initialResidualValueCents?: number | null;
-  marketValueCents?: number | null;
-} | null | undefined): ReliabilityDisplay {
-  if (!valuation || valuation.marketValueCents === null || valuation.marketValueCents === undefined) {
+export function resolveReliability(
+  valuation:
+    | {
+        reliabilityIndicator?: Reliability | null;
+        initialResidualValueCents?: number | null;
+        marketValueCents?: number | null;
+      }
+    | null
+    | undefined,
+): ReliabilityDisplay {
+  if (
+    !valuation ||
+    valuation.marketValueCents === null ||
+    valuation.marketValueCents === undefined
+  ) {
     return "NOT_VALUED";
   }
+
   const residual = valuation.initialResidualValueCents;
   if (residual === null || residual === undefined || residual <= 0) {
     return "NOT_COMPUTABLE";
   }
+
   return valuation.reliabilityIndicator ?? "NOT_VALUED";
 }
 
 export const reliabilityTone = (
-  r: ReliabilityDisplay,
+  state: ReliabilityDisplay,
 ): "success" | "warning" | "critical" | "neutral" =>
-  r === "RELIABLE"
+  state === "RELIABLE"
     ? "success"
-    : r === "MODERATE_RISK"
+    : state === "MODERATE_RISK"
       ? "warning"
-      : r === "CRITICAL_RISK"
+      : state === "CRITICAL_RISK"
         ? "critical"
         : "neutral";
+
+// -------------------------------------------------------------------- misc
 
 export const initials = (name: string | null | undefined): string =>
   (name ?? "")

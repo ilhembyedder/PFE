@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/test/render";
 import { ValuationCard } from "./valuation-card";
 import type { Valuation } from "@/types/api";
 
@@ -35,9 +35,21 @@ describe("ValuationCard", () => {
     expect(hero?.textContent).toMatch(/%/);
   });
 
-  it("labels the reliability band in French with an icon", () => {
+  it("labels the reliability band with an icon, in each locale", () => {
     render(<ValuationCard valuation={valuation()} caseId={CASE_ID} />);
     expect(screen.getByText("Écart modéré")).toBeInTheDocument();
+
+    render(<ValuationCard valuation={valuation()} caseId={CASE_ID} />, { locale: "en" });
+    expect(screen.getByText("Moderate deviation")).toBeInTheDocument();
+  });
+
+  it("renders the whole card in English when the locale is English", () => {
+    render(<ValuationCard valuation={valuation()} caseId={CASE_ID} />, { locale: "en" });
+    expect(screen.getByText("Value estimate")).toBeInTheDocument();
+    expect(screen.getByText("Market value")).toBeInTheDocument();
+    expect(screen.getByText("Residual value")).toBeInTheDocument();
+    // No French must leak through.
+    expect(screen.queryByText(/Valeur de marché/)).toBeNull();
   });
 
   it("exposes an accessible region naming the vehicle", () => {
@@ -79,6 +91,21 @@ describe("ValuationCard", () => {
 
       expect(screen.getByText("Non calculable")).toBeInTheDocument();
       expect(screen.queryByText("Fiable")).not.toBeInTheDocument();
+    });
+
+    it("renders Not computable in English too, never Reliable", () => {
+      render(
+        <ValuationCard
+          valuation={valuation({
+            initialResidualValueCents: 0,
+            reliabilityIndicator: "RELIABLE",
+          })}
+          caseId={CASE_ID}
+        />,
+        { locale: "en" },
+      );
+      expect(screen.getByText("Not computable")).toBeInTheDocument();
+      expect(screen.queryByText("Reliable")).not.toBeInTheDocument();
     });
 
     it("explains the cause and offers a correction", () => {

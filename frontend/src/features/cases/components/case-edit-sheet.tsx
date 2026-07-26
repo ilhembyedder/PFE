@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +70,9 @@ function EditForm({
   detail: CaseDetail;
   onDone: () => void;
 }) {
+  const t = useTranslations("caseDetail.edit");
+  const tCommon = useTranslations("common");
+  const tDetail = useTranslations("caseDetail");
   const update = useUpdateCase(caseId);
   const [error, setError] = useState<string | null>(null);
   const [clientName, setClientName] = useState(
@@ -89,13 +93,13 @@ function EditForm({
 
   const submit = async () => {
     setError(null);
-    if (!clientName.trim()) return setError("Le nom du client est requis.");
+    if (!clientName.trim()) return setError(t("nameRequired"));
     if (!reference.trim())
-      return setError("La référence du contrat est requise.");
+      return setError(t("referenceRequired"));
     if (residual === null || residual <= 0) {
       // Zero is what produces the false "Fiable" indicator (H-21), so the
       // interface refuses it rather than letting it reach the backend.
-      return setError("La valeur résiduelle doit être strictement positive.");
+      return setError(t("residualPositive"));
     }
 
     try {
@@ -114,9 +118,9 @@ function EditForm({
   return (
     <>
       <SheetHeader>
-        <SheetTitle>Modifier le dossier</SheetTitle>
+        <SheetTitle>{t("title")}</SheetTitle>
         <SheetDescription>
-          Les modifications sont enregistrées dans l&apos;historique du dossier.
+          {t("description")}
         </SheetDescription>
       </SheetHeader>
 
@@ -124,7 +128,7 @@ function EditForm({
         {error ? <ErrorState error={new Error(error)} /> : null}
 
         <div className="space-y-1.5">
-          <Label htmlFor="edit-client">Nom du client</Label>
+          <Label htmlFor="edit-client">{t("clientName")}</Label>
           <Input
             id="edit-client"
             value={clientName}
@@ -133,7 +137,7 @@ function EditForm({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="edit-reference">Référence du contrat</Label>
+          <Label htmlFor="edit-reference">{t("contractReference")}</Label>
           <Input
             id="edit-reference"
             className="type-identifier"
@@ -144,7 +148,7 @@ function EditForm({
 
         <div className="grid grid-cols-[1fr_auto] gap-3">
           <div className="space-y-1.5">
-            <Label htmlFor="edit-residual">Valeur résiduelle initiale</Label>
+            <Label htmlFor="edit-residual">{tDetail("residualValue")}</Label>
             <NumericInput
               id="edit-residual"
               value={residual}
@@ -154,7 +158,7 @@ function EditForm({
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="edit-currency">Devise</Label>
+            <Label htmlFor="edit-currency">{t("currency")}</Label>
             <Select
               value={currency}
               onValueChange={(value) => setCurrency(value ?? "TND")}
@@ -176,13 +180,13 @@ function EditForm({
 
       <SheetFooter>
         <Button variant="ghost" onClick={onDone}>
-          Annuler
+          {tCommon("cancel")}
         </Button>
         <Button onClick={() => void submit()} disabled={update.isPending}>
           {update.isPending ? (
             <Loader2 className="animate-spin" aria-hidden />
           ) : null}
-          Enregistrer
+          {tCommon("save")}
         </Button>
       </SheetFooter>
     </>

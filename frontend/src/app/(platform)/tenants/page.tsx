@@ -30,7 +30,9 @@ import { DataTable } from "@/components/states/data-table";
 import { NoDataState } from "@/components/states/empty-state";
 import { ErrorState, messageFor } from "@/components/states/error-state";
 import { useDeactivateTenant, useProvisionTenant, useTenants } from "@/lib/query/hooks";
-import { formatDate, initials, statusLabel } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { initials } from "@/lib/format";
+import { useFormat, useLabels } from "@/lib/use-format";
 import type { Tenant } from "@/types/api";
 
 /**
@@ -40,6 +42,7 @@ import type { Tenant } from "@/types/api";
 const MIN_PASSWORD = 12;
 
 function CopyField({ label, value }: { label: string; value: string }) {
+  const t = useTranslations("tenants");
   const [copied, setCopied] = useState(false);
   return (
     <div>
@@ -51,7 +54,7 @@ function CopyField({ label, value }: { label: string; value: string }) {
         <Button
           variant="outline"
           size="icon-sm"
-          aria-label={`Copier ${label}`}
+          aria-label={t("copy", { label })}
           onClick={() => {
             void navigator.clipboard.writeText(value);
             setCopied(true);
@@ -79,6 +82,8 @@ function randomPassword(): string {
 }
 
 function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) => void }) {
+  const t = useTranslations("tenants");
+  const tCommon = useTranslations("common");
   const provision = useProvisionTenant();
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -89,14 +94,14 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
 
   const submit = async () => {
     setError(null);
-    if (!name.trim()) return setError("Le nom de la société est requis.");
+    if (!name.trim()) return setError(t("nameRequired"));
     if (!/^\S+@\S+\.\S+$/.test(adminEmail.trim())) {
-      return setError("L'adresse e-mail de l'administrateur est invalide.");
+      return setError(t("emailInvalid"));
     }
     // The backend applies NO password rule here at all, though it requires
     // eight characters everywhere else. Twelve is enforced at the edge.
     if (adminPassword.length < MIN_PASSWORD) {
-      return setError(`Le mot de passe doit comporter au moins ${MIN_PASSWORD} caractères.`);
+      return setError(t("passwordTooShort", { min: MIN_PASSWORD }));
     }
 
     try {
@@ -122,9 +127,9 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
   return (
     <>
       <SheetHeader>
-        <SheetTitle>Nouvelle société</SheetTitle>
+        <SheetTitle>{t("new")}</SheetTitle>
         <SheetDescription>
-          Provisionne un schéma isolé et le premier compte administrateur.
+          {t("provisionHint")}
         </SheetDescription>
       </SheetHeader>
 
@@ -132,9 +137,9 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
         {error ? <ErrorState error={new Error(error)} /> : null}
 
         <fieldset className="space-y-4">
-          <legend className="type-label text-muted-foreground mb-2">Société</legend>
+          <legend className="type-label text-muted-foreground mb-2">{t("companySection")}</legend>
           <div className="space-y-1.5">
-            <Label htmlFor="tenant-name">Nom</Label>
+            <Label htmlFor="tenant-name">{t("name")}</Label>
             <Input
               id="tenant-name"
               value={name}
@@ -142,7 +147,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="tenant-logo">URL du logo</Label>
+            <Label htmlFor="tenant-logo">{t("logoUrl")}</Label>
             <Input
               id="tenant-logo"
               type="url"
@@ -151,11 +156,11 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
             />
           </div>
           <div className="max-w-[220px] space-y-1.5">
-            <Label htmlFor="tenant-retention">Rétention des données</Label>
+            <Label htmlFor="tenant-retention">{t("retention")}</Label>
             <NumericInput
               id="tenant-retention"
               integer
-              suffix="mois"
+              suffix={tCommon("months")}
               value={retention}
               onValueChange={setRetention}
               min={1}
@@ -165,10 +170,10 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
 
         <fieldset className="space-y-4">
           <legend className="type-label text-muted-foreground mb-2">
-            Premier administrateur
+            {t("adminSection")}
           </legend>
           <div className="space-y-1.5">
-            <Label htmlFor="admin-email">Adresse e-mail</Label>
+            <Label htmlFor="admin-email">{t("adminEmail")}</Label>
             <Input
               id="admin-email"
               type="email"
@@ -177,7 +182,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="admin-password">Mot de passe</Label>
+            <Label htmlFor="admin-password">{t("adminPassword")}</Label>
             <div className="flex gap-2">
               <Input
                 id="admin-password"
@@ -189,14 +194,14 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="Générer un mot de passe"
+                aria-label={t("generatePassword")}
                 onClick={() => setAdminPassword(randomPassword())}
               >
                 <RefreshCw aria-hidden />
               </Button>
             </div>
             <p id="admin-password-hint" className="type-caption text-muted-foreground">
-              {MIN_PASSWORD} caractères minimum. Il ne sera affiché qu&apos;une seule fois.
+              {t("passwordHint", { min: MIN_PASSWORD })}
             </p>
           </div>
         </fieldset>
@@ -205,7 +210,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
       <SheetFooter>
         <Button onClick={() => void submit()} disabled={provision.isPending}>
           {provision.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-          Provisionner
+          {t("provision")}
         </Button>
       </SheetFooter>
     </>
@@ -221,41 +226,42 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
  * acknowledgement that the credentials were passed on.
  */
 function HandoffPanel({ handoff, onDone }: { handoff: Handoff; onDone: () => void }) {
+  const t = useTranslations("tenants");
   return (
     <>
       <SheetHeader>
-        <SheetTitle>{handoff.name} est provisionnée</SheetTitle>
+        <SheetTitle>{t("handoffTitle", { name: handoff.name })}</SheetTitle>
         <SheetDescription>
-          Transmettez ces accès à l&apos;administrateur de la société.
+          {t("handoffHint")}
         </SheetDescription>
       </SheetHeader>
 
       <div className="space-y-4 overflow-y-auto px-4">
         <div className="bg-warning-surface border-warning-border rounded-md border p-3">
-          <p className="type-body-sm">
-            Le mot de passe ne sera plus affiché et ne peut pas être réinitialisé depuis
-            la plateforme. Transmettez-le maintenant.
-          </p>
+          <p className="type-body-sm">{t("handoffWarning")}</p>
         </div>
 
-        <CopyField label="Identifiant de société" value={handoff.tenantId} />
-        <CopyField label="Adresse e-mail" value={handoff.adminEmail} />
-        <CopyField label="Mot de passe" value={handoff.adminPassword} />
+        <CopyField label={t("handoffTenantId")} value={handoff.tenantId} />
+        <CopyField label={t("adminEmail")} value={handoff.adminEmail} />
+        <CopyField label={t("adminPassword")} value={handoff.adminPassword} />
 
         <p className="type-caption text-muted-foreground">
-          L&apos;identifiant de société est requis à la connexion, en plus de
-          l&apos;adresse e-mail et du mot de passe.
+          {t("handoffNote")}
         </p>
       </div>
 
       <SheetFooter>
-        <Button onClick={onDone}>J&apos;ai transmis les accès</Button>
+        <Button onClick={onDone}>{t("handoffDone")}</Button>
       </SheetFooter>
     </>
   );
 }
 
 export default function TenantsPage() {
+  const t = useTranslations("tenants");
+  const tCommon = useTranslations("common");
+  const format = useFormat();
+  const labels = useLabels();
   const tenants = useTenants();
   const deactivate = useDeactivateTenant();
 
@@ -268,7 +274,7 @@ export default function TenantsPage() {
     () => [
       {
         accessorKey: "name",
-        header: "Société",
+        header: t("columns.company"),
         cell: ({ row }) => (
           <span className="flex items-center gap-2.5">
             {row.original.logoUrl ? (
@@ -292,31 +298,31 @@ export default function TenantsPage() {
       },
       {
         accessorKey: "id",
-        header: "Identifiant",
+        header: t("columns.identifier"),
         cell: ({ row }) => (
           // The UUID tenant users must type at login. Copyable, because the
           // alternative is transcribing it by hand.
-          <CopyField label="Identifiant" value={row.original.id} />
+          <CopyField label={t("columns.identifier")} value={row.original.id} />
         ),
       },
       {
         accessorKey: "status",
-        header: "Statut",
+        header: t("columns.status"),
         cell: ({ row }) =>
           row.original.status === "ACTIVE" ? (
             <Chip tone="success" icon={chipIcons.success}>
-              Active
+              {t("active")}
             </Chip>
           ) : (
-            <Chip>{statusLabel(row.original.status)}</Chip>
+            <Chip>{labels.status(row.original.status)}</Chip>
           ),
       },
       {
         accessorKey: "createdAt",
-        header: "Créée le",
+        header: t("columns.createdAt"),
         cell: ({ row }) => (
           <span className="type-body-sm text-muted-foreground">
-            {formatDate(row.original.createdAt)}
+            {format.date(row.original.createdAt)}
           </span>
         ),
       },
@@ -328,13 +334,13 @@ export default function TenantsPage() {
             <div className="flex justify-end">
               <Button variant="ghost" size="sm" onClick={() => setConfirm(row.original)}>
                 <ShieldOff aria-hidden />
-                Désactiver
+                {t("deactivate")}
               </Button>
             </div>
           ) : null,
       },
     ],
-    [],
+    [t, format, labels],
   );
 
   if (tenants.isError) {
@@ -346,12 +352,12 @@ export default function TenantsPage() {
   return (
     <>
       <PageHeader
-        title="Sociétés"
-        subtitle="Sociétés de leasing provisionnées sur la plateforme."
+        title={t("title")}
+        subtitle={t("subtitle")}
         actions={
           <Button onClick={() => setOpen(true)}>
             <Plus aria-hidden />
-            Nouvelle société
+            {t("new")}
           </Button>
         }
       />
@@ -364,12 +370,12 @@ export default function TenantsPage() {
         isPending={tenants.isPending}
         empty={
           <NoDataState
-            title="Aucune société enregistrée"
-            body="Provisionnez une société de leasing pour lui donner accès à la plateforme."
+            title={t("emptyTitle")}
+            body={t("emptyBody")}
             action={
               <Button onClick={() => setOpen(true)}>
                 <Plus aria-hidden />
-                Nouvelle société
+                {t("new")}
               </Button>
             }
           />
@@ -402,13 +408,11 @@ export default function TenantsPage() {
       <Dialog open={confirm !== null} onOpenChange={(next) => !next && setConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Désactiver {confirm?.name} ?</DialogTitle>
-            <DialogDescription>
-              Ses utilisateurs ne pourront plus se connecter. Les données sont conservées.
-            </DialogDescription>
+            <DialogTitle>{t("deactivateTitle", { name: confirm?.name ?? "" })}</DialogTitle>
+            <DialogDescription>{t("deactivateBody")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose render={<Button variant="ghost">Annuler</Button>} />
+            <DialogClose render={<Button variant="ghost">{tCommon("cancel")}</Button>} />
             <Button
               variant="destructive"
               onClick={() => {
@@ -420,7 +424,7 @@ export default function TenantsPage() {
                 });
               }}
             >
-              Désactiver
+              {t("deactivate")}
             </Button>
           </DialogFooter>
         </DialogContent>

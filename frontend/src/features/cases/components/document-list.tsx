@@ -2,7 +2,8 @@
 
 import { Download, FileText } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDateTime } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useFormat } from "@/lib/use-format";
 import type { DocumentSummary } from "@/types/api";
 
 /**
@@ -15,13 +16,16 @@ export function DocumentList({
   documents,
   isPending,
   downloadHref,
-  emptyLabel = "Aucun document.",
+  emptyLabel,
 }: {
   documents: DocumentSummary[];
   isPending?: boolean;
   downloadHref: (doc: DocumentSummary) => string;
   emptyLabel?: string;
 }) {
+  const t = useTranslations("caseDetail.documents");
+  const tCommon = useTranslations("common");
+  const format = useFormat();
   if (isPending) {
     return (
       <ul className="divide-border divide-y">
@@ -40,7 +44,11 @@ export function DocumentList({
 
   // Never an empty state while a request is in flight — checked above.
   if (documents.length === 0) {
-    return <p className="type-body-sm text-muted-foreground py-2">{emptyLabel}</p>;
+    return (
+      <p className="type-body-sm text-muted-foreground py-2">
+        {emptyLabel ?? t("emptyEntity")}
+      </p>
+    );
   }
 
   return (
@@ -52,14 +60,14 @@ export function DocumentList({
             <p className="type-body-sm truncate font-medium">{doc.fileName}</p>
             <p className="type-caption text-muted-foreground">
               {doc.uploaderName ? `${doc.uploaderName} · ` : ""}
-              <time dateTime={doc.createdAt}>{formatDateTime(doc.createdAt)}</time>
+              <time dateTime={doc.createdAt}>{format.dateTime(doc.createdAt)}</time>
             </p>
           </div>
           <a
             href={downloadHref(doc)}
             download
             className="text-muted-foreground hover:text-foreground focus-visible:focus-ring grid size-8 shrink-0 place-items-center rounded-md outline-none [&_svg]:size-4"
-            aria-label={`Télécharger ${doc.fileName}`}
+            aria-label={`${tCommon("download")} ${doc.fileName}`}
           >
             <Download aria-hidden />
           </a>

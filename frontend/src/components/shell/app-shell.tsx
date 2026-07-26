@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Building2, FileText, LogOut, Menu, Settings, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -16,9 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession, useTenant } from "@/lib/query/hooks";
-import { initials, roleLabel } from "@/lib/format";
+import { initials } from "@/lib/format";
+import { useLabels } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 import { useIdleLogout } from "./use-idle-logout";
 
 export type ShellVariant = "tenant" | "platform";
@@ -29,15 +32,16 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-const TENANT_NAV: NavItem[] = [
-  { href: "/cases", label: "Dossiers", icon: <FileText aria-hidden /> },
-  { href: "/leasing", label: "Clients & contrats", icon: <Users aria-hidden /> },
-  { href: "/settings", label: "Paramètres", icon: <Settings aria-hidden /> },
-];
-
-const PLATFORM_NAV: NavItem[] = [
-  { href: "/tenants", label: "Sociétés", icon: <Building2 aria-hidden /> },
-];
+function useNav(variant: ShellVariant): NavItem[] {
+  const t = useTranslations("nav");
+  return variant === "platform"
+    ? [{ href: "/tenants", label: t("tenants"), icon: <Building2 aria-hidden /> }]
+    : [
+        { href: "/cases", label: t("cases"), icon: <FileText aria-hidden /> },
+        { href: "/leasing", label: t("leasing"), icon: <Users aria-hidden /> },
+        { href: "/settings", label: t("settings"), icon: <Settings aria-hidden /> },
+      ];
+}
 
 /** Active state is a filled shape, never a coloured left stripe. */
 function NavLink({
@@ -126,6 +130,8 @@ function Identity({ variant, collapsed }: { variant: ShellVariant; collapsed?: b
 function AccountBlock({ collapsed }: { collapsed?: boolean }) {
   const session = useSession();
   const router = useRouter();
+  const t = useTranslations("nav");
+  const labels = useLabels();
 
   const signOut = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -145,7 +151,7 @@ function AccountBlock({ collapsed }: { collapsed?: boolean }) {
                 "focus-visible:focus-ring hover:bg-card flex w-full items-center gap-2.5 rounded-md p-2 text-left outline-none transition-colors",
                 collapsed && "justify-center",
               )}
-              aria-label="Compte et préférences"
+              aria-label={t("account")}
             >
               <span
                 aria-hidden
@@ -159,7 +165,7 @@ function AccountBlock({ collapsed }: { collapsed?: boolean }) {
                     {user?.name ?? "—"}
                   </span>
                   <span className="type-caption text-muted-foreground block truncate">
-                    {roleLabel(user?.role)}
+                    {labels.role(user?.role, "")}
                   </span>
                 </span>
               ) : null}
@@ -169,7 +175,7 @@ function AccountBlock({ collapsed }: { collapsed?: boolean }) {
         <DropdownMenuContent align="start" side="top" className="w-56">
           <DropdownMenuItem onClick={() => void signOut()}>
             <LogOut aria-hidden />
-            Se déconnecter
+            {t("signOut")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -187,7 +193,8 @@ function SidebarBody({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const nav = variant === "platform" ? PLATFORM_NAV : TENANT_NAV;
+  const nav = useNav(variant);
+  const t = useTranslations("nav");
 
   return (
     <>
@@ -195,7 +202,7 @@ function SidebarBody({
         <Identity variant={variant} collapsed={collapsed} />
       </div>
 
-      <nav aria-label="Navigation principale" className="flex-1 space-y-0.5 p-2">
+      <nav aria-label={t("main")} className="flex-1 space-y-0.5 p-2">
         {nav.map((item) => (
           <NavLink
             key={item.href}
@@ -223,6 +230,8 @@ export function AppShell({
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { warning, stayConnected, logout } = useIdleLogout(true);
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
 
   return (
     <div className="bg-background min-h-svh">
@@ -231,13 +240,13 @@ export function AppShell({
         href="#contenu"
         className="focus:bg-primary focus:text-primary-foreground type-label sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:px-3 focus:py-2"
       >
-        Aller au contenu
+        {tCommon("skipToContent")}
       </a>
 
       {/* Breakpoint-driven: 56px icon rail at tablet, 240px at desktop. */}
       <aside
         className="bg-sidebar border-sidebar-border fixed inset-y-0 left-0 z-30 hidden w-14 flex-col border-r md:flex lg:w-60"
-        aria-label="Barre latérale"
+        aria-label={t("sidebar")}
       >
         <div className="flex h-full flex-col lg:hidden">
           <SidebarBody variant={variant} collapsed />
@@ -256,14 +265,14 @@ export function AppShell({
                   variant="ghost"
                   size="icon-sm"
                   className="md:hidden"
-                  aria-label="Ouvrir la navigation"
+                  aria-label={t("openNav")}
                 >
                   <Menu aria-hidden />
                 </Button>
               }
             />
             <SheetContent side="left" className="bg-sidebar w-64 p-0">
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <SheetTitle className="sr-only">{t("main")}</SheetTitle>
               <div className="flex h-full flex-col">
                 <SidebarBody variant={variant} onNavigate={() => setDrawerOpen(false)} />
               </div>
@@ -271,13 +280,14 @@ export function AppShell({
           </Sheet>
 
           <div className="min-w-0 flex-1">{breadcrumb}</div>
+          <LanguageSwitcher />
           <ThemeToggle />
         </header>
 
         {/* NFR12 made visible: the platform console cannot reach case data. */}
         {variant === "platform" ? (
           <p className="bg-panel border-border type-caption text-muted-foreground border-b px-4 py-1.5 md:px-6 lg:px-8">
-            Console plateforme — accès aux dossiers clients désactivé.
+            {t("platformNotice")}
           </p>
         ) : null}
 
@@ -286,13 +296,13 @@ export function AppShell({
             role="alert"
             className="bg-warning-surface border-warning-border type-body-sm flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2 md:px-6 lg:px-8"
           >
-            <span>Votre session expire dans 1 minute.</span>
+            <span>{t("idleWarning")}</span>
             <span className="flex gap-2">
               <Button size="sm" variant="outline" onClick={stayConnected}>
-                Rester connecté
+                {t("stayConnected")}
               </Button>
               <Button size="sm" variant="ghost" onClick={() => void logout()}>
-                Se déconnecter
+                {t("signOut")}
               </Button>
             </span>
           </div>

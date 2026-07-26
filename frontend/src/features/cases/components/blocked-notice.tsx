@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Lock } from "lucide-react";
-import { PHASE_SHORT } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useLabels } from "@/lib/use-format";
 import type { Phase } from "@/types/api";
 
 /**
@@ -23,6 +26,9 @@ export function BlockedNotice({
   caseId: string;
   action?: { href: string; label: string };
 }) {
+  const t = useTranslations("caseDetail");
+  const labels = useLabels();
+
   if (!reasons.length) return null;
 
   return (
@@ -34,8 +40,8 @@ export function BlockedNotice({
       <div className="min-w-0">
         <p className="type-body-sm text-destructive font-semibold">
           {nextPhase
-            ? `Passage en « ${PHASE_SHORT[nextPhase]} » bloqué`
-            : "Progression bloquée"}
+            ? t("blockedTitle", { phase: labels.phaseShort(nextPhase) })
+            : t("blockedGeneric")}
         </p>
         <ul className="type-body-sm mt-1.5 list-disc space-y-1 pl-4">
           {reasons.map((reason) => (
@@ -46,7 +52,7 @@ export function BlockedNotice({
           href={action?.href ?? `/cases/${caseId}?tab=documents&focus=upload`}
           className="type-body-sm text-primary focus-visible:focus-ring mt-2 inline-block rounded-sm font-medium underline underline-offset-4 outline-none"
         >
-          {action?.label ?? "Téléverser un rapport d'expertise"}
+          {action?.label ?? t("blockedAction")}
         </Link>
       </div>
     </div>

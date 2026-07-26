@@ -4,9 +4,10 @@ import Link from "next/link";
 import { AlertTriangle, CircleAlert, FileUp, Moon, PenLine, StepForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, chipIcons } from "@/components/ui/chip";
-import { ALERT_LABELS, CRITICALITY_LABELS, formatRelative } from "@/lib/format";
+import { useFormat, useLabels } from "@/lib/use-format";
 import type { PriorityAlert } from "@/types/api";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 /**
  * One actionable alert.
@@ -18,36 +19,41 @@ import { cn } from "@/lib/utils";
  * deep-links to the tab and focus target that resolves the alert.
  */
 
+/** Icon and deep-link target per alert type; the label comes from messages. */
 const ACTIONS: Record<
   string,
-  { label: string; icon: React.ReactNode; target: (id: string) => string }
+  { key: string; icon: React.ReactNode; target: (id: string) => string }
 > = {
   DORMANCY: {
-    label: "Ajouter une note",
+    key: "addNote",
     icon: <PenLine aria-hidden />,
     target: (id) => `/cases/${id}?tab=notes&focus=note`,
   },
   DEADLINE: {
-    label: "Faire avancer la phase",
+    key: "advancePhase",
     icon: <StepForward aria-hidden />,
     target: (id) => `/cases/${id}?tab=details&focus=stepper`,
   },
   MISSING_PREREQUISITE: {
-    label: "Téléverser un rapport",
+    key: "uploadReport",
     icon: <FileUp aria-hidden />,
     target: (id) => `/cases/${id}?tab=documents&focus=upload`,
   },
   VEHICLE_DISCREPANCY: {
-    label: "Vérifier le véhicule",
+    key: "checkVehicle",
     icon: <AlertTriangle aria-hidden />,
     target: (id) => `/cases/${id}?tab=details`,
   },
 };
 
 export function AlertRow({ alert }: { alert: PriorityAlert }) {
+  const t = useTranslations("cases.actions");
+  const format = useFormat();
+  const labels = useLabels();
+
   const critical = alert.criticality === "CRITICAL";
   const action = ACTIONS[alert.alertType] ?? {
-    label: "Ouvrir le dossier",
+    key: "openCase",
     icon: <StepForward aria-hidden />,
     target: (id: string) => `/cases/${id}`,
   };
@@ -79,15 +85,15 @@ export function AlertRow({ alert }: { alert: PriorityAlert }) {
             tone={critical ? "critical" : "warning"}
             icon={critical ? chipIcons.critical : chipIcons.warning}
           >
-            {ALERT_LABELS[alert.alertType] ?? alert.alertType}
+            {labels.alertType(alert.alertType)}
           </Chip>
           <span className="sr-only">
-            {CRITICALITY_LABELS[alert.criticality] ?? alert.criticality}
+            {labels.criticality(alert.criticality)}
           </span>
         </div>
         <p className="type-body mt-1">{alert.message}</p>
         <p className="type-caption text-muted-foreground mt-1">
-          <time dateTime={alert.createdAt}>{formatRelative(alert.createdAt)}</time>
+          <time dateTime={alert.createdAt}>{format.relative(alert.createdAt)}</time>
         </p>
       </div>
 
@@ -98,7 +104,7 @@ export function AlertRow({ alert }: { alert: PriorityAlert }) {
         render={<Link href={action.target(alert.caseId)} />}
       >
         {action.icon}
-        {action.label}
+        {t(action.key)}
       </Button>
     </article>
   );

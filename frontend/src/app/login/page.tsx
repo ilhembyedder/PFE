@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslations } from "next-intl";
 import { Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,24 +25,32 @@ import { cn } from "@/lib/utils";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const schema = z.object({
-  mode: z.enum(["tenant", "platform"]),
-  email: z.string().min(1, "Adresse e-mail requise.").email("Adresse e-mail invalide."),
-  password: z.string().min(1, "Mot de passe requis."),
-  tenantId: z.string(),
-}).refine((v) => v.mode === "platform" || UUID.test(v.tenantId.trim()), {
-  path: ["tenantId"],
-  message: "Identifiant de société invalide.",
-});
+/**
+ * Validation messages are message KEYS, resolved at render.
+ * Building the schema per-locale would rebuild the resolver on every language
+ * change; keys keep the schema static and the errors translated.
+ */
+const schema = z
+  .object({
+    mode: z.enum(["tenant", "platform"]),
+    email: z.string().min(1, "emailRequired").email("emailInvalid"),
+    password: z.string().min(1, "passwordRequired"),
+    tenantId: z.string(),
+  })
+  .refine((v) => v.mode === "platform" || UUID.test(v.tenantId.trim()), {
+    path: ["tenantId"],
+    message: "tenantIdInvalid",
+  });
 
 type Values = z.infer<typeof schema>;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
+  const t = useTranslations("login");
   if (!message) return null;
   return (
     <p id={id} className="type-body-sm text-destructive flex items-center gap-1.5">
       <TriangleAlert className="size-3.5 shrink-0" aria-hidden />
-      {message}
+      {t(message)}
     </p>
   );
 }
@@ -51,6 +60,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
  * Wrapping the whole form meant the page server-rendered as blank.
  */
 function ExpiredNotice() {
+  const t = useTranslations("login");
   const params = useSearchParams();
   if (!params.get("expired")) return null;
   return (
@@ -59,12 +69,14 @@ function ExpiredNotice() {
       className="bg-warning-surface border-warning-border type-body-sm mb-5 flex items-start gap-2 rounded-md border p-3"
     >
       <TriangleAlert className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
-      Votre session a expiré. Reconnectez-vous.
+      {t("expired")}
     </div>
   );
 }
 
 function LoginForm() {
+  const t = useTranslations("login");
+  const tApp = useTranslations("app");
   const router = useRouter();
   const [revealed, setRevealed] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -87,20 +99,16 @@ function LoginForm() {
       });
       router.replace(values.mode === "platform" ? "/tenants" : "/cases");
     } catch (error) {
-      setFormError(
-        isApiError(error)
-          ? error.message
-          : "Connexion au serveur impossible. Réessayez dans un instant.",
-      );
+      setFormError(isApiError(error) ? error.message : t("unreachable"));
     }
   };
 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-[400px] flex-col justify-center px-6 py-16">
       <div className="mb-6">
-        <h1 className="type-display">LeasRecover</h1>
+        <h1 className="type-display">{tApp("name")}</h1>
         <p className="type-body-sm text-muted-foreground mt-1">
-          Plateforme de recouvrement
+          {tApp("tagline")}
         </p>
       </div>
 
@@ -109,7 +117,7 @@ function LoginForm() {
             what the "on" position means. */}
         <div
           role="radiogroup"
-          aria-label="Type de compte"
+          aria-label={t("accountType")}
           className="bg-panel border-border mb-5 grid grid-cols-2 gap-1 rounded-md border p-1"
         >
           {(["tenant", "platform"] as const).map((value) => (
@@ -127,7 +135,7 @@ function LoginForm() {
               )}
               style={{ transitionDuration: "var(--duration-fast)" }}
             >
-              {value === "tenant" ? "Société" : "Plateforme"}
+              {t(value === "tenant" ? "tenant" : "platform")}
             </button>
           ))}
         </div>
@@ -152,7 +160,7 @@ function LoginForm() {
           className="space-y-4"
         >
           <div className="space-y-1.5">
-            <Label htmlFor="email">Adresse e-mail</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
@@ -166,7 +174,7 @@ function LoginForm() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -182,7 +190,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setRevealed((v) => !v)}
-                aria-label={revealed ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                aria-label={t(revealed ? "hidePassword" : "showPassword")}
                 aria-pressed={revealed}
                 className="text-muted-foreground hover:text-foreground focus-visible:focus-ring absolute inset-y-0 right-0 grid w-10 place-items-center rounded-md outline-none [&_svg]:size-4"
               >
@@ -197,7 +205,7 @@ function LoginForm() {
 
           {mode === "tenant" ? (
             <div className="space-y-1.5">
-              <Label htmlFor="tenantId">Identifiant de société</Label>
+              <Label htmlFor="tenantId">{t("tenantId")}</Label>
               <Input
                 id="tenantId"
                 className="type-identifier"
@@ -207,7 +215,7 @@ function LoginForm() {
                 {...form.register("tenantId")}
               />
               <p id="tenantId-hint" className="type-caption text-muted-foreground">
-                Fourni par votre administrateur.
+                {t("tenantIdHint")}
               </p>
               <FieldError
                 id="tenantId-error"
@@ -219,7 +227,7 @@ function LoginForm() {
           {/* Never disabled pending validation: validate on submit. */}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="animate-spin" aria-hidden /> : null}
-            Se connecter
+            {t("submit")}
           </Button>
         </form>
       </div>

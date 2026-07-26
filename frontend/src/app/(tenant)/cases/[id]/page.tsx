@@ -50,17 +50,9 @@ import {
   useCaseValuation,
 } from "@/lib/query/hooks";
 import { api } from "@/lib/api/client";
-import {
-  PHASE_LABELS,
-  PHASE_SHORT,
-  formatDate,
-  formatDateTime,
-  formatMoney,
-  formatRelative,
-  initials,
-  phaseLabel,
-  statusLabel,
-} from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { initials } from "@/lib/format";
+import { useFormat, useLabels } from "@/lib/use-format";
 import { PHASES, type Phase } from "@/types/api";
 
 /**
@@ -80,18 +72,24 @@ type Tab = (typeof TABS)[number];
 const VALUATION_PHASES: Phase[] = ["SAISIE", "VENTE", "CLOTURE"];
 
 function Breadcrumb({ client }: { client?: string }) {
+  const t = useTranslations("caseDetail");
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
   return (
-    <nav aria-label="Fil d'Ariane" className="type-body-sm flex items-center gap-1.5">
+    <nav aria-label={tCommon("breadcrumb")} className="type-body-sm flex items-center gap-1.5">
       <Link href="/cases" className="text-muted-foreground hover:text-foreground">
-        Dossiers
+        {tNav("cases")}
       </Link>
       <ChevronRight className="text-muted-foreground size-3.5 shrink-0" aria-hidden />
-      <span className="text-foreground truncate">{client ?? "Dossier"}</span>
+      <span className="text-foreground truncate">{client ?? t("fallbackTitle")}</span>
     </nav>
   );
 }
 
 function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
+  const t = useTranslations("caseDetail.notes");
+  const tCommon = useTranslations("common");
+  const format = useFormat();
   const notes = useCaseNotes(caseId);
   const addNote = useAddNote(caseId);
   const [content, setContent] = useState("");
@@ -119,7 +117,7 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
       {/* Composer always visible, never behind a button. */}
       <div className="space-y-2">
         <label htmlFor="note" className="type-label text-muted-foreground block">
-          Ajouter une note
+          {t("add")}
         </label>
         <Textarea
           id="note"
@@ -127,7 +125,7 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
           rows={3}
           value={content}
           onChange={(event) => setContent(event.target.value)}
-          placeholder="Décrivez l'action réalisée ou l'information à conserver."
+          placeholder={t("placeholder")}
         />
         {error ? (
           <p role="alert" className="type-body-sm text-destructive">
@@ -137,7 +135,7 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
         <div className="flex justify-end">
           <Button onClick={() => void submit()} disabled={!content.trim() || addNote.isPending}>
             {addNote.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-            Publier
+            {tCommon("publish")}
           </Button>
         </div>
       </div>
@@ -164,8 +162,8 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
                   <span className="font-medium">{note.authorName}</span>
                   <span className="text-muted-foreground">
                     {" · "}
-                    <time dateTime={note.createdAt} title={formatDateTime(note.createdAt)}>
-                      {formatRelative(note.createdAt)}
+                    <time dateTime={note.createdAt} title={format.dateTime(note.createdAt)}>
+                      {format.relative(note.createdAt)}
                     </time>
                   </span>
                 </p>
@@ -175,15 +173,15 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
           ))}
         </ul>
       ) : (
-        <p className="type-body-sm text-muted-foreground">
-          Aucune note. Les notes constituent la trace des actions réalisées sur le dossier.
-        </p>
+        <p className="type-body-sm text-muted-foreground">{t("empty")}</p>
       )}
     </div>
   );
 }
 
 function HistoryTab({ caseId }: { caseId: string }) {
+  const t = useTranslations("caseDetail.history");
+  const format = useFormat();
   const history = useCaseHistory(caseId);
 
   if (history.isPending) {
@@ -200,16 +198,14 @@ function HistoryTab({ caseId }: { caseId: string }) {
   }
   if (!history.data?.length) {
     return (
-      <p className="type-body-sm text-muted-foreground">
-        Aucun événement enregistré pour ce dossier.
-      </p>
+      <p className="type-body-sm text-muted-foreground">{t("empty")}</p>
     );
   }
 
   // Grouped by day, with a heading per day.
   const groups = new Map<string, typeof history.data>();
   for (const event of history.data) {
-    const day = formatDate(event.timestamp);
+    const day = format.date(event.timestamp);
     groups.set(day, [...(groups.get(day) ?? []), event]);
   }
 
@@ -228,15 +224,10 @@ function HistoryTab({ caseId }: { caseId: string }) {
                   className="bg-primary absolute top-1.5 -left-[1.3125rem] size-2 rounded-full"
                 />
                 <p className="type-body-sm">
-                  <span className="font-medium">{event.actor ?? "Système"}</span>
+                  <span className="font-medium">{event.actor ?? t("system")}</span>
                   <span className="text-muted-foreground">
                     {" · "}
-                    <time dateTime={event.timestamp}>
-                      {new Intl.DateTimeFormat("fr-FR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(event.timestamp))}
-                    </time>
+                    <time dateTime={event.timestamp}>{format.time(event.timestamp)}</time>
                   </span>
                 </p>
                 <p className="type-body mt-0.5">{event.description}</p>
@@ -258,6 +249,8 @@ function DocumentsTab({
   currentPhase: Phase;
   focusUpload: boolean;
 }) {
+  const t = useTranslations("caseDetail.documents");
+  const labels = useLabels();
   const documents = useCaseDocuments(caseId);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -278,7 +271,7 @@ function DocumentsTab({
             <AccordionItem key={phase} value={phase}>
               <AccordionTrigger>
                 <span className="flex items-center gap-2">
-                  {PHASE_LABELS[phase]}
+                  {labels.phase(phase)}
                   <span className="type-caption text-muted-foreground tabular">
                     {docs.length}
                   </span>
@@ -289,7 +282,7 @@ function DocumentsTab({
                   documents={docs}
                   isPending={documents.isPending}
                   downloadHref={(doc) => `/api/cases/${caseId}/documents/${doc.id}/download`}
-                  emptyLabel="Aucun document pour cette phase."
+                  emptyLabel={t("emptyPhase")}
                 />
                 {/* Only the current phase carries an upload zone. */}
                 {isCurrent ? (
@@ -307,6 +300,11 @@ function DocumentsTab({
 }
 
 function CaseDetail({ caseId }: { caseId: string }) {
+  const t = useTranslations("caseDetail");
+  const tVal = useTranslations("valuation");
+  const tCases = useTranslations("cases");
+  const format = useFormat();
+  const labels = useLabels();
   const router = useRouter();
   const params = useSearchParams();
   const tabParam = params.get("tab");
@@ -389,30 +387,30 @@ function CaseDetail({ caseId }: { caseId: string }) {
       <header className="mt-4 mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <h1 className="type-display truncate">
-            {data.client?.fullNameOrCompany ?? "Dossier"}
+            {data.client?.fullNameOrCompany ?? t("fallbackTitle")}
           </h1>
           <p className="mt-1 flex flex-wrap items-center gap-2">
             <span className="type-identifier text-muted-foreground">
               {data.contract?.referenceNumber ?? "—"}
             </span>
-            <Chip>{phaseLabel(phase)}</Chip>
-            <Chip>{statusLabel(data.status)}</Chip>
+            <Chip>{labels.phase(phase)}</Chip>
+            <Chip>{labels.status(data.status)}</Chip>
           </p>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <Button variant="outline" onClick={() => void exportPdf()} disabled={downloading}>
             {downloading ? <Loader2 className="animate-spin" aria-hidden /> : <Download aria-hidden />}
-            Exporter
+            {t("export")}
           </Button>
           <Button variant="outline" onClick={() => setEditing(true)}>
             <PenLine aria-hidden />
-            Modifier
+            {t("edit.title")}
           </Button>
           {/* At the terminal phase the action is REPLACED, not disabled. */}
           {terminal ? (
             <span className="type-body-sm text-success flex items-center gap-1.5">
-              Dossier clôturé
+              {t("closed")}
             </span>
           ) : (
             <Button
@@ -430,8 +428,10 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 <StepForward aria-hidden />
               )}
               {prerequisites.data?.nextPhase
-                ? `Passer en ${PHASE_SHORT[prerequisites.data.nextPhase]}`
-                : "Avancer la phase"}
+                ? t("advanceTo", {
+                    phase: labels.phaseShort(prerequisites.data.nextPhase),
+                  })
+                : t("advance")}
             </Button>
           )}
         </div>
@@ -475,18 +475,15 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 }
               />
             ) : (
-              <Panel title="Estimation de valeur">
-                <p className="type-body-sm text-muted-foreground">
-                  Aucune estimation. Téléversez un rapport d&apos;expertise pour lancer
-                  l&apos;analyse.
-                </p>
+              <Panel title={tVal("title")}>
+                <p className="type-body-sm text-muted-foreground">{tVal("none")}</p>
                 <Button
                   variant="outline"
                   size="sm"
                   className="mt-3"
                   onClick={() => setTab("documents")}
                 >
-                  Aller aux documents
+                  {tVal("goToDocuments")}
                 </Button>
               </Panel>
             )
@@ -494,60 +491,64 @@ function CaseDetail({ caseId }: { caseId: string }) {
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList>
-              <TabsTrigger value="details">Détails</TabsTrigger>
-              <TabsTrigger value="notes">Notes</TabsTrigger>
-              <TabsTrigger value="history">Historique</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger value="details">{t("tabs.details")}</TabsTrigger>
+              <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
+              <TabsTrigger value="history">{t("tabs.history")}</TabsTrigger>
+              <TabsTrigger value="documents">{t("tabs.documents")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="space-y-6 pt-4">
-              <Panel title="Client">
+              <Panel title={t("client.title")}>
                 <DefinitionList
                   items={[
-                    { label: "Nom ou raison sociale", value: data.client?.fullNameOrCompany },
+                    { label: t("client.name"), value: data.client?.fullNameOrCompany },
                     {
-                      label: "Numéro d'immatriculation",
+                      label: t("client.registration"),
                       value: data.client?.registrationNumber,
                       mono: true,
                     },
-                    { label: "E-mail", value: data.client?.contactEmail },
-                    { label: "Téléphone", value: data.client?.contactPhone },
+                    { label: t("client.email"), value: data.client?.contactEmail },
+                    { label: t("client.phone"), value: data.client?.contactPhone },
                   ]}
                 />
               </Panel>
 
-              <Panel title="Contrat">
+              <Panel title={t("contract.title")}>
                 <DefinitionList
                   items={[
-                    { label: "Référence", value: data.contract?.referenceNumber, mono: true },
-                    { label: "Statut", value: statusLabel(data.contract?.status) },
-                    { label: "Date de début", value: formatDate(data.contract?.startDate) },
-                    { label: "Date de fin", value: formatDate(data.contract?.endDate) },
+                    {
+                      label: t("contract.reference"),
+                      value: data.contract?.referenceNumber,
+                      mono: true,
+                    },
+                    { label: t("contract.status"), value: labels.status(data.contract?.status) },
+                    { label: t("contract.startDate"), value: format.date(data.contract?.startDate) },
+                    { label: t("contract.endDate"), value: format.date(data.contract?.endDate) },
                   ]}
                 />
               </Panel>
 
-              <Panel title="Véhicule">
+              <Panel title={t("vehicle.title")}>
                 {data.vehicle ? (
                   <DefinitionList
                     items={[
-                      { label: "VIN", value: data.vehicle.vin, mono: true },
+                      { label: t("vehicle.vin"), value: data.vehicle.vin, mono: true },
                       {
-                        label: "Immatriculation",
+                        label: t("vehicle.plate"),
                         value: data.vehicle.licensePlate,
                         mono: true,
                       },
-                      { label: "Marque", value: data.vehicle.brand },
-                      { label: "Modèle", value: data.vehicle.model },
-                      { label: "Année", value: data.vehicle.year },
+                      { label: t("vehicle.brand"), value: data.vehicle.brand },
+                      { label: t("vehicle.model"), value: data.vehicle.model },
+                      { label: t("vehicle.year"), value: data.vehicle.year },
                     ]}
                     columns={3}
                   />
                 ) : (
                   <p className="type-body-sm text-muted-foreground">
-                    Aucun véhicule lié à ce contrat. Liez-le depuis{" "}
+                    {t("vehicle.none")}{" "}
                     <Link href="/leasing" className="text-primary underline underline-offset-4">
-                      Clients &amp; contrats
+                      {t("vehicle.linkHere")}
                     </Link>
                     .
                   </p>
@@ -575,7 +576,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
 
         {/* Sticky, so assignee and residual value stay visible while scrolling. */}
         <aside className="bg-card border-border rounded-md border p-5 lg:sticky lg:top-20">
-          <h2 className="type-title mb-4">Résumé</h2>
+          <h2 className="type-title mb-4">{t("summary")}</h2>
 
           <div className="space-y-4">
             <div>
@@ -583,7 +584,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 htmlFor="assignee"
                 className="type-label text-muted-foreground mb-1.5 block"
               >
-                Responsable
+                {t("assignee")}
               </label>
               <Select
                 value={data.assigneeId ?? "none"}
@@ -592,11 +593,11 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 }}
               >
                 <SelectTrigger id="assignee" className="w-full">
-                  <SelectValue placeholder="Non assigné" />
+                  <SelectValue placeholder={tCases("unassigned")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none" disabled>
-                    Non assigné
+                    {tCases("unassigned")}
                   </SelectItem>
                   {(assignees.data ?? []).map((person) => (
                     <SelectItem key={person.id} value={person.id}>
@@ -616,19 +617,19 @@ function CaseDetail({ caseId }: { caseId: string }) {
               columns={1}
               items={[
                 {
-                  label: "Valeur résiduelle initiale",
+                  label: t("residualValue"),
                   value: (
                     <span className="tabular">
-                      {formatMoney(data.initialResidualValueCents, data.currencyCode)}
+                      {format.money(data.initialResidualValueCents, data.currencyCode)}
                     </span>
                   ),
                 },
-                { label: "Ouvert le", value: formatDate(data.createdAt) },
+                { label: t("openedOn"), value: format.date(data.createdAt) },
                 {
-                  label: "Dernière action",
-                  value: formatRelative(data.lastActionAt ?? data.createdAt),
+                  label: t("lastAction"),
+                  value: format.relative(data.lastActionAt ?? data.createdAt),
                 },
-                { label: "Phase depuis", value: formatDate(data.phaseStartedAt) },
+                { label: t("phaseSince"), value: format.date(data.phaseStartedAt) },
               ]}
             />
           </div>

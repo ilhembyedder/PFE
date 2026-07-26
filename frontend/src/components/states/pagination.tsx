@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +22,8 @@ export function Pagination({
   totalPages: number;
   onPageChange: (page: number) => void;
 }) {
+  const t = useTranslations("common");
+
   if (totalElements === 0) return null;
 
   const from = page * size + 1;
@@ -28,11 +31,11 @@ export function Pagination({
 
   return (
     <nav
-      aria-label="Pagination"
+      aria-label={t("pagination")}
       className="mt-4 flex flex-wrap items-center justify-between gap-3"
     >
       <p className="type-body-sm text-muted-foreground tabular" aria-live="polite">
-        {from}–{to} sur {totalElements}
+        {t("paginationRange", { from, to, total: totalElements })}
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -42,7 +45,7 @@ export function Pagination({
           onClick={() => onPageChange(page - 1)}
         >
           <ChevronLeft aria-hidden />
-          Précédent
+          {t("previous")}
         </Button>
         <span className="type-body-sm text-muted-foreground tabular px-1">
           {page + 1} / {Math.max(totalPages, 1)}
@@ -53,7 +56,7 @@ export function Pagination({
           disabled={page + 1 >= totalPages}
           onClick={() => onPageChange(page + 1)}
         >
-          Suivant
+          {t("next")}
           <ChevronRight aria-hidden />
         </Button>
       </div>

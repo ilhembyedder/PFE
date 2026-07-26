@@ -2,6 +2,7 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +22,13 @@ import { Button } from "@/components/ui/button";
  */
 export function ThemeToggle() {
   const { setTheme } = useTheme();
+  const t = useTranslations("theme");
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon-sm" aria-label="Changer de thème">
+          <Button variant="ghost" size="icon-sm" aria-label={t("toggle")}>
             <Sun className="dark:hidden" aria-hidden />
             <Moon className="hidden dark:block" aria-hidden />
           </Button>
@@ -35,15 +37,15 @@ export function ThemeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Sun aria-hidden />
-          Clair
+          {t("light")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           <Moon aria-hidden />
-          Sombre
+          {t("dark")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
           <Monitor aria-hidden />
-          Système
+          {t("system")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

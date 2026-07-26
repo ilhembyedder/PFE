@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -22,22 +23,29 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "LeasRecover",
-  description: "Plateforme de recouvrement pour sociétés de leasing",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app");
+  return { title: t("name"), description: t("description") };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Declared from the resolved locale, not hardcoded. The previous build
+  // shipped lang="en" on an entirely French interface.
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <html
-      lang="fr"
+      lang={locale}
       suppressHydrationWarning
       className={cn(plexSans.variable, plexMono.variable)}
     >
       <body className="font-sans type-body antialiased">
-        <Providers>{children}</Providers>
+        <Providers locale={locale} messages={messages}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

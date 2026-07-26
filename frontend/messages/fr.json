@@ -1,0 +1,460 @@
+{
+  "app": {
+    "name": "LeasRecover",
+    "tagline": "Plateforme de recouvrement",
+    "description": "Plateforme de recouvrement pour sociétés de leasing"
+  },
+
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "retry": "Réessayer",
+    "open": "Consulter",
+    "download": "Télécharger",
+    "search": "Rechercher",
+    "reset": "Réinitialiser",
+    "publish": "Publier",
+    "none": "Aucun",
+    "dash": "—",
+    "days": "jours",
+    "months": "mois",
+    "loading": "Chargement…",
+    "unsavedChanges": "Modifications non enregistrées",
+    "saved": "Enregistré",
+    "irreversible": "Cette action est irréversible.",
+    "skipToContent": "Aller au contenu",
+    "breadcrumb": "Fil d'Ariane",
+    "pagination": "Pagination",
+    "paginationRange": "{from}–{to} sur {total}",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+
+  "errors": {
+    "generic": "Une erreur est survenue.",
+    "network": "Connexion au serveur impossible.",
+    "unauthorized": "Session expirée. Reconnectez-vous.",
+    "forbidden": "Vous n'avez pas les droits nécessaires.",
+    "notFound": "Ressource introuvable.",
+    "conflict": "Cette action n'est plus possible : le dossier a changé.",
+    "tooLarge": "Ce fichier dépasse la taille maximale de 10 Mo.",
+    "unsupportedType": "Format de fichier non accepté.",
+    "badGateway": "Réponse invalide reçue du serveur.",
+    "unavailable": "Connexion au serveur impossible.",
+    "pageTitle": "Cette page n'a pas pu être chargée",
+    "renderTitle": "Cette page n'a pas pu s'afficher",
+    "renderBody": "L'erreur a été enregistrée. Vous pouvez réessayer sans perdre votre session.",
+    "reference": "Référence",
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "Cette adresse ne correspond à aucune page de la plateforme.",
+    "backToCases": "Retour aux dossiers",
+    "downloadFailed": "Le fichier n'a pas pu être téléchargé.",
+    "emptyFile": "Ce fichier est vide.",
+    "noFile": "Aucun fichier fourni."
+  },
+
+  "empty": {
+    "noResultsTitle": "Aucun résultat",
+    "noResultsBody": "Aucun élément ne correspond aux filtres appliqués.",
+    "resetFilters": "Réinitialiser les filtres"
+  },
+
+  "nav": {
+    "main": "Navigation principale",
+    "sidebar": "Barre latérale",
+    "openNav": "Ouvrir la navigation",
+    "cases": "Dossiers",
+    "leasing": "Clients & contrats",
+    "settings": "Paramètres",
+    "tenants": "Sociétés",
+    "account": "Compte et préférences",
+    "signOut": "Se déconnecter",
+    "platformNotice": "Console plateforme — accès aux dossiers clients désactivé.",
+    "idleWarning": "Votre session expire dans 1 minute.",
+    "stayConnected": "Rester connecté"
+  },
+
+  "theme": {
+    "toggle": "Changer de thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+
+  "language": {
+    "label": "Langue",
+    "change": "Changer de langue"
+  },
+
+  "roles": {
+    "SUPER_ADMIN": "Super administrateur",
+    "ADMIN": "Administrateur",
+    "GESTIONNAIRE": "Gestionnaire"
+  },
+
+  "phases": {
+    "PRE_CONTENTIEUX": "Pré-contentieux",
+    "MISE_EN_DEMEURE": "Mise en demeure",
+    "SAISIE": "Saisie du véhicule",
+    "VENTE": "Vente",
+    "CLOTURE": "Clôture"
+  },
+
+  "phasesShort": {
+    "PRE_CONTENTIEUX": "Pré-contentieux",
+    "MISE_EN_DEMEURE": "Mise en demeure",
+    "SAISIE": "Saisie",
+    "VENTE": "Vente",
+    "CLOTURE": "Clôture"
+  },
+
+  "reliability": {
+    "RELIABLE": "Fiable",
+    "MODERATE_RISK": "Écart modéré",
+    "CRITICAL_RISK": "Écart critique",
+    "NOT_COMPUTABLE": "Non calculable",
+    "NOT_VALUED": "Non estimé"
+  },
+
+  "alertTypes": {
+    "DORMANCY": "Dossier dormant",
+    "DEADLINE": "Échéance",
+    "MISSING_PREREQUISITE": "Prérequis manquant",
+    "VEHICLE_DISCREPANCY": "Incohérence véhicule"
+  },
+
+  "criticality": {
+    "CRITICAL": "Critique",
+    "WARNING": "Avertissement"
+  },
+
+  "status": {
+    "ACTIVE": "Actif",
+    "SUSPENDED": "Suspendu",
+    "TERMINATED": "Résilié",
+    "INACTIVE": "Inactive"
+  },
+
+  "login": {
+    "accountType": "Type de compte",
+    "tenant": "Société",
+    "platform": "Plateforme",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "tenantId": "Identifiant de société",
+    "tenantIdHint": "Fourni par votre administrateur.",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "submit": "Se connecter",
+    "expired": "Votre session a expiré. Reconnectez-vous.",
+    "emailRequired": "Adresse e-mail requise.",
+    "emailInvalid": "Adresse e-mail invalide.",
+    "passwordRequired": "Mot de passe requis.",
+    "tenantIdInvalid": "Identifiant de société invalide.",
+    "rejected": "Adresse e-mail, mot de passe ou identifiant de société incorrect.",
+    "suspended": "Ce compte est désactivé. Contactez votre administrateur.",
+    "unreachable": "Connexion au serveur impossible. Réessayez dans un instant."
+  },
+
+  "cases": {
+    "title": "Dossiers",
+    "subtitle": "{count, plural, =0 {Aucun dossier} one {# dossier au total} other {# dossiers au total}}",
+    "new": "Nouveau dossier",
+    "priorityAlerts": "Alertes prioritaires",
+    "alertsFailed": "Les alertes n'ont pas pu être chargées.",
+    "filterPlaceholder": "Filtrer cette page par client ou référence",
+    "filterLabel": "Filtrer par client ou référence",
+    "filterPhase": "Filtrer par phase",
+    "filterStatus": "Filtrer par statut",
+    "filterReliability": "Filtrer par fiabilité",
+    "allPhases": "Toutes les phases",
+    "allStatuses": "Tous les statuts",
+    "allReliabilities": "Toutes fiabilités",
+    "emptyTitle": "Aucun dossier pour le moment",
+    "emptyBody": "Créez un dossier de recouvrement pour lancer le suivi d'un contrat en défaut.",
+    "openCase": "Ouvrir le dossier de {client}",
+    "columns": {
+      "client": "Client",
+      "reference": "Référence",
+      "phase": "Phase",
+      "assignee": "Responsable",
+      "reliability": "Fiabilité",
+      "lastAction": "Dernière action"
+    },
+    "unassigned": "Non assigné",
+    "actions": {
+      "addNote": "Ajouter une note",
+      "advancePhase": "Faire avancer la phase",
+      "uploadReport": "Téléverser un rapport",
+      "checkVehicle": "Vérifier le véhicule",
+      "openCase": "Ouvrir le dossier"
+    }
+  },
+
+  "caseDetail": {
+    "fallbackTitle": "Dossier",
+    "export": "Exporter",
+    "advance": "Avancer la phase",
+    "advanceTo": "Passer en {phase}",
+    "closed": "Dossier clôturé",
+    "currentPhase": "Phase actuelle : {phase}, étape {index} sur {total}.",
+    "blockedTitle": "Passage en « {phase} » bloqué",
+    "blockedGeneric": "Progression bloquée",
+    "blockedAction": "Téléverser un rapport d'expertise",
+    "summary": "Résumé",
+    "assignee": "Responsable",
+    "residualValue": "Valeur résiduelle initiale",
+    "openedOn": "Ouvert le",
+    "lastAction": "Dernière action",
+    "phaseSince": "Phase depuis",
+    "tabs": {
+      "details": "Détails",
+      "notes": "Notes",
+      "history": "Historique",
+      "documents": "Documents"
+    },
+    "client": {
+      "title": "Client",
+      "name": "Nom ou raison sociale",
+      "registration": "Numéro d'immatriculation",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "address": "Adresse"
+    },
+    "contract": {
+      "title": "Contrat",
+      "reference": "Référence",
+      "status": "Statut",
+      "startDate": "Date de début",
+      "endDate": "Date de fin"
+    },
+    "vehicle": {
+      "title": "Véhicule",
+      "vin": "VIN",
+      "plate": "Immatriculation",
+      "brand": "Marque",
+      "model": "Modèle",
+      "year": "Année",
+      "none": "Aucun véhicule lié à ce contrat. Liez-le depuis",
+      "linkHere": "Clients & contrats"
+    },
+    "notes": {
+      "add": "Ajouter une note",
+      "placeholder": "Décrivez l'action réalisée ou l'information à conserver.",
+      "empty": "Aucune note. Les notes constituent la trace des actions réalisées sur le dossier."
+    },
+    "history": {
+      "empty": "Aucun événement enregistré pour ce dossier.",
+      "system": "Système"
+    },
+    "documents": {
+      "emptyPhase": "Aucun document pour cette phase.",
+      "emptyEntity": "Aucun document rattaché."
+    },
+    "edit": {
+      "title": "Modifier le dossier",
+      "description": "Les modifications sont enregistrées dans l'historique du dossier.",
+      "clientName": "Nom du client",
+      "contractReference": "Référence du contrat",
+      "currency": "Devise",
+      "nameRequired": "Le nom du client est requis.",
+      "referenceRequired": "La référence du contrat est requise.",
+      "residualPositive": "La valeur résiduelle doit être strictement positive."
+    }
+  },
+
+  "valuation": {
+    "title": "Estimation de valeur",
+    "marketValue": "Valeur de marché",
+    "marketValueEstimated": "Valeur de marché estimée",
+    "residualValue": "Valeur résiduelle",
+    "regionLabel": "Résultat de l'analyse",
+    "regionLabelFor": "Résultat de l'analyse pour {vehicle}",
+    "viewSource": "Voir le rapport source",
+    "provenance": "Extrait du rapport : {details}",
+    "below": "soit {amount} sous la valeur résiduelle",
+    "above": "soit {amount} au-dessus de la valeur résiduelle",
+    "unavailable": "écart indisponible",
+    "timesLower": "la valeur de marché est {ratio} fois inférieure à la valeur résiduelle",
+    "clamped": "> 999 %",
+    "notComputable": "La valeur résiduelle du contrat est nulle. L'écart ne peut pas être calculé.",
+    "unusual": "Écart inhabituel. Vérifiez la valeur résiduelle du contrat.",
+    "fixCase": "Corriger le dossier",
+    "none": "Aucune estimation. Téléversez un rapport d'expertise pour lancer l'analyse.",
+    "goToDocuments": "Aller aux documents"
+  },
+
+  "upload": {
+    "expertise": "Téléverser le rapport d'expertise",
+    "document": "Téléverser un document",
+    "expertiseHint": "PDF uniquement, 10 Mo maximum. L'analyse démarre automatiquement.",
+    "documentHint": "PDF, JPEG ou PNG, 10 Mo maximum.",
+    "pdfOnly": "Le rapport d'expertise doit être un fichier PDF.",
+    "sending": "Envoi du document…",
+    "progress": "Progression de l'analyse",
+    "done": "Analyse terminée. L'estimation est disponible.",
+    "uploadAnother": "Téléverser un autre document",
+    "failedGeneric": "Le document est illisible ou n'est pas un rapport d'expertise valide.",
+    "timedOut": "L'analyse n'a pas répondu. Le traitement est peut-être toujours en cours ; réessayez dans un instant."
+  },
+
+  "newCase": {
+    "title": "Nouveau dossier",
+    "subtitle": "Renseignez le client, le contrat et le véhicule concernés.",
+    "submit": "Créer le dossier",
+    "sections": {
+      "existing": "Contrat existant",
+      "client": "Client",
+      "contract": "Contrat",
+      "vehicle": "Véhicule",
+      "financial": "Données financières"
+    },
+    "existingLabel": "Reprendre un contrat déjà enregistré",
+    "existingPlaceholder": "Optionnel — saisir manuellement ci-dessous",
+    "existingManual": "Saisir manuellement",
+    "existingHint": "Les sections suivantes seront pré-remplies.",
+    "matchedClient": "Client existant. Ses informations ne seront pas modifiées.",
+    "editClient": "Modifier ce client",
+    "otherClient": "Saisir un autre client",
+    "residualHint": "Référence de toute comparaison avec la valeur de marché estimée.",
+    "startedOn": "Contrat démarré le {date}.",
+    "validation": "{count, plural, one {# champ à corriger} other {# champs à corriger}}",
+    "nameRequired": "Le nom du client est requis.",
+    "referenceRequired": "La référence du contrat est requise.",
+    "vinRequired": "Le VIN du véhicule est requis.",
+    "residualPositive": "La valeur résiduelle initiale doit être strictement positive.",
+    "endAfterStart": "La date de fin doit être postérieure à la date de début.",
+    "yearRange": "L'année du véhicule doit être comprise entre 1900 et {max}."
+  },
+
+  "leasing": {
+    "title": "Clients & contrats",
+    "subtitle": "Données de référence rattachées aux dossiers de recouvrement.",
+    "tabs": { "clients": "Clients", "contracts": "Contrats" },
+    "newClient": "Nouveau client",
+    "newContract": "Nouveau contrat",
+    "searchClient": "Rechercher un client",
+    "searchContract": "Rechercher un contrat",
+    "clientsEmptyTitle": "Aucun client enregistré",
+    "clientsEmptyBody": "Ajoutez un client pour pouvoir créer des contrats et des dossiers.",
+    "contractsEmptyTitle": "Aucun contrat enregistré",
+    "contractsEmptyBody": "Créez un contrat pour rattacher un véhicule et ouvrir un dossier.",
+    "clientColumns": { "client": "Client", "registration": "Immatriculation", "email": "E-mail" },
+    "contractColumns": { "reference": "Référence", "client": "Client", "status": "Statut", "vehicle": "Véhicule" },
+    "vehicleNotLinked": "Non lié",
+    "clientNew": "Nouveau client",
+    "clientNewHint": "Les clients peuvent ensuite être rattachés à des contrats.",
+    "clientNoRegistration": "Aucun numéro d'immatriculation",
+    "createdOn": "Créé le",
+    "contractsCount": "Contrats ({count})",
+    "noContracts": "Aucun contrat rattaché à ce client.",
+    "documents": "Documents",
+    "contractDocuments": "Documents du contrat",
+    "vehicleDocuments": "Documents du véhicule",
+    "contractNew": "Nouveau contrat",
+    "contractNewHint": "Rattaché à un client",
+    "selectClient": "Sélectionner un client",
+    "clientRequired": "Un client doit être sélectionné.",
+    "nameRequired": "Le nom est requis.",
+    "referenceRequired": "La référence est requise.",
+    "endAfterStart": "La date de fin doit être postérieure à la date de début.",
+    "deleteTitle": "Supprimer {name} ?",
+    "deleteClientLinked": "{count, plural, one {Ce client est lié à # contrat.} other {Ce client est lié à # contrats.}}",
+    "deleteClientNone": "Aucun contrat n'est rattaché à ce client.",
+    "deleteContractVehicle": "Un véhicule est rattaché à ce contrat.",
+    "deleteContractNone": "Aucun véhicule n'est rattaché à ce contrat.",
+    "deleteClientAria": "Supprimer {name}",
+    "deleteContractAria": "Supprimer le contrat {reference}",
+    "vehicle": {
+      "none": "Aucun véhicule rattaché à ce contrat.",
+      "link": "Lier un véhicule",
+      "edit": "Modifier le véhicule",
+      "vinRequired": "Le VIN est requis.",
+      "vinAlphanumeric": "Le VIN ne doit contenir que des lettres et des chiffres.",
+      "yearRange": "L'année doit être comprise entre 1900 et {max}."
+    }
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Configuration de votre société et des règles de conformité.",
+    "sections": "Sections des paramètres",
+    "tabs": { "tenant": "Société", "compliance": "Conformité" },
+    "branding": {
+      "title": "Identité de la société",
+      "name": "Nom de la société",
+      "logoUrl": "URL du logo",
+      "logoHint": "Affiché dans la barre latérale. Format carré recommandé.",
+      "preview": "Aperçu",
+      "nameRequired": "Le nom de la société est requis.",
+      "urlInvalid": "L'URL du logo doit commencer par http:// ou https://.",
+      "imageFailed": "L'image n'a pas pu être chargée. Les initiales seront utilisées."
+    },
+    "compliance": {
+      "dormancyTitle": "Dormance",
+      "dormancyHint": "Un dossier sans action pendant cette durée déclenche une alerte.",
+      "dormancyLabel": "Seuil de dormance",
+      "delaysTitle": "Délais légaux par phase",
+      "delaysHint": "Durée maximale d'une phase avant alerte d'échéance. Une alerte d'avertissement est émise 2 jours avant l'expiration.",
+      "thresholdsTitle": "Seuils d'écart IA",
+      "thresholdsHint": "Détermine l'indicateur de fiabilité affiché sur chaque estimation.",
+      "moderateFrom": "Écart modéré à partir de",
+      "criticalFrom": "Écart critique à partir de",
+      "previewTitle": "Résultat de cette configuration",
+      "previewInvalid": "Configuration invalide : le seuil modéré doit être inférieur au seuil critique.",
+      "bandReliable": "écart < {value} %",
+      "bandModerate": "de {from} à {to} %",
+      "bandCritical": "≥ {value} %",
+      "validation": "{count, plural, one {# valeur à corriger} other {# valeurs à corriger}}",
+      "dormancyPositive": "Le seuil de dormance doit être un nombre de jours positif.",
+      "delayPositive": "Le délai de la phase « {phase} » doit être positif.",
+      "moderateRange": "Le seuil d'écart modéré doit être compris entre 0 et 100.",
+      "criticalRange": "Le seuil d'écart critique doit être compris entre 0 et 100.",
+      "moderateBelowCritical": "Le seuil modéré doit être strictement inférieur au seuil critique.",
+      "partialDelays": "Les seuils d'écart IA ont été enregistrés, mais les délais n'ont pas pu l'être : {reason}",
+      "partialThresholds": "Les délais ont été enregistrés, mais les seuils d'écart IA n'ont pas pu l'être : {reason}"
+    }
+  },
+
+  "tenants": {
+    "title": "Sociétés",
+    "subtitle": "Sociétés de leasing provisionnées sur la plateforme.",
+    "new": "Nouvelle société",
+    "emptyTitle": "Aucune société enregistrée",
+    "emptyBody": "Provisionnez une société de leasing pour lui donner accès à la plateforme.",
+    "columns": {
+      "company": "Société",
+      "identifier": "Identifiant",
+      "status": "Statut",
+      "createdAt": "Créée le"
+    },
+    "active": "Active",
+    "deactivate": "Désactiver",
+    "deactivateTitle": "Désactiver {name} ?",
+    "deactivateBody": "Ses utilisateurs ne pourront plus se connecter. Les données sont conservées.",
+    "provisionHint": "Provisionne un schéma isolé et le premier compte administrateur.",
+    "companySection": "Société",
+    "adminSection": "Premier administrateur",
+    "name": "Nom",
+    "logoUrl": "URL du logo",
+    "retention": "Rétention des données",
+    "adminEmail": "Adresse e-mail",
+    "adminPassword": "Mot de passe",
+    "generatePassword": "Générer un mot de passe",
+    "passwordHint": "{min} caractères minimum. Il ne sera affiché qu'une seule fois.",
+    "provision": "Provisionner",
+    "nameRequired": "Le nom de la société est requis.",
+    "emailInvalid": "L'adresse e-mail de l'administrateur est invalide.",
+    "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères.",
+    "copy": "Copier {label}",
+    "handoffTitle": "{name} est provisionnée",
+    "handoffHint": "Transmettez ces accès à l'administrateur de la société.",
+    "handoffWarning": "Le mot de passe ne sera plus affiché et ne peut pas être réinitialisé depuis la plateforme. Transmettez-le maintenant.",
+    "handoffTenantId": "Identifiant de société",
+    "handoffNote": "L'identifiant de société est requis à la connexion, en plus de l'adresse e-mail et du mot de passe.",
+    "handoffDone": "J'ai transmis les accès"
+  }
+}

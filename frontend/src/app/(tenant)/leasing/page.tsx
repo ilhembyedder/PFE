@@ -42,7 +42,8 @@ import {
   useSaveClient,
   useSaveContract,
 } from "@/lib/query/hooks";
-import { formatDate, statusLabel } from "@/lib/format";
+import { useTranslations } from "next-intl";
+import { useFormat, useLabels } from "@/lib/use-format";
 import type { Client, Contract } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -57,13 +58,14 @@ import { cn } from "@/lib/utils";
 type Tab = "clients" | "contracts";
 
 function EntityDocuments({ entityType, entityId }: { entityType: string; entityId: string }) {
+  const t = useTranslations("caseDetail.documents");
   const documents = useEntityDocuments(entityType, entityId);
   return (
     <DocumentList
       documents={documents.data ?? []}
       isPending={documents.isPending}
       downloadHref={(doc) => `/api/documents/${doc.id}/download`}
-      emptyLabel="Aucun document rattaché."
+      emptyLabel={t("emptyEntity")}
     />
   );
 }
@@ -75,6 +77,11 @@ function ClientSheet({
   client: Client | null;
   onClose: () => void;
 }) {
+  const t = useTranslations("leasing");
+  const tRoot = useTranslations();
+  const tCommon = useTranslations("common");
+  const format = useFormat();
+  const labels = useLabels();
   const save = useSaveClient();
   const contracts = useContracts();
   const [editing, setEditing] = useState(false);
@@ -91,7 +98,7 @@ function ClientSheet({
 
   const submit = async () => {
     setError(null);
-    if (!form.fullNameOrCompany.trim()) return setError("Le nom est requis.");
+    if (!form.fullNameOrCompany.trim()) return setError(t("nameRequired"));
     try {
       await save.mutateAsync({ id: client?.id, ...form });
       onClose();
@@ -107,12 +114,12 @@ function ClientSheet({
     <>
       <SheetHeader>
         <SheetTitle>
-          {isNew ? "Nouveau client" : (client?.fullNameOrCompany ?? "Client")}
+          {isNew ? t("clientNew") : (client?.fullNameOrCompany ?? t("clientColumns.client"))}
         </SheetTitle>
         <SheetDescription>
           {isNew
-            ? "Les clients peuvent ensuite être rattachés à des contrats."
-            : client?.registrationNumber || "Aucun numéro d'immatriculation"}
+            ? t("clientNewHint")
+            : client?.registrationNumber || t("clientNoRegistration")}
         </SheetDescription>
       </SheetHeader>
 
@@ -123,15 +130,15 @@ function ClientSheet({
           <div className="space-y-4">
             {(
               [
-                ["fullNameOrCompany", "Nom ou raison sociale", "text"],
-                ["registrationNumber", "Numéro d'immatriculation", "text"],
-                ["contactEmail", "E-mail", "email"],
-                ["contactPhone", "Téléphone", "tel"],
-                ["address", "Adresse", "text"],
+                ["fullNameOrCompany", "caseDetail.client.name", "text"],
+                ["registrationNumber", "caseDetail.client.registration", "text"],
+                ["contactEmail", "caseDetail.client.email", "email"],
+                ["contactPhone", "caseDetail.client.phone", "tel"],
+                ["address", "caseDetail.client.address", "text"],
               ] as const
-            ).map(([key, label, type]) => (
+            ).map(([key, labelKey, type]) => (
               <div key={key} className="space-y-1.5">
-                <Label htmlFor={`client-${key}`}>{label}</Label>
+                <Label htmlFor={`client-${key}`}>{tRoot(labelKey)}</Label>
                 <Input
                   id={`client-${key}`}
                   type={type}
@@ -148,14 +155,14 @@ function ClientSheet({
           <>
             <DefinitionList
               items={[
-                { label: "E-mail", value: client?.contactEmail },
-                { label: "Téléphone", value: client?.contactPhone },
-                { label: "Adresse", value: client?.address },
-                { label: "Créé le", value: formatDate(client?.createdAt) },
+                { label: tRoot("caseDetail.client.email"), value: client?.contactEmail },
+                { label: tRoot("caseDetail.client.phone"), value: client?.contactPhone },
+                { label: tRoot("caseDetail.client.address"), value: client?.address },
+                { label: t("createdOn"), value: format.date(client?.createdAt) },
               ]}
             />
 
-            <Panel title={`Contrats (${linked.length})`}>
+            <Panel title={t("contractsCount", { count: linked.length })}>
               {linked.length ? (
                 <ul className="divide-border divide-y">
                   {linked.map((contract) => (
@@ -163,19 +170,17 @@ function ClientSheet({
                       <span className="type-identifier flex-1 truncate">
                         {contract.referenceNumber}
                       </span>
-                      <Chip>{statusLabel(contract.status)}</Chip>
+                      <Chip>{labels.status(contract.status)}</Chip>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="type-body-sm text-muted-foreground">
-                  Aucun contrat rattaché à ce client.
-                </p>
+                <p className="type-body-sm text-muted-foreground">{t("noContracts")}</p>
               )}
             </Panel>
 
             {client ? (
-              <Panel title="Documents">
+              <Panel title={t("documents")}>
                 <EntityDocuments entityType="client" entityId={client.id} />
               </Panel>
             ) : null}
@@ -190,16 +195,16 @@ function ClientSheet({
               variant="ghost"
               onClick={() => (isNew ? onClose() : setEditing(false))}
             >
-              Annuler
+              {tCommon("cancel")}
             </Button>
             <Button onClick={() => void submit()} disabled={save.isPending}>
               {save.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-              Enregistrer
+              {tCommon("save")}
             </Button>
           </>
         ) : (
           <Button variant="outline" onClick={() => setEditing(true)}>
-            Modifier
+            {tCommon("edit")}
           </Button>
         )}
       </SheetFooter>
@@ -214,6 +219,11 @@ function ContractSheet({
   contract: Contract | null;
   onClose: () => void;
 }) {
+  const t = useTranslations("leasing");
+  const tRoot = useTranslations();
+  const tCommon = useTranslations("common");
+  const labels = useLabels();
+  const format = useFormat();
   const save = useSaveContract();
   const clients = useClients();
   const [editing, setEditing] = useState(false);
@@ -228,10 +238,10 @@ function ContractSheet({
 
   const submit = async () => {
     setError(null);
-    if (!form.referenceNumber.trim()) return setError("La référence est requise.");
-    if (!form.clientId) return setError("Un client doit être sélectionné.");
+    if (!form.referenceNumber.trim()) return setError(t("referenceRequired"));
+    if (!form.clientId) return setError(t("clientRequired"));
     if (form.startDate && form.endDate && form.endDate <= form.startDate) {
-      return setError("La date de fin doit être postérieure à la date de début.");
+      return setError(t("endAfterStart"));
     }
     try {
       await save.mutateAsync({
@@ -253,9 +263,9 @@ function ContractSheet({
     <>
       <SheetHeader>
         <SheetTitle>
-          {isNew ? "Nouveau contrat" : (contract?.referenceNumber ?? "Contrat")}
+          {isNew ? t("contractNew") : (contract?.referenceNumber ?? tRoot("caseDetail.contract.title"))}
         </SheetTitle>
-        <SheetDescription>{contract?.clientName ?? "Rattaché à un client"}</SheetDescription>
+        <SheetDescription>{contract?.clientName ?? t("contractNewHint")}</SheetDescription>
       </SheetHeader>
 
       <div className="space-y-5 overflow-y-auto px-4">
@@ -264,7 +274,7 @@ function ContractSheet({
         {showForm ? (
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="contract-client">Client</Label>
+              <Label htmlFor="contract-client">{t("contractColumns.client")}</Label>
               <select
                 id="contract-client"
                 value={form.clientId}
@@ -273,7 +283,7 @@ function ContractSheet({
                 }
                 className="border-input bg-card type-body focus-visible:focus-ring h-9 w-full rounded-md border px-3 outline-none"
               >
-                <option value="">Sélectionner un client</option>
+                <option value="">{t("selectClient")}</option>
                 {(clients.data ?? []).map((client) => (
                   <option key={client.id} value={client.id}>
                     {client.fullNameOrCompany}
@@ -282,7 +292,7 @@ function ContractSheet({
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contract-reference">Référence</Label>
+              <Label htmlFor="contract-reference">{t("contractColumns.reference")}</Label>
               <Input
                 id="contract-reference"
                 className="type-identifier"
@@ -294,7 +304,7 @@ function ContractSheet({
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="contract-start">Date de début</Label>
+                <Label htmlFor="contract-start">{tRoot("caseDetail.contract.startDate")}</Label>
                 <Input
                   id="contract-start"
                   type="date"
@@ -305,7 +315,7 @@ function ContractSheet({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="contract-end">Date de fin</Label>
+                <Label htmlFor="contract-end">{tRoot("caseDetail.contract.endDate")}</Label>
                 <Input
                   id="contract-end"
                   type="date"
@@ -321,26 +331,26 @@ function ContractSheet({
           <>
             <DefinitionList
               items={[
-                { label: "Client", value: contract?.clientName },
-                { label: "Statut", value: statusLabel(contract?.status) },
-                { label: "Date de début", value: formatDate(contract?.startDate) },
-                { label: "Date de fin", value: formatDate(contract?.endDate) },
+                { label: t("contractColumns.client"), value: contract?.clientName },
+                { label: t("contractColumns.status"), value: labels.status(contract?.status) },
+                { label: tRoot("caseDetail.contract.startDate"), value: format.date(contract?.startDate) },
+                { label: tRoot("caseDetail.contract.endDate"), value: format.date(contract?.endDate) },
               ]}
             />
 
             {contract ? (
               <>
                 {/* Inline, not a modal stacked on this sheet. */}
-                <Panel title="Véhicule">
+                <Panel title={tRoot("caseDetail.vehicle.title")}>
                   <VehicleForm contract={contract} />
                 </Panel>
 
-                <Panel title="Documents du contrat">
+                <Panel title={t("contractDocuments")}>
                   <EntityDocuments entityType="contract" entityId={contract.id} />
                 </Panel>
 
                 {contract.vehicleId ? (
-                  <Panel title="Documents du véhicule">
+                  <Panel title={t("vehicleDocuments")}>
                     <EntityDocuments entityType="vehicle" entityId={contract.vehicleId} />
                   </Panel>
                 ) : null}
@@ -354,16 +364,16 @@ function ContractSheet({
         {showForm ? (
           <>
             <Button variant="ghost" onClick={() => (isNew ? onClose() : setEditing(false))}>
-              Annuler
+              {tCommon("cancel")}
             </Button>
             <Button onClick={() => void submit()} disabled={save.isPending}>
               {save.isPending ? <Loader2 className="animate-spin" aria-hidden /> : null}
-              Enregistrer
+              {tCommon("save")}
             </Button>
           </>
         ) : (
           <Button variant="outline" onClick={() => setEditing(true)}>
-            Modifier
+            {tCommon("edit")}
           </Button>
         )}
       </SheetFooter>
@@ -372,6 +382,9 @@ function ContractSheet({
 }
 
 function LeasingRegistry() {
+  const t = useTranslations("leasing");
+  const tCommon = useTranslations("common");
+  const labels = useLabels();
   const router = useRouter();
   const params = useSearchParams();
   const tab: Tab = params.get("tab") === "contracts" ? "contracts" : "clients";
@@ -427,19 +440,19 @@ function LeasingRegistry() {
     () => [
       {
         accessorKey: "fullNameOrCompany",
-        header: "Client",
+        header: t("clientColumns.client"),
         cell: ({ row }) => <span className="font-medium">{row.original.fullNameOrCompany}</span>,
       },
       {
         accessorKey: "registrationNumber",
-        header: "Immatriculation",
+        header: t("clientColumns.registration"),
         cell: ({ row }) => (
           <span className="type-identifier text-muted-foreground">
             {row.original.registrationNumber ?? "—"}
           </span>
         ),
       },
-      { accessorKey: "contactEmail", header: "E-mail" },
+      { accessorKey: "contactEmail", header: t("clientColumns.email") },
       {
         id: "actions",
         header: "",
@@ -450,12 +463,12 @@ function LeasingRegistry() {
               size="sm"
               onClick={() => setSheet({ kind: "client", value: row.original })}
             >
-              Consulter
+              {tCommon("open")}
             </Button>
             <Button
               variant="ghost"
               size="icon-sm"
-              aria-label={`Supprimer ${row.original.fullNameOrCompany}`}
+              aria-label={t("deleteClientAria", { name: row.original.fullNameOrCompany })}
               onClick={() => {
                 const linked = (contracts.data ?? []).filter(
                   (c) => c.clientId === row.original.id,
@@ -467,8 +480,8 @@ function LeasingRegistry() {
                   // The backend performs no referential check, so the count
                   // is surfaced here rather than discovered afterwards.
                   detail: linked
-                    ? `Ce client est lié à ${linked} contrat${linked > 1 ? "s" : ""}.`
-                    : "Aucun contrat n'est rattaché à ce client.",
+                    ? t("deleteClientLinked", { count: linked })
+                    : t("deleteClientNone"),
                 });
               }}
             >
@@ -478,7 +491,7 @@ function LeasingRegistry() {
         ),
       },
     ],
-    [contracts.data],
+    [contracts.data, t, tCommon],
   );
 
   const contractColumns = useMemo<ColumnDef<Contract, unknown>[]>(
@@ -490,22 +503,22 @@ function LeasingRegistry() {
           <span className="type-identifier">{row.original.referenceNumber}</span>
         ),
       },
-      { accessorKey: "clientName", header: "Client" },
+      { accessorKey: "clientName", header: t("contractColumns.client") },
       {
         accessorKey: "status",
-        header: "Statut",
-        cell: ({ row }) => <Chip>{statusLabel(row.original.status)}</Chip>,
+        header: t("contractColumns.status"),
+        cell: ({ row }) => <Chip>{labels.status(row.original.status)}</Chip>,
       },
       {
         accessorKey: "vehicleVin",
-        header: "Véhicule",
+        header: t("contractColumns.vehicle"),
         cell: ({ row }) =>
           row.original.vehicleVin ? (
             <span className="type-identifier text-muted-foreground">
               {row.original.vehicleVin}
             </span>
           ) : (
-            <span className="text-muted-foreground type-body-sm">Non lié</span>
+            <span className="text-muted-foreground type-body-sm">{t("vehicleNotLinked")}</span>
           ),
       },
       {
@@ -518,20 +531,20 @@ function LeasingRegistry() {
               size="sm"
               onClick={() => setSheet({ kind: "contract", value: row.original })}
             >
-              Consulter
+              {tCommon("open")}
             </Button>
             <Button
               variant="ghost"
               size="icon-sm"
-              aria-label={`Supprimer le contrat ${row.original.referenceNumber}`}
+              aria-label={t("deleteContractAria", { reference: row.original.referenceNumber })}
               onClick={() =>
                 setConfirm({
                   kind: "contracts",
                   id: row.original.id,
                   label: row.original.referenceNumber,
                   detail: row.original.vehicleVin
-                    ? "Un véhicule est rattaché à ce contrat."
-                    : "Aucun véhicule n'est rattaché à ce contrat.",
+                    ? t("deleteContractVehicle")
+                    : t("deleteContractNone"),
                 })
               }
             >
@@ -541,7 +554,7 @@ function LeasingRegistry() {
         ),
       },
     ],
-    [],
+    [t, tCommon, labels],
   );
 
   const query = tab === "clients" ? clients : contracts;
@@ -552,8 +565,8 @@ function LeasingRegistry() {
   return (
     <>
       <PageHeader
-        title="Clients & contrats"
-        subtitle="Données de référence rattachées aux dossiers de recouvrement."
+        title={t("title")}
+        subtitle={t("subtitle")}
         actions={
           <Button
             onClick={() =>
@@ -565,7 +578,7 @@ function LeasingRegistry() {
             }
           >
             <Plus aria-hidden />
-            {tab === "clients" ? "Nouveau client" : "Nouveau contrat"}
+            {tab === "clients" ? t("newClient") : t("newContract")}
           </Button>
         }
       />
@@ -573,10 +586,10 @@ function LeasingRegistry() {
       <div className="border-border mb-4 flex gap-1 border-b">
         {(
           [
-            ["clients", "Clients"],
-            ["contracts", "Contrats"],
+            ["clients", "tabs.clients"],
+            ["contracts", "tabs.contracts"],
           ] as const
-        ).map(([value, label]) => (
+        ).map(([value, labelKey]) => (
           <button
             key={value}
             type="button"
@@ -589,7 +602,7 @@ function LeasingRegistry() {
                 : "text-muted-foreground hover:text-foreground border-transparent",
             )}
           >
-            {label}
+            {t(labelKey)}
           </button>
         ))}
       </div>
@@ -598,8 +611,8 @@ function LeasingRegistry() {
         type="search"
         value={search}
         onChange={(event) => setParams({ q: event.target.value })}
-        placeholder={tab === "clients" ? "Rechercher un client" : "Rechercher un contrat"}
-        aria-label="Rechercher"
+        placeholder={tab === "clients" ? t("searchClient") : t("searchContract")}
+        aria-label={tCommon("search")}
         className="mb-4 w-full sm:max-w-xs"
       />
 
@@ -615,12 +628,12 @@ function LeasingRegistry() {
               <NoResultsState onReset={() => setParams({ q: null })} />
             ) : (
               <NoDataState
-                title="Aucun client enregistré"
-                body="Ajoutez un client pour pouvoir créer des contrats et des dossiers."
+                title={t("clientsEmptyTitle")}
+                body={t("clientsEmptyBody")}
                 action={
                   <Button onClick={() => setSheet({ kind: "client", value: null })}>
                     <Plus aria-hidden />
-                    Nouveau client
+                    {t("newClient")}
                   </Button>
                 }
               />
@@ -637,12 +650,12 @@ function LeasingRegistry() {
               <NoResultsState onReset={() => setParams({ q: null })} />
             ) : (
               <NoDataState
-                title="Aucun contrat enregistré"
-                body="Créez un contrat pour rattacher un véhicule et ouvrir un dossier."
+                title={t("contractsEmptyTitle")}
+                body={t("contractsEmptyBody")}
                 action={
                   <Button onClick={() => setSheet({ kind: "contract", value: null })}>
                     <Plus aria-hidden />
-                    Nouveau contrat
+                    {t("newContract")}
                   </Button>
                 }
               />
@@ -665,13 +678,13 @@ function LeasingRegistry() {
       <Dialog open={confirm !== null} onOpenChange={(open) => !open && setConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer {confirm?.label} ?</DialogTitle>
+            <DialogTitle>{t("deleteTitle", { name: confirm?.label ?? "" })}</DialogTitle>
             <DialogDescription>
-              {confirm?.detail} Cette action est irréversible.
+              {confirm?.detail} {tCommon("irreversible")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose render={<Button variant="ghost">Annuler</Button>} />
+            <DialogClose render={<Button variant="ghost">{tCommon("cancel")}</Button>} />
             <Button
               variant="destructive"
               onClick={() => {
@@ -684,7 +697,7 @@ function LeasingRegistry() {
                 });
               }}
             >
-              Supprimer
+              {tCommon("delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

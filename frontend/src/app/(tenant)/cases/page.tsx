@@ -26,16 +26,10 @@ import { AlertRow } from "@/features/cases/components/alert-row";
 import { useCases, usePriorityAlerts } from "@/lib/query/hooks";
 import { queryKeys } from "@/lib/query/keys";
 import { api } from "@/lib/api/client";
-import {
-  PHASE_LABELS,
-  RELIABILITY_LABELS,
-  daysSince,
-  formatDateTime,
-  formatRelative,
-  phaseLabel,
-  reliabilityTone,
-} from "@/lib/format";
-import { PHASES, type CaseListItem, type Phase } from "@/types/api";
+import { useTranslations } from "next-intl";
+import { daysSince, reliabilityTone } from "@/lib/format";
+import { useFormat, useLabels } from "@/lib/use-format";
+import { PHASES, type CaseListItem } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 /**
@@ -50,17 +44,8 @@ import { cn } from "@/lib/utils";
 const PAGE_SIZE = 20;
 const DORMANCY_HINT_DAYS = 30;
 
-const STATUS_OPTIONS = [
-  ["ACTIVE", "Actif"],
-  ["SUSPENDED", "Suspendu"],
-  ["TERMINATED", "Résilié"],
-] as const;
-
-const ALERT_OPTIONS = [
-  ["RELIABLE", "Fiable"],
-  ["MODERATE_RISK", "Écart modéré"],
-  ["CRITICAL_RISK", "Écart critique"],
-] as const;
+const STATUS_OPTIONS = ["ACTIVE", "SUSPENDED", "TERMINATED"] as const;
+const ALERT_OPTIONS = ["RELIABLE", "MODERATE_RISK", "CRITICAL_RISK"] as const;
 
 const SORT_FIELDS: Record<string, string> = {
   clientName: "clientName",
@@ -69,6 +54,7 @@ const SORT_FIELDS: Record<string, string> = {
 };
 
 function AlertRegion() {
+  const t = useTranslations("cases");
   const alerts = usePriorityAlerts();
 
   // Renders nothing while loading: the region must never flash a placeholder
@@ -79,7 +65,7 @@ function AlertRegion() {
     return (
       <div className="mb-8">
         <ErrorState
-          error={alerts.error}
+          error={new Error(t("alertsFailed"))}
           onRetry={() => void alerts.refetch()}
           className="bg-panel border-border"
         />
@@ -91,7 +77,7 @@ function AlertRegion() {
   if (!alerts.data?.length) return null;
 
   return (
-    <section aria-label="Alertes prioritaires" className="mb-8 space-y-2">
+    <section aria-label={t("priorityAlerts")} className="mb-8 space-y-2">
       {alerts.data.map((alert) => (
         <AlertRow key={alert.alertId} alert={alert} />
       ))}
@@ -100,6 +86,10 @@ function AlertRegion() {
 }
 
 function Registry() {
+  const t = useTranslations("cases");
+  const tCommon = useTranslations("common");
+  const format = useFormat();
+  const labels = useLabels();
   const router = useRouter();
   const params = useSearchParams();
   const client = useQueryClient();
@@ -154,7 +144,7 @@ function Registry() {
     () => [
       {
         accessorKey: "clientName",
-        header: "Client",
+        header: t("columns.client"),
         enableSorting: true,
         cell: ({ row }) => (
           <span className="text-foreground font-medium">{row.original.clientName}</span>
@@ -162,7 +152,7 @@ function Registry() {
       },
       {
         accessorKey: "contractReference",
-        header: "Référence",
+        header: t("columns.reference"),
         cell: ({ row }) => (
           <span className="type-identifier text-muted-foreground">
             {row.original.contractReference}
@@ -171,25 +161,29 @@ function Registry() {
       },
       {
         accessorKey: "currentPhase",
-        header: "Phase",
+        header: t("columns.phase"),
         enableSorting: true,
-        cell: ({ row }) => <Chip>{phaseLabel(row.original.currentPhase)}</Chip>,
+        cell: ({ row }) => <Chip>{labels.phase(row.original.currentPhase)}</Chip>,
       },
       {
         accessorKey: "assigneeName",
-        header: "Responsable",
+        header: t("columns.assignee"),
         cell: ({ row }) =>
           row.original.assigneeName ?? (
-            <span className="text-muted-foreground">Non assigné</span>
+            <span className="text-muted-foreground">{t("unassigned")}</span>
           ),
       },
       {
         accessorKey: "reliabilityIndicator",
-        header: "Fiabilité",
+        header: t("columns.reliability"),
         cell: ({ row }) => {
           const value = row.original.reliabilityIndicator;
           if (!value) {
-            return <span className="text-muted-foreground type-body-sm">Non estimé</span>;
+            return (
+              <span className="text-muted-foreground type-body-sm">
+                {labels.reliability("NOT_VALUED")}
+              </span>
+            );
           }
           const tone = reliabilityTone(value);
           return (
@@ -205,14 +199,14 @@ function Registry() {
                       : undefined
               }
             >
-              {RELIABILITY_LABELS[value]}
+              {labels.reliability(value)}
             </Chip>
           );
         },
       },
       {
         accessorKey: "lastActionAt",
-        header: "Dernière action",
+        header: t("columns.lastAction"),
         enableSorting: true,
         cell: ({ row }) => {
           const iso = row.original.lastActionAt ?? row.original.createdAt;
@@ -226,15 +220,15 @@ function Registry() {
               )}
             >
               {dormant ? chipIcons.dormant : null}
-              <time dateTime={iso} title={formatDateTime(iso)}>
-                {formatRelative(iso)}
+              <time dateTime={iso} title={format.dateTime(iso)}>
+                {format.relative(iso)}
               </time>
             </span>
           );
         },
       },
     ],
-    [],
+    [t, labels, format],
   );
 
   // Client-side name filter over the current page. The backend exposes no
@@ -262,18 +256,18 @@ function Registry() {
   return (
     <>
       <PageHeader
-        title="Dossiers"
+        title={t("title")}
         subtitle={
           query.isPending ? (
             <Skeleton className="h-3.5 w-48" />
           ) : (
-            `${total} dossier${total === 1 ? "" : "s"} au total`
+            t("subtitle", { count: total })
           )
         }
         actions={
           <Button render={<Link href="/cases/new" />}>
             <Plus aria-hidden />
-            Nouveau dossier
+            {t("new")}
           </Button>
         }
       />
@@ -285,8 +279,8 @@ function Registry() {
           type="search"
           value={search}
           onChange={(event) => setParams({ q: event.target.value, page: null })}
-          placeholder="Filtrer cette page par client ou référence"
-          aria-label="Filtrer par client ou référence"
+          placeholder={t("filterPlaceholder")}
+          aria-label={t("filterLabel")}
           className="w-full sm:max-w-xs"
         />
 
@@ -294,14 +288,14 @@ function Registry() {
           value={phase || "all"}
           onValueChange={(value) => setParams({ phase: value === "all" ? null : value, page: null })}
         >
-          <SelectTrigger className="w-full sm:w-48" aria-label="Filtrer par phase">
+          <SelectTrigger className="w-full sm:w-48" aria-label={t("filterPhase")}>
             <SelectValue placeholder="Phase" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes les phases</SelectItem>
+            <SelectItem value="all">{t("allPhases")}</SelectItem>
             {PHASES.map((value) => (
               <SelectItem key={value} value={value}>
-                {PHASE_LABELS[value as Phase]}
+                {labels.phase(value)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -311,14 +305,14 @@ function Registry() {
           value={status || "all"}
           onValueChange={(value) => setParams({ status: value === "all" ? null : value, page: null })}
         >
-          <SelectTrigger className="w-full sm:w-40" aria-label="Filtrer par statut">
+          <SelectTrigger className="w-full sm:w-40" aria-label={t("filterStatus")}>
             <SelectValue placeholder="Statut" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            {STATUS_OPTIONS.map(([value, label]) => (
+            <SelectItem value="all">{t("allStatuses")}</SelectItem>
+            {STATUS_OPTIONS.map((value) => (
               <SelectItem key={value} value={value}>
-                {label}
+                {labels.status(value)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -330,14 +324,14 @@ function Registry() {
             setParams({ alertLevel: value === "all" ? null : value, page: null })
           }
         >
-          <SelectTrigger className="w-full sm:w-44" aria-label="Filtrer par fiabilité">
+          <SelectTrigger className="w-full sm:w-44" aria-label={t("filterReliability")}>
             <SelectValue placeholder="Fiabilité" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes fiabilités</SelectItem>
-            {ALERT_OPTIONS.map(([value, label]) => (
+            <SelectItem value="all">{t("allReliabilities")}</SelectItem>
+            {ALERT_OPTIONS.map((value) => (
               <SelectItem key={value} value={value}>
-                {label}
+                {labels.reliability(value)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -352,7 +346,7 @@ function Registry() {
             }
           >
             <X aria-hidden />
-            Réinitialiser
+            {tCommon("reset")}
           </Button>
         ) : null}
       </div>
@@ -365,7 +359,7 @@ function Registry() {
         sorting={sorting}
         onSortingChange={onSortingChange}
         rowHref={(row) => `/cases/${row.id}`}
-        rowLabel={(row) => `Ouvrir le dossier de ${row.clientName}`}
+        rowLabel={(row) => t("openCase", { client: row.clientName })}
         onRowPrefetch={(row) => {
           // Prefetch on intent: opening a case then feels instantaneous.
           void client.prefetchQuery({
@@ -382,12 +376,12 @@ function Registry() {
             />
           ) : (
             <NoDataState
-              title="Aucun dossier pour le moment"
-              body="Créez un dossier de recouvrement pour lancer le suivi d'un contrat en défaut."
+              title={t("emptyTitle")}
+              body={t("emptyBody")}
               action={
                 <Button render={<Link href="/cases/new" />}>
                   <Plus aria-hidden />
-                  Nouveau dossier
+                  {t("new")}
                 </Button>
               }
             />

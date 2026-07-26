@@ -47,3 +47,7 @@ if (typeof window !== "undefined") {
     } as unknown as typeof ResizeObserver;
   }
 }
+
+// Every test starts in the default locale; render(ui, { locale }) overrides it.
+import { setTestLocale } from "@/test/i18n-mock";
+beforeEach(() => setTestLocale("fr"));
