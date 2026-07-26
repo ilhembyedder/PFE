@@ -39,8 +39,8 @@ export function ErrorState({
         )}
       >
         <TriangleAlert className="text-destructive mb-4 size-6" aria-hidden />
-        <p className="text-title">Cette page n&apos;a pas pu être chargée</p>
-        <p className="text-body-sm text-muted-foreground mt-1 max-w-sm">{message}</p>
+        <p className="type-title">Cette page n&apos;a pas pu être chargée</p>
+        <p className="type-body-sm text-muted-foreground mt-1 max-w-sm">{message}</p>
         {onRetry ? (
           <Button variant="outline" className="mt-5" onClick={onRetry}>
             <RotateCcw aria-hidden />
@@ -61,12 +61,12 @@ export function ErrorState({
     >
       <TriangleAlert className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="text-body-sm text-foreground">{message}</p>
+        <p className="type-body-sm text-foreground">{message}</p>
         {onRetry ? (
           <button
             type="button"
             onClick={onRetry}
-            className="text-label text-primary mt-2 underline underline-offset-4"
+            className="type-label text-primary mt-2 underline underline-offset-4"
           >
             Réessayer
           </button>

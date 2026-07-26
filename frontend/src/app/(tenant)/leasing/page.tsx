@@ -135,7 +135,7 @@ function ClientSheet({
                 <Input
                   id={`client-${key}`}
                   type={type}
-                  className={key === "registrationNumber" ? "text-identifier" : undefined}
+                  className={key === "registrationNumber" ? "type-identifier" : undefined}
                   value={form[key]}
                   onChange={(event) =>
                     setForm((previous) => ({ ...previous, [key]: event.target.value }))
@@ -160,7 +160,7 @@ function ClientSheet({
                 <ul className="divide-border divide-y">
                   {linked.map((contract) => (
                     <li key={contract.id} className="flex items-center gap-3 py-2.5">
-                      <span className="text-identifier flex-1 truncate">
+                      <span className="type-identifier flex-1 truncate">
                         {contract.referenceNumber}
                       </span>
                       <Chip>{statusLabel(contract.status)}</Chip>
@@ -168,7 +168,7 @@ function ClientSheet({
                   ))}
                 </ul>
               ) : (
-                <p className="text-body-sm text-muted-foreground">
+                <p className="type-body-sm text-muted-foreground">
                   Aucun contrat rattaché à ce client.
                 </p>
               )}
@@ -271,7 +271,7 @@ function ContractSheet({
                 onChange={(event) =>
                   setForm((previous) => ({ ...previous, clientId: event.target.value }))
                 }
-                className="border-input bg-card text-body focus-visible:focus-ring h-9 w-full rounded-md border px-3 outline-none"
+                className="border-input bg-card type-body focus-visible:focus-ring h-9 w-full rounded-md border px-3 outline-none"
               >
                 <option value="">Sélectionner un client</option>
                 {(clients.data ?? []).map((client) => (
@@ -285,7 +285,7 @@ function ContractSheet({
               <Label htmlFor="contract-reference">Référence</Label>
               <Input
                 id="contract-reference"
-                className="text-identifier"
+                className="type-identifier"
                 value={form.referenceNumber}
                 onChange={(event) =>
                   setForm((previous) => ({ ...previous, referenceNumber: event.target.value }))
@@ -434,7 +434,7 @@ function LeasingRegistry() {
         accessorKey: "registrationNumber",
         header: "Immatriculation",
         cell: ({ row }) => (
-          <span className="text-identifier text-muted-foreground">
+          <span className="type-identifier text-muted-foreground">
             {row.original.registrationNumber ?? "—"}
           </span>
         ),
@@ -487,7 +487,7 @@ function LeasingRegistry() {
         accessorKey: "referenceNumber",
         header: "Référence",
         cell: ({ row }) => (
-          <span className="text-identifier">{row.original.referenceNumber}</span>
+          <span className="type-identifier">{row.original.referenceNumber}</span>
         ),
       },
       { accessorKey: "clientName", header: "Client" },
@@ -501,11 +501,11 @@ function LeasingRegistry() {
         header: "Véhicule",
         cell: ({ row }) =>
           row.original.vehicleVin ? (
-            <span className="text-identifier text-muted-foreground">
+            <span className="type-identifier text-muted-foreground">
               {row.original.vehicleVin}
             </span>
           ) : (
-            <span className="text-muted-foreground text-body-sm">Non lié</span>
+            <span className="text-muted-foreground type-body-sm">Non lié</span>
           ),
       },
       {
@@ -583,7 +583,7 @@ function LeasingRegistry() {
             onClick={() => setParams({ tab: value === "clients" ? null : value })}
             aria-current={tab === value ? "page" : undefined}
             className={cn(
-              "text-body-sm focus-visible:focus-ring -mb-px rounded-t-md border-b-2 px-3 py-2 outline-none",
+              "type-body-sm focus-visible:focus-ring -mb-px rounded-t-md border-b-2 px-3 py-2 outline-none",
               tab === value
                 ? "border-primary text-foreground font-medium"
                 : "text-muted-foreground hover:text-foreground border-transparent",

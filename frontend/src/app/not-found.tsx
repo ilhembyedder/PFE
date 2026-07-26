@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-headline">Page introuvable</h1>
-      <p className="text-body-sm text-muted-foreground mt-2">
+      <h1 className="type-headline">Page introuvable</h1>
+      <p className="type-body-sm text-muted-foreground mt-2">
         Cette adresse ne correspond à aucune page de la plateforme.
       </p>
       <Button render={<Link href="/cases" />} className="mt-6">

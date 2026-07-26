@@ -40,7 +40,7 @@ export function DocumentList({
 
   // Never an empty state while a request is in flight — checked above.
   if (documents.length === 0) {
-    return <p className="text-body-sm text-muted-foreground py-2">{emptyLabel}</p>;
+    return <p className="type-body-sm text-muted-foreground py-2">{emptyLabel}</p>;
   }
 
   return (
@@ -49,8 +49,8 @@ export function DocumentList({
         <li key={doc.id} className="flex items-center gap-3 py-3">
           <FileText className="text-muted-foreground size-4 shrink-0" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="text-body-sm truncate font-medium">{doc.fileName}</p>
-            <p className="text-caption text-muted-foreground">
+            <p className="type-body-sm truncate font-medium">{doc.fileName}</p>
+            <p className="type-caption text-muted-foreground">
               {doc.uploaderName ? `${doc.uploaderName} · ` : ""}
               <time dateTime={doc.createdAt}>{formatDateTime(doc.createdAt)}</time>
             </p>

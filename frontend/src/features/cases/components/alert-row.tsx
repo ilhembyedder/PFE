@@ -71,8 +71,8 @@ export function AlertRow({ alert }: { alert: PriorityAlert }) {
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="text-title truncate">{alert.clientName}</span>
-          <span className="text-identifier text-muted-foreground">
+          <span className="type-title truncate">{alert.clientName}</span>
+          <span className="type-identifier text-muted-foreground">
             {alert.contractReference}
           </span>
           <Chip
@@ -85,8 +85,8 @@ export function AlertRow({ alert }: { alert: PriorityAlert }) {
             {CRITICALITY_LABELS[alert.criticality] ?? alert.criticality}
           </span>
         </div>
-        <p className="text-body mt-1">{alert.message}</p>
-        <p className="text-caption text-muted-foreground mt-1">
+        <p className="type-body mt-1">{alert.message}</p>
+        <p className="type-caption text-muted-foreground mt-1">
           <time dateTime={alert.createdAt}>{formatRelative(alert.createdAt)}</time>
         </p>
       </div>

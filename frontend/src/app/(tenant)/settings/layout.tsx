@@ -36,7 +36,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
               href={tab.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "text-body-sm focus-visible:focus-ring -mb-px rounded-t-md border-b-2 px-3 py-2 outline-none transition-colors",
+                "type-body-sm focus-visible:focus-ring -mb-px rounded-t-md border-b-2 px-3 py-2 outline-none transition-colors",
                 active
                   ? "border-primary text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground border-transparent",

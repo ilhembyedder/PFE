@@ -30,6 +30,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-postgres}
       - AI_SERVICE_URL=http://ai-service:8000
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - UPLOAD_DIR=/app/uploads
+      - APP_SECURITY_ALLOW_HEADER_FALLBACK=false
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       - postgres
     networks:
@@ -43,7 +48,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - BACKEND_API_URL=http://backend:8080/api/v1
+      - NODE_ENV=production
+      - BACKEND_URL=http://backend:8080
+      - BFF_COOKIE_SECRET=${BFF_COOKIE_SECRET:?BFF_COOKIE_SECRET is required, minimum 32 characters}
+      - NEXT_PUBLIC_IDLE_TIMEOUT=${NEXT_PUBLIC_IDLE_TIMEOUT:-900000}
     depends_on:
       - backend
     networks:
@@ -61,6 +69,7 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:
 
 networks:
   leasrecover-network:

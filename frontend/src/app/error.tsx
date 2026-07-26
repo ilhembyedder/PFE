@@ -21,14 +21,14 @@ export default function GlobalError({
 
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-headline">Cette page n&apos;a pas pu s&apos;afficher</h1>
-      <p className="text-body-sm text-muted-foreground mt-2">
+      <h1 className="type-headline">Cette page n&apos;a pas pu s&apos;afficher</h1>
+      <p className="type-body-sm text-muted-foreground mt-2">
         L&apos;erreur a été enregistrée. Vous pouvez réessayer sans perdre votre
         session.
       </p>
       {error.digest ? (
-        <p className="text-caption text-muted-foreground mt-3">
-          Référence&nbsp;: <span className="text-identifier">{error.digest}</span>
+        <p className="type-caption text-muted-foreground mt-3">
+          Référence&nbsp;: <span className="type-identifier">{error.digest}</span>
         </p>
       ) : null}
       <Button className="mt-6" onClick={reset}>

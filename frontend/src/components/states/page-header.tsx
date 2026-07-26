@@ -18,9 +18,9 @@ export function PageHeader({
   return (
     <header className={cn("mb-6 flex items-start justify-between gap-6", className)}>
       <div className="min-w-0">
-        <h1 className="text-display">{title}</h1>
+        <h1 className="type-display">{title}</h1>
         {subtitle ? (
-          <p className="text-body-sm text-muted-foreground mt-1">{subtitle}</p>
+          <p className="type-body-sm text-muted-foreground mt-1">{subtitle}</p>
         ) : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

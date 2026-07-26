@@ -91,7 +91,7 @@ export default function BrandingPage() {
               value={value.logoUrl}
               onChange={(event) => set({ logoUrl: event.target.value })}
             />
-            <p className="text-caption text-muted-foreground">
+            <p className="type-caption text-muted-foreground">
               Affiché dans la barre latérale. Format carré recommandé.
             </p>
           </div>
@@ -114,16 +114,16 @@ export default function BrandingPage() {
             ) : (
               <span
                 aria-hidden
-                className="bg-primary text-primary-foreground text-caption grid size-7 shrink-0 place-items-center rounded-sm font-semibold"
+                className="bg-primary text-primary-foreground type-caption grid size-7 shrink-0 place-items-center rounded-sm font-semibold"
               >
                 {initials(value.name || "LeasRecover")}
               </span>
             )}
-            <span className="text-title truncate">{value.name || "LeasRecover"}</span>
+            <span className="type-title truncate">{value.name || "LeasRecover"}</span>
           </div>
         </div>
         {imageFailed ? (
-          <p className="text-body-sm text-warning mt-2">
+          <p className="type-body-sm text-warning mt-2">
             L&apos;image n&apos;a pas pu être chargée. Les initiales seront utilisées.
           </p>
         ) : null}
@@ -131,11 +131,11 @@ export default function BrandingPage() {
 
       <div className="flex items-center justify-end gap-3">
         {dirty ? (
-          <span className="text-body-sm text-muted-foreground">
+          <span className="type-body-sm text-muted-foreground">
             Modifications non enregistrées
           </span>
         ) : saved ? (
-          <span className="text-body-sm text-success" role="status">
+          <span className="type-body-sm text-success" role="status">
             Enregistré
           </span>
         ) : null}

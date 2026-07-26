@@ -32,19 +32,19 @@ export function BlockedNotice({
     >
       <Lock className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden />
       <div className="min-w-0">
-        <p className="text-body-sm text-destructive font-semibold">
+        <p className="type-body-sm text-destructive font-semibold">
           {nextPhase
             ? `Passage en « ${PHASE_SHORT[nextPhase]} » bloqué`
             : "Progression bloquée"}
         </p>
-        <ul className="text-body-sm mt-1.5 list-disc space-y-1 pl-4">
+        <ul className="type-body-sm mt-1.5 list-disc space-y-1 pl-4">
           {reasons.map((reason) => (
             <li key={reason}>{reason}</li>
           ))}
         </ul>
         <Link
           href={action?.href ?? `/cases/${caseId}?tab=documents&focus=upload`}
-          className="text-body-sm text-primary focus-visible:focus-ring mt-2 inline-block rounded-sm font-medium underline underline-offset-4 outline-none"
+          className="type-body-sm text-primary focus-visible:focus-ring mt-2 inline-block rounded-sm font-medium underline underline-offset-4 outline-none"
         >
           {action?.label ?? "Téléverser un rapport d'expertise"}
         </Link>

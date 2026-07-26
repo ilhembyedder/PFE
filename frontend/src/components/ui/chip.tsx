@@ -42,7 +42,7 @@ export function Chip({ className, tone = "neutral", icon, children, ...props }: 
     <span
       data-slot="chip"
       className={cn(
-        "text-caption inline-flex shrink-0 items-center gap-1 rounded-sm border px-2 py-0.5 whitespace-nowrap",
+        "type-caption inline-flex shrink-0 items-center gap-1 rounded-sm border px-2 py-0.5 whitespace-nowrap",
         "[&_svg]:size-3 [&_svg]:shrink-0",
         TONES[tone],
         className,

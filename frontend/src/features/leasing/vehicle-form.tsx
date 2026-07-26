@@ -72,7 +72,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
   if (!hasVehicle && !editing) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="text-body-sm text-muted-foreground">
+        <p className="type-body-sm text-muted-foreground">
           Aucun véhicule rattaché à ce contrat.
         </p>
         <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
@@ -92,7 +92,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           <Label htmlFor="vehicle-vin">VIN</Label>
           <Input
             id="vehicle-vin"
-            className="text-identifier uppercase"
+            className="type-identifier uppercase"
             maxLength={50}
             value={form.vin}
             onChange={(event) => setForm((p) => ({ ...p, vin: event.target.value }))}
@@ -102,7 +102,7 @@ export function VehicleForm({ contract }: { contract: Contract }) {
           <Label htmlFor="vehicle-plate">Immatriculation</Label>
           <Input
             id="vehicle-plate"
-            className="text-identifier"
+            className="type-identifier"
             maxLength={50}
             value={form.licensePlate}
             onChange={(event) => setForm((p) => ({ ...p, licensePlate: event.target.value }))}

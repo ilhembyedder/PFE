@@ -164,7 +164,7 @@ function Registry() {
         accessorKey: "contractReference",
         header: "Référence",
         cell: ({ row }) => (
-          <span className="text-identifier text-muted-foreground">
+          <span className="type-identifier text-muted-foreground">
             {row.original.contractReference}
           </span>
         ),
@@ -189,7 +189,7 @@ function Registry() {
         cell: ({ row }) => {
           const value = row.original.reliabilityIndicator;
           if (!value) {
-            return <span className="text-muted-foreground text-body-sm">Non estimé</span>;
+            return <span className="text-muted-foreground type-body-sm">Non estimé</span>;
           }
           const tone = reliabilityTone(value);
           return (
@@ -221,7 +221,7 @@ function Registry() {
           return (
             <span
               className={cn(
-                "text-body-sm inline-flex items-center gap-1.5",
+                "type-body-sm inline-flex items-center gap-1.5",
                 dormant ? "text-destructive" : "text-muted-foreground",
               )}
             >

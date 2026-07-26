@@ -122,7 +122,7 @@ export function ValuationCard({
       }}
     >
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-title">Estimation de valeur</h2>
+        <h2 className="type-title">Estimation de valeur</h2>
         <div className="flex items-center gap-2">
           {state === "NOT_COMPUTABLE" ? (
             <Chip>{RELIABILITY_LABELS.NOT_COMPUTABLE}</Chip>
@@ -147,7 +147,7 @@ export function ValuationCard({
               href={`/api/cases/${caseId}/documents/${documentId}/download`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-body-sm text-primary focus-visible:focus-ring inline-flex items-center gap-1 rounded-sm underline underline-offset-4 outline-none [&_svg]:size-3.5"
+              className="type-body-sm text-primary focus-visible:focus-ring inline-flex items-center gap-1 rounded-sm underline underline-offset-4 outline-none [&_svg]:size-3.5"
             >
               <FileText aria-hidden />
               Voir le rapport source
@@ -163,22 +163,22 @@ export function ValuationCard({
            ran is the most damaging thing this screen could show, so the
            market value stands alone and no band is rendered. */
         <>
-          <p className="text-figure-hero text-foreground">
+          <p className="type-figure-hero text-foreground">
             {formatMoney(valuation.marketValueCents, currency)}
           </p>
-          <p className="text-body-sm text-muted-foreground mt-1.5">
+          <p className="type-body-sm text-muted-foreground mt-1.5">
             Valeur de marché estimée
           </p>
           <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
             <Info className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
             <div>
-              <p className="text-body-sm">
+              <p className="type-body-sm">
                 La valeur résiduelle du contrat est nulle. L&apos;écart ne peut pas être
                 calculé.
               </p>
               <Link
                 href={`/cases/${caseId}?edit=1`}
-                className="text-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
+                className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
               >
                 Corriger le dossier
               </Link>
@@ -187,15 +187,19 @@ export function ValuationCard({
         </>
       ) : (
         <>
-          <p className={cn("text-figure-hero", TONE_TEXT[tone])}>
-            {extreme
+          {/* Prefer the absolute figure once the percentage stops being
+              picturable. Fall back to a clamped percentage only when no
+              absolute deviation is available, since the stored value is
+              capped at 999.99 and is no longer precise. */}
+          <p className={cn("type-figure-hero", TONE_TEXT[tone])}>
+            {extreme && deviationCents !== null
               ? formatMoney(deviationCents, currency)
               : clamped
                 ? "> 999 %"
                 : formatPercent(percent, deviationCents)}
           </p>
 
-          <p className="text-body-sm text-muted-foreground mt-1.5">
+          <p className="type-body-sm text-muted-foreground mt-1.5">
             {extreme && ratio
               ? `la valeur de marché est ${new Intl.NumberFormat("fr-FR", {
                   maximumFractionDigits: 1,
@@ -211,12 +215,12 @@ export function ValuationCard({
             <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
               <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
               <div>
-                <p className="text-body-sm">
+                <p className="type-body-sm">
                   Écart inhabituel. Vérifiez la valeur résiduelle du contrat.
                 </p>
                 <Link
                   href={`/cases/${caseId}?edit=1`}
-                  className="text-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
+                  className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
                 >
                   Corriger le dossier
                 </Link>
@@ -226,14 +230,14 @@ export function ValuationCard({
 
           <dl className="border-border mt-5 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2">
             <div>
-              <dt className="text-label text-muted-foreground">Valeur de marché</dt>
-              <dd className="text-figure text-foreground mt-1">
+              <dt className="type-label text-muted-foreground">Valeur de marché</dt>
+              <dd className="type-figure text-foreground mt-1">
                 {formatMoney(valuation.marketValueCents, currency)}
               </dd>
             </div>
             <div>
-              <dt className="text-label text-muted-foreground">Valeur résiduelle</dt>
-              <dd className="text-figure text-muted-foreground mt-1">
+              <dt className="type-label text-muted-foreground">Valeur résiduelle</dt>
+              <dd className="type-figure text-muted-foreground mt-1">
                 {formatMoney(valuation.initialResidualValueCents, currency)}
               </dd>
             </div>
@@ -244,7 +248,7 @@ export function ValuationCard({
       {/* The Sourced Number Rule: a figure never appears without its
           provenance in the same block. */}
       {provenance ? (
-        <p className="text-caption text-muted-foreground mt-4">
+        <p className="type-caption text-muted-foreground mt-4">
           Extrait du rapport&nbsp;: {provenance}
         </p>
       ) : null}

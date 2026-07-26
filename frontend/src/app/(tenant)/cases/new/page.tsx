@@ -79,7 +79,7 @@ function SectionTitle({ index, children }: { index: number; children: React.Reac
     <span className="flex items-center gap-2.5">
       <span
         aria-hidden
-        className="bg-panel border-border text-caption grid size-5 shrink-0 place-items-center rounded-full border font-semibold"
+        className="bg-panel border-border type-caption grid size-5 shrink-0 place-items-center rounded-full border font-semibold"
       >
         {index}
       </span>
@@ -200,7 +200,7 @@ export default function NewCasePage() {
 
   return (
     <div className="mx-auto max-w-[720px]">
-      <nav aria-label="Fil d'Ariane" className="text-body-sm mb-4 flex items-center gap-1.5">
+      <nav aria-label="Fil d'Ariane" className="type-body-sm mb-4 flex items-center gap-1.5">
         <Link href="/cases" className="text-muted-foreground hover:text-foreground">
           Dossiers
         </Link>
@@ -230,7 +230,7 @@ export default function NewCasePage() {
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-caption text-muted-foreground">
+            <p className="type-caption text-muted-foreground">
               Les sections suivantes seront pré-remplies.
             </p>
           </div>
@@ -243,12 +243,12 @@ export default function NewCasePage() {
               <div className="bg-accent border-primary-border flex gap-2.5 rounded-md border p-3">
                 <Info className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
                 <div>
-                  <p className="text-body-sm">
+                  <p className="type-body-sm">
                     Client existant. Ses informations ne seront pas modifiées.
                   </p>
                   <Link
                     href="/leasing"
-                    className="text-body-sm text-primary mt-1 inline-block font-medium underline underline-offset-4"
+                    className="type-body-sm text-primary mt-1 inline-block font-medium underline underline-offset-4"
                   >
                     Modifier ce client
                   </Link>
@@ -291,7 +291,7 @@ export default function NewCasePage() {
                 <Label htmlFor="clientReg">Numéro d&apos;immatriculation</Label>
                 <Input
                   id="clientReg"
-                  className="text-identifier"
+                  className="type-identifier"
                   value={form.clientRegistrationNumber}
                   onChange={(e) => set("clientRegistrationNumber", e.target.value)}
                 />
@@ -331,7 +331,7 @@ export default function NewCasePage() {
               <Label htmlFor="reference">Référence</Label>
               <Input
                 id="reference"
-                className="text-identifier"
+                className="type-identifier"
                 value={form.contractReference}
                 onChange={(e) => set("contractReference", e.target.value)}
               />
@@ -381,7 +381,7 @@ export default function NewCasePage() {
               <Label htmlFor="vin">VIN</Label>
               <Input
                 id="vin"
-                className="text-identifier uppercase"
+                className="type-identifier uppercase"
                 value={form.vehicleVin}
                 onChange={(e) => set("vehicleVin", e.target.value)}
               />
@@ -390,7 +390,7 @@ export default function NewCasePage() {
               <Label htmlFor="plate">Immatriculation</Label>
               <Input
                 id="plate"
-                className="text-identifier"
+                className="type-identifier"
                 value={form.vehicleLicensePlate}
                 onChange={(e) => set("vehicleLicensePlate", e.target.value)}
               />
@@ -436,7 +436,7 @@ export default function NewCasePage() {
                 suffix={form.currencyCode}
                 min={0}
               />
-              <p className="text-caption text-muted-foreground">
+              <p className="type-caption text-muted-foreground">
                 Référence de toute comparaison avec la valeur de marché estimée.
               </p>
             </div>
@@ -460,7 +460,7 @@ export default function NewCasePage() {
             </div>
           </div>
           {form.contractStartDate ? (
-            <p className="text-caption text-muted-foreground mt-3">
+            <p className="type-caption text-muted-foreground mt-3">
               Contrat démarré le {formatDate(form.contractStartDate)}.
             </p>
           ) : null}
@@ -475,10 +475,10 @@ export default function NewCasePage() {
               role="alert"
               className="bg-destructive-surface border-destructive-border mb-3 rounded-md border p-3"
             >
-              <p className="text-body-sm text-destructive font-semibold">
+              <p className="type-body-sm text-destructive font-semibold">
                 {errors.length} champ{errors.length > 1 ? "s" : ""} à corriger
               </p>
-              <ul className="text-body-sm mt-1 list-disc space-y-0.5 pl-4">
+              <ul className="type-body-sm mt-1 list-disc space-y-0.5 pl-4">
                 {errors.map((message) => (
                   <li key={message}>{message}</li>
                 ))}

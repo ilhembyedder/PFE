@@ -689,7 +689,8 @@ shadcn has no vocabulary for a semantic triad beyond `destructive`, and no secon
 ### Rules
 
 - Spacing uses Tailwind's default 4px scale. Do not redefine it; `DESIGN.md` `spacing` documents which steps are sanctioned (`1 2 3 4 5 6 8 10 12 16`).
-- Typography ships as a component layer: `.text-body`, `.text-label`, `.text-figure-hero`, one class per role from `DESIGN.md` `typography`. Roles are applied as named classes, never as ad-hoc `text-[13px] font-medium` combinations.
+- Typography ships as a component layer: `.type-body`, `.type-label`, `.type-figure-hero`, one class per role from `DESIGN.md` `typography`. Roles are applied as named classes, never as ad-hoc `text-[13px] font-medium` combinations.
+- **The prefix is `type-`, not `text-`, and this is not cosmetic.** `tailwind-merge` classifies any `text-*` class as belonging to Tailwind's own text group, so `cn("text-figure-hero", "text-warning")` silently resolved to just `text-warning` and every figure lost its size and weight. Keeping the typography namespace outside Tailwind's prevents the collision. `src/lib/utils.test.ts` asserts every role survives being combined with every semantic colour, so a rename back into a Tailwind-owned prefix fails loudly instead of degrading the UI invisibly.
 - `font-variant-numeric: tabular-nums` is bound to a `.tabular` utility and applied by `NumericInput`, `DataTable` numeric columns, and every figure role.
 - The focus ring is a single `.focus-ring` utility used by every interactive component. It must not be reimplemented per component.
 - **Zero raw hex in components.** The current build has 565. Add an ESLint rule failing on hex literals in `src/**` so this cannot regress.

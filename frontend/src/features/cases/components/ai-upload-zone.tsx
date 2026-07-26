@@ -100,7 +100,7 @@ export function AIUploadZone({
         className="bg-success-surface border-success-border flex items-center gap-3 rounded-md border p-4"
       >
         <CheckCircle2 className="text-success size-4 shrink-0" aria-hidden />
-        <p className="text-body-sm flex-1">Analyse terminée. L&apos;estimation est disponible.</p>
+        <p className="type-body-sm flex-1">Analyse terminée. L&apos;estimation est disponible.</p>
         <Button variant="ghost" size="sm" onClick={stream.reset}>
           Téléverser un autre document
         </Button>
@@ -115,13 +115,13 @@ export function AIUploadZone({
       <div className="bg-card border-border rounded-md border p-5">
         <div className="mb-3 flex items-center gap-2.5">
           <Loader2 className="text-primary size-4 animate-spin" aria-hidden />
-          <p className="text-body-sm font-medium">
+          <p className="type-body-sm font-medium">
             {running?.message ?? "Envoi du document…"}
           </p>
         </div>
         {/* aria-live so each stage is announced as it arrives. */}
         <Progress value={value} aria-label="Progression de l'analyse" />
-        <p className="text-caption text-muted-foreground mt-2 tabular" aria-live="polite">
+        <p className="type-caption text-muted-foreground mt-2 tabular" aria-live="polite">
           {value}&nbsp;%
         </p>
       </div>
@@ -155,12 +155,12 @@ export function AIUploadZone({
         ) : (
           <UploadCloud className="text-muted-foreground size-5" aria-hidden />
         )}
-        <span className="text-body-sm font-medium">
+        <span className="type-body-sm font-medium">
           {isExpertise
             ? "Téléverser le rapport d'expertise"
             : "Téléverser un document"}
         </span>
-        <span className="text-caption text-muted-foreground">
+        <span className="type-caption text-muted-foreground">
           {isExpertise
             ? "PDF uniquement, 10 Mo maximum. L'analyse démarre automatiquement."
             : "PDF, JPEG ou PNG, 10 Mo maximum."}
@@ -180,7 +180,7 @@ export function AIUploadZone({
       </label>
 
       {error ? (
-        <p role="alert" className="text-body-sm text-destructive flex items-center gap-1.5">
+        <p role="alert" className="type-body-sm text-destructive flex items-center gap-1.5">
           <TriangleAlert className="size-3.5 shrink-0" aria-hidden />
           {error}
         </p>

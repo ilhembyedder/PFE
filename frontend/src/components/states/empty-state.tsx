@@ -32,8 +32,8 @@ function Shell({
       <div className="bg-panel text-muted-foreground mb-4 grid size-10 place-items-center rounded-md [&_svg]:size-5">
         {icon}
       </div>
-      <p className="text-title">{title}</p>
-      <p className="text-body-sm text-muted-foreground mt-1 max-w-sm">{body}</p>
+      <p className="type-title">{title}</p>
+      <p className="type-body-sm text-muted-foreground mt-1 max-w-sm">{body}</p>
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );
@@ -67,7 +67,7 @@ export function NoResultsState({
         <button
           type="button"
           onClick={onReset}
-          className="text-label text-primary underline underline-offset-4"
+          className="type-label text-primary underline underline-offset-4"
         >
           Réinitialiser les filtres
         </button>

@@ -43,9 +43,9 @@ function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <div>
-      <p className="text-label text-muted-foreground">{label}</p>
+      <p className="type-label text-muted-foreground">{label}</p>
       <div className="mt-1 flex items-center gap-2">
-        <code className="text-identifier bg-background border-border min-w-0 flex-1 truncate rounded-sm border px-2 py-1.5">
+        <code className="type-identifier bg-background border-border min-w-0 flex-1 truncate rounded-sm border px-2 py-1.5">
           {value}
         </code>
         <Button
@@ -132,7 +132,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
         {error ? <ErrorState error={new Error(error)} /> : null}
 
         <fieldset className="space-y-4">
-          <legend className="text-label text-muted-foreground mb-2">Société</legend>
+          <legend className="type-label text-muted-foreground mb-2">Société</legend>
           <div className="space-y-1.5">
             <Label htmlFor="tenant-name">Nom</Label>
             <Input
@@ -164,7 +164,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-label text-muted-foreground mb-2">
+          <legend className="type-label text-muted-foreground mb-2">
             Premier administrateur
           </legend>
           <div className="space-y-1.5">
@@ -181,7 +181,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
             <div className="flex gap-2">
               <Input
                 id="admin-password"
-                className="text-identifier"
+                className="type-identifier"
                 value={adminPassword}
                 onChange={(event) => setAdminPassword(event.target.value)}
                 aria-describedby="admin-password-hint"
@@ -195,7 +195,7 @@ function ProvisionForm({ onProvisioned }: { onProvisioned: (handoff: Handoff) =>
                 <RefreshCw aria-hidden />
               </Button>
             </div>
-            <p id="admin-password-hint" className="text-caption text-muted-foreground">
+            <p id="admin-password-hint" className="type-caption text-muted-foreground">
               {MIN_PASSWORD} caractères minimum. Il ne sera affiché qu&apos;une seule fois.
             </p>
           </div>
@@ -232,7 +232,7 @@ function HandoffPanel({ handoff, onDone }: { handoff: Handoff; onDone: () => voi
 
       <div className="space-y-4 overflow-y-auto px-4">
         <div className="bg-warning-surface border-warning-border rounded-md border p-3">
-          <p className="text-body-sm">
+          <p className="type-body-sm">
             Le mot de passe ne sera plus affiché et ne peut pas être réinitialisé depuis
             la plateforme. Transmettez-le maintenant.
           </p>
@@ -242,7 +242,7 @@ function HandoffPanel({ handoff, onDone }: { handoff: Handoff; onDone: () => voi
         <CopyField label="Adresse e-mail" value={handoff.adminEmail} />
         <CopyField label="Mot de passe" value={handoff.adminPassword} />
 
-        <p className="text-caption text-muted-foreground">
+        <p className="type-caption text-muted-foreground">
           L&apos;identifiant de société est requis à la connexion, en plus de
           l&apos;adresse e-mail et du mot de passe.
         </p>
@@ -281,7 +281,7 @@ export default function TenantsPage() {
             ) : (
               <span
                 aria-hidden
-                className="bg-panel border-border text-caption grid size-6 shrink-0 place-items-center rounded-sm border font-semibold"
+                className="bg-panel border-border type-caption grid size-6 shrink-0 place-items-center rounded-sm border font-semibold"
               >
                 {initials(row.original.name)}
               </span>
@@ -315,7 +315,7 @@ export default function TenantsPage() {
         accessorKey: "createdAt",
         header: "Créée le",
         cell: ({ row }) => (
-          <span className="text-body-sm text-muted-foreground">
+          <span className="type-body-sm text-muted-foreground">
             {formatDate(row.original.createdAt)}
           </span>
         ),

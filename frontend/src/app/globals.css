@@ -211,60 +211,60 @@
     /* ---- Typography roles (DESIGN.md §3) -------------------------------
        Applied as named classes. Never as ad-hoc text-[13px] font-medium. */
 
-    .text-figure-hero {
+    .type-figure-hero {
         font-size: 2.5rem;
         font-weight: 600;
         line-height: 1;
         letter-spacing: -0.02em;
         font-variant-numeric: tabular-nums;
     }
-    .text-figure {
+    .type-figure {
         font-size: 1.5rem;
         font-weight: 600;
         line-height: 1.1;
         letter-spacing: -0.01em;
         font-variant-numeric: tabular-nums;
     }
-    .text-display {
+    .type-display {
         font-size: 1.75rem;
         font-weight: 600;
         line-height: 1.2;
         letter-spacing: -0.015em;
     }
-    .text-headline {
+    .type-headline {
         font-size: 1.25rem;
         font-weight: 600;
         line-height: 1.3;
         letter-spacing: -0.01em;
     }
-    .text-title {
+    .type-title {
         font-size: 1rem;
         font-weight: 600;
         line-height: 1.4;
     }
-    .text-body {
+    .type-body {
         font-size: 0.875rem;
         font-weight: 400;
         line-height: 1.6;
     }
-    .text-body-sm {
+    .type-body-sm {
         font-size: 0.8125rem;
         font-weight: 400;
         line-height: 1.5;
     }
-    .text-label {
+    .type-label {
         font-size: 0.75rem;
         font-weight: 500;
         line-height: 1.4;
         letter-spacing: 0.01em;
     }
-    .text-caption {
+    .type-caption {
         font-size: 0.6875rem;
         font-weight: 400;
         line-height: 1.4;
         letter-spacing: 0.01em;
     }
-    .text-identifier {
+    .type-identifier {
         font-family: var(--font-mono);
         font-size: 0.8125rem;
         font-weight: 400;

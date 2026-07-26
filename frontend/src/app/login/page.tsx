@@ -39,7 +39,7 @@ type Values = z.infer<typeof schema>;
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="text-body-sm text-destructive flex items-center gap-1.5">
+    <p id={id} className="type-body-sm text-destructive flex items-center gap-1.5">
       <TriangleAlert className="size-3.5 shrink-0" aria-hidden />
       {message}
     </p>
@@ -84,8 +84,8 @@ function LoginForm() {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-[400px] flex-col justify-center px-6 py-16">
       <div className="mb-6">
-        <h1 className="text-display">LeasRecover</h1>
-        <p className="text-body-sm text-muted-foreground mt-1">
+        <h1 className="type-display">LeasRecover</h1>
+        <p className="type-body-sm text-muted-foreground mt-1">
           Plateforme de recouvrement
         </p>
       </div>
@@ -106,7 +106,7 @@ function LoginForm() {
               aria-checked={mode === value}
               onClick={() => form.setValue("mode", value)}
               className={cn(
-                "text-label focus-visible:focus-ring h-8 rounded-sm outline-none transition-colors",
+                "type-label focus-visible:focus-ring h-8 rounded-sm outline-none transition-colors",
                 mode === value
                   ? "bg-card text-foreground border-border border shadow-none"
                   : "text-muted-foreground hover:text-foreground",
@@ -122,7 +122,7 @@ function LoginForm() {
           <div
             role="alert"
             className={cn(
-              "text-body-sm mb-5 flex items-start gap-2 rounded-md border p-3",
+              "type-body-sm mb-5 flex items-start gap-2 rounded-md border p-3",
               expired && !form.formState.isSubmitted
                 ? "bg-warning-surface border-warning-border text-foreground"
                 : "bg-destructive-surface border-destructive-border text-foreground",
@@ -195,13 +195,13 @@ function LoginForm() {
               <Label htmlFor="tenantId">Identifiant de société</Label>
               <Input
                 id="tenantId"
-                className="text-identifier"
+                className="type-identifier"
                 placeholder="00000000-0000-0000-0000-000000000000"
                 aria-invalid={Boolean(form.formState.errors.tenantId)}
                 aria-describedby="tenantId-hint tenantId-error"
                 {...form.register("tenantId")}
               />
-              <p id="tenantId-hint" className="text-caption text-muted-foreground">
+              <p id="tenantId-hint" className="type-caption text-muted-foreground">
                 Fourni par votre administrateur.
               </p>
               <FieldError

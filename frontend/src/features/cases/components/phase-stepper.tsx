@@ -52,7 +52,7 @@ export function PhaseStepper({
           const label = (
             <span
               className={cn(
-                "text-body-sm truncate",
+                "type-body-sm truncate",
                 active && "text-foreground font-medium",
                 done && "text-foreground",
                 blocked && "text-destructive font-medium",

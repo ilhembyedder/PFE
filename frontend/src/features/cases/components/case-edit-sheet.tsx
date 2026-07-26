@@ -136,7 +136,7 @@ function EditForm({
           <Label htmlFor="edit-reference">Référence du contrat</Label>
           <Input
             id="edit-reference"
-            className="text-identifier"
+            className="type-identifier"
             value={reference}
             onChange={(event) => setReference(event.target.value)}
           />

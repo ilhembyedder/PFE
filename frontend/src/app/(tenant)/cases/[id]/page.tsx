@@ -81,7 +81,7 @@ const VALUATION_PHASES: Phase[] = ["SAISIE", "VENTE", "CLOTURE"];
 
 function Breadcrumb({ client }: { client?: string }) {
   return (
-    <nav aria-label="Fil d'Ariane" className="text-body-sm flex items-center gap-1.5">
+    <nav aria-label="Fil d'Ariane" className="type-body-sm flex items-center gap-1.5">
       <Link href="/cases" className="text-muted-foreground hover:text-foreground">
         Dossiers
       </Link>
@@ -118,7 +118,7 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
     <div className="space-y-5">
       {/* Composer always visible, never behind a button. */}
       <div className="space-y-2">
-        <label htmlFor="note" className="text-label text-muted-foreground block">
+        <label htmlFor="note" className="type-label text-muted-foreground block">
           Ajouter une note
         </label>
         <Textarea
@@ -130,7 +130,7 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
           placeholder="Décrivez l'action réalisée ou l'information à conserver."
         />
         {error ? (
-          <p role="alert" className="text-body-sm text-destructive">
+          <p role="alert" className="type-body-sm text-destructive">
             {error}
           </p>
         ) : null}
@@ -155,12 +155,12 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
             <li key={note.id} className="flex gap-3 py-4">
               <span
                 aria-hidden
-                className="bg-panel border-border text-caption grid size-7 shrink-0 place-items-center rounded-full border font-semibold"
+                className="bg-panel border-border type-caption grid size-7 shrink-0 place-items-center rounded-full border font-semibold"
               >
                 {initials(note.authorName)}
               </span>
               <div className="min-w-0">
-                <p className="text-body-sm">
+                <p className="type-body-sm">
                   <span className="font-medium">{note.authorName}</span>
                   <span className="text-muted-foreground">
                     {" · "}
@@ -169,13 +169,13 @@ function NotesTab({ caseId, focus }: { caseId: string; focus: boolean }) {
                     </time>
                   </span>
                 </p>
-                <p className="text-body mt-1 whitespace-pre-wrap">{note.content}</p>
+                <p className="type-body mt-1 whitespace-pre-wrap">{note.content}</p>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-body-sm text-muted-foreground">
+        <p className="type-body-sm text-muted-foreground">
           Aucune note. Les notes constituent la trace des actions réalisées sur le dossier.
         </p>
       )}
@@ -200,7 +200,7 @@ function HistoryTab({ caseId }: { caseId: string }) {
   }
   if (!history.data?.length) {
     return (
-      <p className="text-body-sm text-muted-foreground">
+      <p className="type-body-sm text-muted-foreground">
         Aucun événement enregistré pour ce dossier.
       </p>
     );
@@ -217,7 +217,7 @@ function HistoryTab({ caseId }: { caseId: string }) {
     <div className="space-y-6">
       {[...groups.entries()].map(([day, events]) => (
         <section key={day}>
-          <h3 className="text-label text-muted-foreground bg-card sticky top-14 z-10 py-1">
+          <h3 className="type-label text-muted-foreground bg-card sticky top-14 z-10 py-1">
             {day}
           </h3>
           <ol className="border-border mt-2 space-y-4 border-l pl-4">
@@ -227,7 +227,7 @@ function HistoryTab({ caseId }: { caseId: string }) {
                   aria-hidden
                   className="bg-primary absolute top-1.5 -left-[1.3125rem] size-2 rounded-full"
                 />
-                <p className="text-body-sm">
+                <p className="type-body-sm">
                   <span className="font-medium">{event.actor ?? "Système"}</span>
                   <span className="text-muted-foreground">
                     {" · "}
@@ -239,7 +239,7 @@ function HistoryTab({ caseId }: { caseId: string }) {
                     </time>
                   </span>
                 </p>
-                <p className="text-body mt-0.5">{event.description}</p>
+                <p className="type-body mt-0.5">{event.description}</p>
               </li>
             ))}
           </ol>
@@ -279,7 +279,7 @@ function DocumentsTab({
               <AccordionTrigger>
                 <span className="flex items-center gap-2">
                   {PHASE_LABELS[phase]}
-                  <span className="text-caption text-muted-foreground tabular">
+                  <span className="type-caption text-muted-foreground tabular">
                     {docs.length}
                   </span>
                 </span>
@@ -388,11 +388,11 @@ function CaseDetail({ caseId }: { caseId: string }) {
 
       <header className="mt-4 mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-display truncate">
+          <h1 className="type-display truncate">
             {data.client?.fullNameOrCompany ?? "Dossier"}
           </h1>
           <p className="mt-1 flex flex-wrap items-center gap-2">
-            <span className="text-identifier text-muted-foreground">
+            <span className="type-identifier text-muted-foreground">
               {data.contract?.referenceNumber ?? "—"}
             </span>
             <Chip>{phaseLabel(phase)}</Chip>
@@ -411,7 +411,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
           </Button>
           {/* At the terminal phase the action is REPLACED, not disabled. */}
           {terminal ? (
-            <span className="text-body-sm text-success flex items-center gap-1.5">
+            <span className="type-body-sm text-success flex items-center gap-1.5">
               Dossier clôturé
             </span>
           ) : (
@@ -476,7 +476,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
               />
             ) : (
               <Panel title="Estimation de valeur">
-                <p className="text-body-sm text-muted-foreground">
+                <p className="type-body-sm text-muted-foreground">
                   Aucune estimation. Téléversez un rapport d&apos;expertise pour lancer
                   l&apos;analyse.
                 </p>
@@ -544,7 +544,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
                     columns={3}
                   />
                 ) : (
-                  <p className="text-body-sm text-muted-foreground">
+                  <p className="type-body-sm text-muted-foreground">
                     Aucun véhicule lié à ce contrat. Liez-le depuis{" "}
                     <Link href="/leasing" className="text-primary underline underline-offset-4">
                       Clients &amp; contrats
@@ -575,13 +575,13 @@ function CaseDetail({ caseId }: { caseId: string }) {
 
         {/* Sticky, so assignee and residual value stay visible while scrolling. */}
         <aside className="bg-card border-border rounded-md border p-5 lg:sticky lg:top-20">
-          <h2 className="text-title mb-4">Résumé</h2>
+          <h2 className="type-title mb-4">Résumé</h2>
 
           <div className="space-y-4">
             <div>
               <label
                 htmlFor="assignee"
-                className="text-label text-muted-foreground mb-1.5 block"
+                className="type-label text-muted-foreground mb-1.5 block"
               >
                 Responsable
               </label>
@@ -606,7 +606,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 </SelectContent>
               </Select>
               {assign.isError ? (
-                <p role="alert" className="text-body-sm text-destructive mt-1.5">
+                <p role="alert" className="type-body-sm text-destructive mt-1.5">
                   {messageFor(assign.error)}
                 </p>
               ) : null}

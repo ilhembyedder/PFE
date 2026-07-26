@@ -174,7 +174,7 @@ export default function CompliancePage() {
   return (
     <div className="max-w-[720px] space-y-5">
       <Panel title="Dormance">
-        <p className="text-body-sm text-muted-foreground mb-4">
+        <p className="type-body-sm text-muted-foreground mb-4">
           Un dossier sans action pendant cette durée déclenche une alerte.
         </p>
         <div className="max-w-[200px] space-y-1.5">
@@ -194,14 +194,14 @@ export default function CompliancePage() {
       </Panel>
 
       <Panel title="Délais légaux par phase">
-        <p className="text-body-sm text-muted-foreground mb-4">
+        <p className="type-body-sm text-muted-foreground mb-4">
           Durée maximale d&apos;une phase avant alerte d&apos;échéance. Une alerte
           d&apos;avertissement est émise 2 jours avant l&apos;expiration.
         </p>
         <div className="space-y-3">
           {DELAY_PHASES.map((phase) => (
             <div key={phase} className="flex items-center justify-between gap-4">
-              <Label htmlFor={`delay-${phase}`} className="text-body-sm font-normal">
+              <Label htmlFor={`delay-${phase}`} className="type-body-sm font-normal">
                 {PHASE_LABELS[phase]}
               </Label>
               <div className="w-[180px]">
@@ -223,7 +223,7 @@ export default function CompliancePage() {
       </Panel>
 
       <Panel title="Seuils d'écart IA">
-        <p className="text-body-sm text-muted-foreground mb-4">
+        <p className="type-body-sm text-muted-foreground mb-4">
           Détermine l&apos;indicateur de fiabilité affiché sur chaque estimation.
         </p>
 
@@ -263,15 +263,15 @@ export default function CompliancePage() {
         {/* The consequence preview: the values restated as the outcome they
             produce, using the real chips. */}
         <div className="bg-background border-border mt-5 rounded-md border p-4">
-          <p className="text-label text-muted-foreground mb-3">Résultat de cette configuration</p>
+          <p className="type-label text-muted-foreground mb-3">Résultat de cette configuration</p>
           {bandsInvalid ? (
-            <p role="alert" className="text-body-sm text-destructive">
+            <p role="alert" className="type-body-sm text-destructive">
               Configuration invalide : le seuil modéré doit être inférieur au seuil
               critique.
             </p>
           ) : (
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="text-body-sm inline-flex items-center gap-1.5">
+              <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="success" icon={chipIcons.success}>
                   Fiable
                 </Chip>
@@ -279,7 +279,7 @@ export default function CompliancePage() {
                   écart &lt; {moderateValue ?? "—"}&nbsp;%
                 </span>
               </span>
-              <span className="text-body-sm inline-flex items-center gap-1.5">
+              <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="warning" icon={chipIcons.warning}>
                   Écart modéré
                 </Chip>
@@ -287,7 +287,7 @@ export default function CompliancePage() {
                   de {moderateValue ?? "—"} à {criticalValue ?? "—"}&nbsp;%
                 </span>
               </span>
-              <span className="text-body-sm inline-flex items-center gap-1.5">
+              <span className="type-body-sm inline-flex items-center gap-1.5">
                 <Chip tone="critical" icon={chipIcons.critical}>
                   Écart critique
                 </Chip>
@@ -305,10 +305,10 @@ export default function CompliancePage() {
           role="alert"
           className="bg-destructive-surface border-destructive-border rounded-md border p-4"
         >
-          <p className="text-body-sm text-destructive font-semibold">
+          <p className="type-body-sm text-destructive font-semibold">
             {errors.length} valeur{errors.length > 1 ? "s" : ""} à corriger
           </p>
-          <ul className="text-body-sm mt-1 list-disc space-y-0.5 pl-4">
+          <ul className="type-body-sm mt-1 list-disc space-y-0.5 pl-4">
             {errors.map((message) => (
               <li key={message}>{message}</li>
             ))}
@@ -320,11 +320,11 @@ export default function CompliancePage() {
 
       <div className="flex items-center justify-end gap-3">
         {touched ? (
-          <span className="text-body-sm text-muted-foreground">
+          <span className="type-body-sm text-muted-foreground">
             Modifications non enregistrées
           </span>
         ) : saved ? (
-          <span className="text-body-sm text-success" role="status">
+          <span className="type-body-sm text-success" role="status">
             Enregistré
           </span>
         ) : null}

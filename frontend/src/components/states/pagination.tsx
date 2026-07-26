@@ -31,7 +31,7 @@ export function Pagination({
       aria-label="Pagination"
       className="mt-4 flex flex-wrap items-center justify-between gap-3"
     >
-      <p className="text-body-sm text-muted-foreground tabular" aria-live="polite">
+      <p className="type-body-sm text-muted-foreground tabular" aria-live="polite">
         {from}–{to} sur {totalElements}
       </p>
       <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function Pagination({
           <ChevronLeft aria-hidden />
           Précédent
         </Button>
-        <span className="text-body-sm text-muted-foreground tabular px-1">
+        <span className="type-body-sm text-muted-foreground tabular px-1">
           {page + 1} / {Math.max(totalPages, 1)}
         </span>
         <Button

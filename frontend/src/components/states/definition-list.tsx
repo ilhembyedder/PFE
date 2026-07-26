@@ -25,11 +25,11 @@ export function DefinitionList({
     >
       {items.map(({ label, value, mono }) => (
         <div key={label} className="min-w-0">
-          <dt className="text-label text-muted-foreground">{label}</dt>
+          <dt className="type-label text-muted-foreground">{label}</dt>
           <dd
             className={cn(
               "mt-1 truncate",
-              mono ? "text-identifier" : "text-body text-foreground",
+              mono ? "type-identifier" : "type-body text-foreground",
             )}
           >
             {value ?? "—"}

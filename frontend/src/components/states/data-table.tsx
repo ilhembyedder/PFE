@@ -137,7 +137,7 @@ export function DataTable<T>({
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "text-label text-muted-foreground bg-background h-9",
+                      "type-label text-muted-foreground bg-background h-9",
                       numeric && "text-right",
                     )}
                     aria-sort={
@@ -206,7 +206,7 @@ export function DataTable<T>({
                   <TableCell
                     key={cell.id}
                     className={cn(
-                      "text-body h-12",
+                      "type-body h-12",
                       cell.column.columnDef.meta?.numeric && "text-right tabular",
                     )}
                   >

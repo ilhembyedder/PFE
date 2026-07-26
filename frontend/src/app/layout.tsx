@@ -36,7 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(plexSans.variable, plexMono.variable)}
     >
-      <body className="font-sans text-body antialiased">
+      <body className="font-sans type-body antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

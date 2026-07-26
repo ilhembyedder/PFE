@@ -24,7 +24,7 @@ export function Panel({
     <section className={cn("bg-card border-border rounded-md border", className)}>
       {title ? (
         <div className="border-border flex items-center justify-between gap-4 border-b px-5 py-3">
-          <h2 className="text-title">{title}</h2>
+          <h2 className="type-title">{title}</h2>
           {actions}
         </div>
       ) : null}

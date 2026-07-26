@@ -57,7 +57,7 @@ function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "text-body flex h-9 items-center gap-2.5 rounded-md px-3 transition-colors [&_svg]:size-4 [&_svg]:shrink-0",
+        "type-body flex h-9 items-center gap-2.5 rounded-md px-3 transition-colors [&_svg]:size-4 [&_svg]:shrink-0",
         "focus-visible:focus-ring outline-none",
         active
           ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
@@ -111,13 +111,13 @@ function Identity({ variant, collapsed }: { variant: ShellVariant; collapsed?: b
       ) : (
         <span
           aria-hidden
-          className="bg-primary text-primary-foreground text-caption grid size-7 shrink-0 place-items-center rounded-sm font-semibold"
+          className="bg-primary text-primary-foreground type-caption grid size-7 shrink-0 place-items-center rounded-sm font-semibold"
         >
           {initials(name ?? "LeasRecover")}
         </span>
       )}
       {!collapsed ? (
-        <span className="text-title truncate">{name ?? "LeasRecover"}</span>
+        <span className="type-title truncate">{name ?? "LeasRecover"}</span>
       ) : null}
     </div>
   );
@@ -149,16 +149,16 @@ function AccountBlock({ collapsed }: { collapsed?: boolean }) {
             >
               <span
                 aria-hidden
-                className="bg-panel text-foreground text-caption border-border grid size-7 shrink-0 place-items-center rounded-full border font-semibold"
+                className="bg-panel text-foreground type-caption border-border grid size-7 shrink-0 place-items-center rounded-full border font-semibold"
               >
                 {initials(user?.name)}
               </span>
               {!collapsed ? (
                 <span className="min-w-0 flex-1">
-                  <span className="text-body-sm text-foreground block truncate">
+                  <span className="type-body-sm text-foreground block truncate">
                     {user?.name ?? "—"}
                   </span>
-                  <span className="text-caption text-muted-foreground block truncate">
+                  <span className="type-caption text-muted-foreground block truncate">
                     {roleLabel(user?.role)}
                   </span>
                 </span>
@@ -229,7 +229,7 @@ export function AppShell({
       {/* Skip link: first focusable element on every screen. */}
       <a
         href="#contenu"
-        className="focus:bg-primary focus:text-primary-foreground text-label sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:px-3 focus:py-2"
+        className="focus:bg-primary focus:text-primary-foreground type-label sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:px-3 focus:py-2"
       >
         Aller au contenu
       </a>
@@ -276,7 +276,7 @@ export function AppShell({
 
         {/* NFR12 made visible: the platform console cannot reach case data. */}
         {variant === "platform" ? (
-          <p className="bg-panel border-border text-caption text-muted-foreground border-b px-4 py-1.5 md:px-6 lg:px-8">
+          <p className="bg-panel border-border type-caption text-muted-foreground border-b px-4 py-1.5 md:px-6 lg:px-8">
             Console plateforme — accès aux dossiers clients désactivé.
           </p>
         ) : null}
@@ -284,7 +284,7 @@ export function AppShell({
         {warning ? (
           <div
             role="alert"
-            className="bg-warning-surface border-warning-border text-body-sm flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2 md:px-6 lg:px-8"
+            className="bg-warning-surface border-warning-border type-body-sm flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2 md:px-6 lg:px-8"
           >
             <span>Votre session expire dans 1 minute.</span>
             <span className="flex gap-2">
