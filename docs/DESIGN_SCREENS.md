@@ -50,7 +50,7 @@ These apply to every screen. Individual briefs note only their deviations.
 
 **Scope, for every screen.** Fidelity: production-ready specification. Breadth: the whole surface, 9 screens plus 2 shells. Interactivity: shipped-quality components with all seven states. Time intent: polish until it ships.
 
-**Constraints.** Next.js 16 App Router, React 19, **TypeScript**, Tailwind + Radix/shadcn (Ant Design is being removed), **TanStack Query v5** for all server state, `next-themes` for the light/dark switch. French UI. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
+**Constraints.** Next.js 16 App Router, React 19, **TypeScript**, Tailwind v4 + **shadcn on Base UI** (style `base-nova`; Ant Design is being removed), **TanStack Query v5** for all server state, `next-themes` on the `.dark` class strategy. French UI. Desktop-first. WCAG 2.1 AA as a release gate. Tenants operate in both TND and EUR, so currency is never hardcoded.
 
 Every "loading", "empty" and "error" state named in the briefs below maps onto a specific TanStack Query state. See [§12](#12-data-layer) for that mapping; the briefs describe what the user sees, §12 describes what drives it.
 
@@ -417,34 +417,41 @@ What to build, in what order, and on what primitive. Ordered so that nothing is 
 
 ### Tier 1 — Primitives (no screen ships without these)
 
-| Component | Base | Notes |
+Built on **Base UI** via shadcn, not Radix. `Install` means `npx shadcn@latest add <name>` then restyle to the token layer; `Build` means it does not exist and we write it.
+
+| Component | Source | Notes |
 |---|---|---|
-| `Button` | shadcn | Variants: primary, secondary, ghost, danger. Sizes: default 36px, compact 32px. All seven states. |
-| `Input` / `Textarea` | shadcn | Edge border, label always external. |
-| `NumericInput` | custom | Tabular, right-aligned, suffix adornment, French decimal parsing. |
-| `Select` / `Combobox` | Radix Select, Popover + cmdk | Combobox needed for the contract picker in §6. |
-| `Label` / `FormField` / `FormError` | react-hook-form + zod | Wires `aria-describedby` and `aria-invalid` automatically. |
-| `Chip` | custom | Semantic and neutral variants. **Icon + colour + text is enforced by the API**: the icon prop is required for semantic variants. |
-| `Tooltip` | Radix | Never the sole carrier of required information. |
-| `Skeleton` | custom | Must accept an explicit height so it matches real content. |
-| `Toast` | Radix Toast / sonner | Manually dismissible, per WCAG timeouts. |
-| `Dialog` / `Sheet` | Radix Dialog | Sheet is the default; Dialog reserved for destructive confirmations. |
-| `Tabs` | Radix Tabs | URL-synced variant needed for §5. |
-| `Disclosure` | Radix Accordion | Used by the documents tab. |
+| `Button` | Install `button` | Remap variants to ours: primary, secondary, ghost, danger. Sizes 36px / 32px. All seven states. |
+| `Input` / `Textarea` | Install `input`, `textarea` | Border comes from `--input` (Edge), which is already the 3:1 boundary token. |
+| `Field` / `Label` | Install `field`, `label` | shadcn `Field` wires `aria-describedby` and `aria-invalid`. Use it rather than hand-rolling; pair with react-hook-form + zod. |
+| `Select` / `Combobox` | Install `select`, `combobox` | Combobox is needed for the contract picker in §6. |
+| `Tooltip` | Install `tooltip` | Never the sole carrier of required information. |
+| `Skeleton` | Install `skeleton` | Must always be given an explicit height matching real content. |
+| `Toast` | Install `toast` | Manually dismissible, per WCAG timeouts. |
+| `Dialog` / `Sheet` | Install `dialog`, `sheet` | Sheet is the default; Dialog reserved for destructive confirmations. |
+| `Tabs` | Install `tabs` | Wrap in a URL-synced variant for §5. |
+| `Accordion` | Install `accordion` | Backs the per-phase document disclosure. |
+| `Breadcrumb` | Install `breadcrumb` | Required on every detail view; absent today. |
+| `Empty` | Install `empty` | Base for both empty-state variants. |
+| `Spinner` / `Progress` | Install `spinner`, `progress` | Progress must be determinate for the AI pipeline. |
+| `Sidebar` | Install `sidebar` | Backs `AppShell`. Gets the `--sidebar*` token family. |
+| `NumericInput` | **Build** | Tabular, right-aligned, suffix adornment, French decimal parsing. |
+| `Chip` | **Build** | shadcn `Badge` is close but does not enforce our rule. **Icon + colour + text is enforced by the API**: the icon prop is required for semantic variants. |
+
+Roughly two thirds of Tier 1 is installation and restyling rather than construction. The build effort in this tier is `Chip`, `NumericInput`, and the token remapping of `Button`.
 
 ### Tier 2 — Composites
 
 | Component | Replaces | Notes |
 |---|---|---|
-| `DataTable` | AntD `Table` | TanStack Table. Server pagination, sorting, URL-synced filters, sticky header, 48px rows, skeleton and two distinct empty states. The single largest build item. |
+| `DataTable` | AntD `Table` | Install shadcn `data-table` (TanStack Table) as the base, then add server pagination, URL-synced sorting and filters, `placeholderData`, sticky header, 48px rows, skeleton rows and two distinct empty states. Still the single largest item in this tier. |
 | `FilterBar` | — | Search, selects, removable active-filter chips, URL sync. |
-| `EmptyState` | — | Title, body, optional action. Two variants: no-data and no-results. |
+| `EmptyState` | — | Wraps shadcn `Empty`. Two variants, no-data and no-results, as separate exports so they cannot be confused. |
 | `ErrorState` | — | Specific cause plus retry. Inline and full-page variants. |
 | `PageHeader` | — | Title, subtitle, action slot. |
-| `Breadcrumb` | — | Does not exist today; required on every detail view. |
 | `DefinitionList` | — | The `Détails` tab and every sheet. Replaces the card-soup. |
 | `DocumentList` | — | One implementation replacing the current three upload paths. |
-| `AppShell` | both layouts | One shell, two configurations. Breakpoint-driven collapse. |
+| `AppShell` | both layouts | Wraps shadcn `Sidebar`. One shell, two configurations. Breakpoint-driven collapse. |
 
 ### Tier 3 — Signature
 
@@ -627,29 +634,57 @@ One global handler, for one case only. Everything else is local, so the message 
 
 Normative values live in [`../DESIGN.md`](../DESIGN.md) frontmatter. This is the naming contract between that file and the code, so the two cannot drift.
 
-**Every token is a CSS custom property on `:root`, themed by a `data-theme` attribute on `<html>`.** Tailwind reads the custom properties rather than redefining the values, so there is exactly one source of truth and dark mode requires no Tailwind changes.
+**Every token is a CSS custom property on `:root`, overridden inside `.dark`, and exposed to Tailwind through `@theme inline`.** There is exactly one source of truth, and dark mode requires no component or utility changes.
 
-### Naming contract
+### Mapping onto shadcn's token vocabulary
 
-| CSS custom property | Tailwind utility | DESIGN.md token |
+shadcn ships a fixed set of semantic token names and every installed component is written against them. **We adopt those names rather than inventing parallel ones**, so components work unmodified. `DESIGN.md`'s descriptive names remain the design vocabulary; these are their code identities.
+
+> ⚠️ **One false friend.** shadcn's `--accent` means *"interactive hover, focus and active surfaces"*, **not** the brand accent. Our Dossier Plum is shadcn's `--primary`. Getting this backwards would tint every hover state plum and every button pale. It is the single most likely mistake in this phase.
+
+| shadcn token | DESIGN.md name | Value (light) |
 |---|---|---|
-| `--color-paper` | `bg-paper` | `colors.paper` |
-| `--color-surface` | `bg-surface` | `colors.surface` |
-| `--color-panel` | `bg-panel` | `colors.panel` |
-| `--color-border-subtle` | `border-subtle` | `colors.border-subtle` |
-| `--color-border` | `border-DEFAULT` | `colors.border` |
-| `--color-border-strong` | `border-strong` | `colors.border-strong` |
-| `--color-ink` / `-secondary` / `-muted` | `text-ink` / `-secondary` / `-muted` | `colors.ink*` |
-| `--color-accent` / `-hover` / `-subtle` / `-border` | `bg-accent`, `text-accent`, … | `colors.plum*` |
-| `--color-critical` / `-surface` / `-border` | `text-critical`, `bg-critical-surface`, … | `colors.critical*` |
-| `--color-warning` / `-surface` / `-border` | idem | `colors.warning*` |
-| `--color-success` / `-surface` / `-border` | idem | `colors.success*` |
-| `--radius-sm` / `-md` / `-lg` | `rounded-sm` / `-md` / `-lg` | `rounded.*` |
-| `--shadow-overlay` / `-dialog` / `-focus` | `shadow-overlay` / … | sidecar `extensions.shadows` |
-| `--ease-out-quart` | `ease-out-quart` | sidecar `extensions.motion` |
-| `--duration-fast` / `-base` / `-reveal` | `duration-fast` / … | sidecar `extensions.motion` |
+| `--background` / `--foreground` | Paper / Ink | `#FAF5F8` / `#20171D` |
+| `--card` / `--card-foreground` | Leaf / Ink | `#FEFCFD` / `#20171D` |
+| `--popover` / `--popover-foreground` | Leaf / Ink | `#FEFCFD` / `#20171D` |
+| `--primary` / `--primary-foreground` | **Dossier Plum** / Leaf | `#633481` / `#FEFCFD` |
+| `--secondary` / `--secondary-foreground` | Board / Ink | `#F1EBEE` / `#20171D` |
+| `--muted` / `--muted-foreground` | Board / Ink Muted | `#F1EBEE` / `#746C71` |
+| `--accent` / `--accent-foreground` | Plum Wash / Plum *(hover + selected surfaces)* | `#F3EBFA` / `#633481` |
+| `--destructive` | Overdue Red | `#B71824` |
+| `--border` | Hairline | `#E5DFE3` |
+| `--input` | **Edge** *(form control boundaries; already our 3:1 token)* | `#91898E` |
+| `--ring` | Plum | `#633481` |
+| `--sidebar` / `--sidebar-foreground` | Board / Ink Secondary | `#F1EBEE` / `#5B5258` |
+| `--sidebar-primary` / `-foreground` | Plum / Leaf | `#633481` / `#FEFCFD` |
+| `--sidebar-accent` / `-foreground` | Plum Wash / Plum | `#F3EBFA` / `#633481` |
+| `--sidebar-border` | Hairline | `#E5DFE3` |
+| `--sidebar-ring` | Plum | `#633481` |
 
-The accent is named `accent`, not `plum`, in code. A future palette change must not require renaming every call site.
+### Tokens we add
+
+shadcn has no vocabulary for a semantic triad beyond `destructive`, and no second-level surface. Added via its documented pattern: define under `:root` and `.dark`, expose with `@theme inline`.
+
+| Token | DESIGN.md name | Value | Utility |
+|---|---|---|---|
+| `--warning` / `--warning-foreground` | Approaching Amber | `#975800` / `#FEFCFD` | `text-warning`, `bg-warning` |
+| `--warning-surface` / `--warning-border` | | `#FDF1D9` / `#F2D5A5` | `bg-warning-surface` |
+| `--success` / `--success-foreground` | Settled Green | `#00713E` / `#FEFCFD` | `text-success` |
+| `--success-surface` / `--success-border` | | `#E1F8EB` / `#BAE3CA` | `bg-success-surface` |
+| `--destructive-surface` / `--destructive-border` | Critical surface / border | `#FFECE9` / `#FDC9C4` | `bg-destructive-surface` |
+| `--border-subtle` | Hairline, lighter | `#E5DFE3` | `border-subtle` |
+| `--panel` | Board, where `--secondary` would read wrong semantically | `#F1EBEE` | `bg-panel` |
+
+`--destructive-foreground` is not in shadcn's default set but is needed for text on a red fill; add it.
+
+### Radius, shadow, motion
+
+| Token | Value | Note |
+|---|---|---|
+| `--radius-sm` / `-md` / `-lg` | `3px` / `5px` / `8px` | **Explicit overrides.** shadcn derives its scale from a single `--radius` (`sm = 0.6×`, `md = 0.8×`, `lg = 1×`), which cannot yield 3/5/8. Set the three directly; keep `--radius: 5px` so any component reaching for the base gets `md`. |
+| `--shadow-overlay` / `-dialog` / `-focus` | see `DESIGN.md` §4 | Ink-tinted, never pure black. |
+| `--ease-out-quart` | `cubic-bezier(0.25, 1, 0.5, 1)` | The only easing curve. |
+| `--duration-fast` / `-base` / `-reveal` | `120ms` / `180ms` / `300ms` | |
 
 ### Rules
 
@@ -661,9 +696,11 @@ The accent is named `accent`, not `plum`, in code. A future palette change must 
 
 ### Theming
 
-`next-themes` with `attribute="data-theme"`, `defaultTheme="light"`, `enableSystem`, and `disableTransitionOnChange` so switching does not animate every colour on the page at once.
+`next-themes` with `attribute="class"`, `defaultTheme="light"`, `enableSystem`, and `disableTransitionOnChange` so switching does not animate every colour on the page at once. Tailwind is told about it with `@custom-variant dark (&:is(.dark *))`, which is the shadcn default.
 
-Because every colour is a custom property redefined under `[data-theme='dark']`, dark mode requires **no component changes and no Tailwind changes**. That is the whole reason for the naming contract above, and it is why dark ships from the start rather than later: once the token layer exists, the second theme is a second block of custom properties, already specified in `DESIGN.md`.
+The class strategy rather than a `data-theme` attribute, because it is what shadcn's generated components and `next-themes` both assume. Fighting that would mean editing every installed component.
+
+Because every colour is a custom property redefined under `.dark`, dark mode requires **no component changes and no Tailwind changes**. That is the whole reason for the mapping above, and why dark ships from the start rather than later: once the token layer exists, the second theme is a second block of custom properties, already specified in `DESIGN.md`.
 
 The switch lives in the sidebar account menu (§1) as three options, `Clair` / `Sombre` / `Système`. Light is the default; system preference is honoured only when the user selects `Système` explicitly, because a manager on a machine set to dark should still get the light default this product is designed around.
 

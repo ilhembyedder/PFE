@@ -278,6 +278,8 @@ The semantic triad. These are states, never styling. Each is paired with an icon
 
 Same hues, inverted lightness, recomputed for contrast rather than algorithmically flipped. Ground `#151013`, panels `#0D090B`, sheets `#201A1D`, ink `#F0EBEE` at 16.01:1. The accent lightens to `#BE8CE1` (7.22:1) and the semantic triad lightens with it. Dark is a genuine second theme, opt-in for late sessions, and it is never the default: the physical scene is an all-day desktop session in a normally-lit office reading dense financial tables.
 
+Applied with a `.dark` class on `<html>` (`@custom-variant dark (&:is(.dark *))`), which is the shadcn and `next-themes` default. Every token above is redefined inside that selector; no component or utility changes are required to support it.
+
 ### Named Rules
 
 **The One Voice Rule.** Exactly one non-semantic colour exists in this system, and it appears on no more than 10% of any screen. Its rarity is what makes an active nav item or a primary button unmistakable. If a screen needs a second accent, the screen has a hierarchy problem, not a palette problem.
@@ -338,6 +340,14 @@ Shadow is reserved for elements that genuinely float above the page and will be 
 ## 5. Components
 
 Every interactive component ships with all seven states: default, hover, focus-visible, active, disabled, loading, error. A component with four of them is unfinished and must not merge.
+
+Components are built on **Base UI** primitives via shadcn (style `base-nova`), not Radix. shadcn migrated to Base UI, which is the same team's successor to the Radix primitives; behaviour and accessibility guarantees are equivalent, the package and import paths are not.
+
+### Radius
+
+Three steps, deliberately tight: **3px** (`sm`), **5px** (`md`), **8px** (`lg`). Large radii read consumer-friendly, which is the wrong register for an official record.
+
+These are set as explicit `@theme inline` overrides, **not** derived from shadcn's `--radius` base. Their default scale multiplies a single base (`sm = 0.6×`, `md = 0.8×`, `lg = 1×`), which cannot produce 3/5/8 from any one value. Override the three steps directly and leave `--radius` aligned to `md`.
 
 ### Buttons
 
