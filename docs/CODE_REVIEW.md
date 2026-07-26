@@ -68,9 +68,11 @@ Authorization is the weakest structural area: there is **no `@EnableMethodSecuri
 The Spring Mail configuration carries a personal Gmail address and a **working 16-character Google app password** as the property *defaults*:
 
 ```yaml
-username: ${SPRING_MAIL_USERNAME:ilhemby1999@gmail.com}
-password: ${SPRING_MAIL_PASSWORD:ijqx zbrq daiv uvwg}
+username: ${SPRING_MAIL_USERNAME:<a personal gmail address>}
+password: ${SPRING_MAIL_PASSWORD:<a working 16-character app password>}
 ```
+
+The literal values are deliberately not reproduced here. They are visible at the location above, and duplicating a live credential into a second tracked file only widens the exposure and gives secret scanners a second hit.
 
 **Impact:** anyone with repository access can send mail as that account. The credential is in git history, so deleting the line is not sufficient.
 
