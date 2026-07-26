@@ -213,6 +213,7 @@ components:
 # Design System: LeasRecover
 
 > Visual specification. Strategy, users and principles live in [`PRODUCT.md`](PRODUCT.md).
+> Screen-by-screen layout, states and copy live in [`docs/DESIGN_SCREENS.md`](docs/DESIGN_SCREENS.md).
 > This system is **designed, not extracted**: it describes the target, not the code as it stands today. The current build predates it and violates most of it.
 
 ## 1. Overview

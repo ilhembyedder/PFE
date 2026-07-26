@@ -2,6 +2,7 @@
 
 > Strategic design context for LeasRecover. Answers who, what and why.
 > Visual decisions (colour, type, spacing, components) live in [`DESIGN.md`](DESIGN.md).
+> Screen layouts, states and copy live in [`docs/DESIGN_SCREENS.md`](docs/DESIGN_SCREENS.md).
 > Product background and technical reference: [`README.md`](README.md). Known issues: [`docs/CODE_REVIEW.md`](docs/CODE_REVIEW.md).
 
 ## Register

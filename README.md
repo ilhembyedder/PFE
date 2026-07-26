@@ -5,6 +5,8 @@
 **Status:** MVP feature-complete per the BMad sprint tracker (7 epics, 26 stories, all marked `done`).
 **Before you deploy or demo anything, read [`docs/CODE_REVIEW.md`](docs/CODE_REVIEW.md).** There are 10 critical findings, including committed credentials and a simulated AI pipeline.
 
+**A frontend redesign is specified but not yet built.** [`PRODUCT.md`](PRODUCT.md) (strategy) · [`DESIGN.md`](DESIGN.md) (visual system) · [`docs/DESIGN_SCREENS.md`](docs/DESIGN_SCREENS.md) (all 9 screens). The UI described in §8 below is the *current* build, which those documents supersede.
+
 ---
 
 ## Table of contents
