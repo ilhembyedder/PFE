@@ -31,4 +31,19 @@ public class Vehicle extends BaseEntity {
     private String model;
 
     private Integer year;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
+    public String getVin() { return vin; }
+    public void setVin(String vin) { this.vin = vin; }
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 }

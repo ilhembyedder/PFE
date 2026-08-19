@@ -60,4 +60,27 @@ public class TenantConfig {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public BigDecimal getAiDeviationModerate() { return aiDeviationModerate; }
+    public void setAiDeviationModerate(BigDecimal aiDeviationModerate) { this.aiDeviationModerate = aiDeviationModerate; }
+    public BigDecimal getAiDeviationCritical() { return aiDeviationCritical; }
+    public void setAiDeviationCritical(BigDecimal aiDeviationCritical) { this.aiDeviationCritical = aiDeviationCritical; }
+    public Integer getDormancyThresholdDays() { return dormancyThresholdDays; }
+    public void setDormancyThresholdDays(Integer dormancyThresholdDays) { this.dormancyThresholdDays = dormancyThresholdDays; }
+    public Map<String, Integer> getPhaseLegalDelays() { return phaseLegalDelays; }
+    public void setPhaseLegalDelays(Map<String, Integer> phaseLegalDelays) { this.phaseLegalDelays = phaseLegalDelays; }
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer version) { this.version = version; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public Boolean getIsDeleted() { return isDeleted; }
+    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public ZonedDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(ZonedDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

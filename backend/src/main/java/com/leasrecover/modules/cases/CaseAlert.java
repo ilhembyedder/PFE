@@ -33,4 +33,19 @@ public class CaseAlert extends BaseEntity {
 
     @Column(name = "resolved_at")
     private ZonedDateTime resolvedAt;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public UUID getCaseId() { return caseId; }
+    public void setCaseId(UUID caseId) { this.caseId = caseId; }
+    public String getAlertType() { return alertType; }
+    public void setAlertType(String alertType) { this.alertType = alertType; }
+    public String getCriticality() { return criticality; }
+    public void setCriticality(String criticality) { this.criticality = criticality; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    public Boolean getIsResolved() { return isResolved; }
+    public void setIsResolved(Boolean isResolved) { this.isResolved = isResolved; }
+    public ZonedDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(ZonedDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 }

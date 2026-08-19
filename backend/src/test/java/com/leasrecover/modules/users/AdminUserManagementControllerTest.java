@@ -1,6 +1,6 @@
 package com.leasrecover.modules.users;
 
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leasrecover.modules.users.dto.UserCreateRequest;
 import com.leasrecover.modules.users.dto.UserResponse;
 import com.leasrecover.modules.users.dto.UserUpdateRequest;
@@ -10,7 +10,7 @@ import com.leasrecover.modules.superadmin.SuperAdminRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;

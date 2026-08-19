@@ -247,8 +247,16 @@ function ContractSheet({
       await save.mutateAsync({
         id: contract?.id,
         ...form,
-        startDate: form.startDate || null,
-        endDate: form.endDate || null,
+        startDate: form.startDate
+          ? form.startDate.includes("T")
+            ? form.startDate
+            : `${form.startDate}T00:00:00Z`
+          : null,
+        endDate: form.endDate
+          ? form.endDate.includes("T")
+            ? form.endDate
+            : `${form.endDate}T00:00:00Z`
+          : null,
       });
       onClose();
     } catch (cause) {

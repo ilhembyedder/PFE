@@ -20,7 +20,7 @@ export function PageHeader({
       <div className="min-w-0">
         <h1 className="type-display">{title}</h1>
         {subtitle ? (
-          <p className="type-body-sm text-muted-foreground mt-1">{subtitle}</p>
+          <div className="type-body-sm text-muted-foreground mt-1">{subtitle}</div>
         ) : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

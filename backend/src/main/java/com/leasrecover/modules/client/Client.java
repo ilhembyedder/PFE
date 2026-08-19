@@ -31,4 +31,17 @@ public class Client extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String address;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public String getFullNameOrCompany() { return fullNameOrCompany; }
+    public void setFullNameOrCompany(String fullNameOrCompany) { this.fullNameOrCompany = fullNameOrCompany; }
+    public String getRegistrationNumber() { return registrationNumber; }
+    public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
+    public String getContactEmail() { return contactEmail; }
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
+    public String getContactPhone() { return contactPhone; }
+    public void setContactPhone(String contactPhone) { this.contactPhone = contactPhone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 }

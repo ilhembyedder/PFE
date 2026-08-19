@@ -23,6 +23,18 @@ public class TenantConfigRequest {
     @NotNull(message = "Les délais légaux par phase sont obligatoires")
     private Map<String, Integer> phaseLegalDelays;
 
+    public TenantConfigRequest() {}
+
+    public TenantConfigRequest(Integer dormancyThresholdDays, Map<String, Integer> phaseLegalDelays) {
+        this.dormancyThresholdDays = dormancyThresholdDays;
+        this.phaseLegalDelays = phaseLegalDelays;
+    }
+
+    public Integer getDormancyThresholdDays() { return dormancyThresholdDays; }
+    public void setDormancyThresholdDays(Integer dormancyThresholdDays) { this.dormancyThresholdDays = dormancyThresholdDays; }
+    public Map<String, Integer> getPhaseLegalDelays() { return phaseLegalDelays; }
+    public void setPhaseLegalDelays(Map<String, Integer> phaseLegalDelays) { this.phaseLegalDelays = phaseLegalDelays; }
+
     @AssertTrue(message = "Tous les délais légaux de phase doivent être strictement supérieurs à zéro")
     public boolean isPhaseLegalDelaysValid() {
         if (phaseLegalDelays == null || phaseLegalDelays.isEmpty()) {

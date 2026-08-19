@@ -32,4 +32,17 @@ public class Contract extends BaseEntity {
 
     @Column(nullable = false)
     private String status;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
+    public String getReferenceNumber() { return referenceNumber; }
+    public void setReferenceNumber(String referenceNumber) { this.referenceNumber = referenceNumber; }
+    public ZonedDateTime getStartDate() { return startDate; }
+    public void setStartDate(ZonedDateTime startDate) { this.startDate = startDate; }
+    public ZonedDateTime getEndDate() { return endDate; }
+    public void setEndDate(ZonedDateTime endDate) { this.endDate = endDate; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

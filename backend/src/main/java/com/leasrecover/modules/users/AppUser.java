@@ -39,4 +39,21 @@ public class AppUser extends BaseEntity {
 
     @Column(name = "last_login")
     private ZonedDateTime lastLogin;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public ZonedDateTime getLastLogin() { return lastLogin; }
+    public void setLastLogin(ZonedDateTime lastLogin) { this.lastLogin = lastLogin; }
 }

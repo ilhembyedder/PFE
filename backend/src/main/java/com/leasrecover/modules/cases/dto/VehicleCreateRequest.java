@@ -28,4 +28,15 @@ public class VehicleCreateRequest {
     @NotNull(message = "Year is required")
     @Min(value = 1900, message = "Year must be 1900 or later")
     private Integer year;
+
+    public String getVin() { return vin; }
+    public void setVin(String vin) { this.vin = vin; }
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 }

@@ -24,6 +24,29 @@ public class UserResponse {
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 
+    public UserResponse() {}
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public ZonedDateTime getLastLogin() { return lastLogin; }
+    public void setLastLogin(ZonedDateTime lastLogin) { this.lastLogin = lastLogin; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     public static UserResponse fromUser(AppUser user) {
         UserResponse response = new UserResponse();
         response.setId(user.getId());

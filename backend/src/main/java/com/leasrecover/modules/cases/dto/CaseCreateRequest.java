@@ -62,4 +62,37 @@ public class CaseCreateRequest {
     private Long initialResidualValueCents;
 
     private String currencyCode = "TND";
+
+    public String getClientFullName() { return clientFullName; }
+    public void setClientFullName(String clientFullName) { this.clientFullName = clientFullName; }
+    public String getClientRegistrationNumber() { return clientRegistrationNumber; }
+    public void setClientRegistrationNumber(String clientRegistrationNumber) { this.clientRegistrationNumber = clientRegistrationNumber; }
+    public String getClientContactEmail() { return clientContactEmail; }
+    public void setClientContactEmail(String clientContactEmail) { this.clientContactEmail = clientContactEmail; }
+    public String getClientContactPhone() { return clientContactPhone; }
+    public void setClientContactPhone(String clientContactPhone) { this.clientContactPhone = clientContactPhone; }
+    public String getClientAddress() { return clientAddress; }
+    public void setClientAddress(String clientAddress) { this.clientAddress = clientAddress; }
+    public String getContractReferenceNumber() { return contractReferenceNumber; }
+    public void setContractReferenceNumber(String contractReferenceNumber) { this.contractReferenceNumber = contractReferenceNumber; }
+    public ZonedDateTime getContractStartDate() { return contractStartDate; }
+    public void setContractStartDate(ZonedDateTime contractStartDate) { this.contractStartDate = contractStartDate; }
+    public ZonedDateTime getContractEndDate() { return contractEndDate; }
+    public void setContractEndDate(ZonedDateTime contractEndDate) { this.contractEndDate = contractEndDate; }
+    public String getContractStatus() { return contractStatus; }
+    public void setContractStatus(String contractStatus) { this.contractStatus = contractStatus; }
+    public String getVehicleVin() { return vehicleVin; }
+    public void setVehicleVin(String vehicleVin) { this.vehicleVin = vehicleVin; }
+    public String getVehicleLicensePlate() { return vehicleLicensePlate; }
+    public void setVehicleLicensePlate(String vehicleLicensePlate) { this.vehicleLicensePlate = vehicleLicensePlate; }
+    public String getVehicleBrand() { return vehicleBrand; }
+    public void setVehicleBrand(String vehicleBrand) { this.vehicleBrand = vehicleBrand; }
+    public String getVehicleModel() { return vehicleModel; }
+    public void setVehicleModel(String vehicleModel) { this.vehicleModel = vehicleModel; }
+    public Integer getVehicleYear() { return vehicleYear; }
+    public void setVehicleYear(Integer vehicleYear) { this.vehicleYear = vehicleYear; }
+    public Long getInitialResidualValueCents() { return initialResidualValueCents; }
+    public void setInitialResidualValueCents(Long initialResidualValueCents) { this.initialResidualValueCents = initialResidualValueCents; }
+    public String getCurrencyCode() { return currencyCode; }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 }

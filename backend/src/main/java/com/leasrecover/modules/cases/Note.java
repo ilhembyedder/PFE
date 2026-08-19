@@ -26,4 +26,13 @@ public class Note extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public RecoveryCase getRecoveryCase() { return recoveryCase; }
+    public void setRecoveryCase(RecoveryCase recoveryCase) { this.recoveryCase = recoveryCase; }
+    public AppUser getAuthor() { return author; }
+    public void setAuthor(AppUser author) { this.author = author; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 }

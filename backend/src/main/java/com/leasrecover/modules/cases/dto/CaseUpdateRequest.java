@@ -24,4 +24,13 @@ public class CaseUpdateRequest {
     @NotBlank(message = "Currency code is required")
     @Size(min = 3, max = 3, message = "Currency code must be exactly 3 characters")
     private String currencyCode;
+
+    public String getClientFullName() { return clientFullName; }
+    public void setClientFullName(String clientFullName) { this.clientFullName = clientFullName; }
+    public String getContractReferenceNumber() { return contractReferenceNumber; }
+    public void setContractReferenceNumber(String contractReferenceNumber) { this.contractReferenceNumber = contractReferenceNumber; }
+    public Long getInitialResidualValueCents() { return initialResidualValueCents; }
+    public void setInitialResidualValueCents(Long initialResidualValueCents) { this.initialResidualValueCents = initialResidualValueCents; }
+    public String getCurrencyCode() { return currencyCode; }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
 }

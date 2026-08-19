@@ -22,4 +22,13 @@ public class UserUpdateRequest {
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "^(ACTIVE|INACTIVE)$", message = "Status must be ACTIVE or INACTIVE")
     private String status;
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

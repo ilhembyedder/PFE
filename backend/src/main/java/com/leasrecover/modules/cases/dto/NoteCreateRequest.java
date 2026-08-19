@@ -10,4 +10,7 @@ public class NoteCreateRequest {
 
     @NotBlank(message = "Note content is required")
     private String content;
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 }

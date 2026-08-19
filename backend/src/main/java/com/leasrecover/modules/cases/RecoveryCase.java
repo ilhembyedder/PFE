@@ -51,4 +51,23 @@ public class RecoveryCase extends BaseEntity {
 
     @Column(nullable = false)
     private String status = "ACTIVE";
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public AppUser getAssignee() { return assignee; }
+    public void setAssignee(AppUser assignee) { this.assignee = assignee; }
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
+    public Long getInitialResidualValueCents() { return initialResidualValueCents; }
+    public void setInitialResidualValueCents(Long initialResidualValueCents) { this.initialResidualValueCents = initialResidualValueCents; }
+    public String getCurrencyCode() { return currencyCode; }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
+    public RecoveryPhase getCurrentPhase() { return currentPhase; }
+    public void setCurrentPhase(RecoveryPhase currentPhase) { this.currentPhase = currentPhase; }
+    public ZonedDateTime getPhaseStartedAt() { return phaseStartedAt; }
+    public void setPhaseStartedAt(ZonedDateTime phaseStartedAt) { this.phaseStartedAt = phaseStartedAt; }
+    public ZonedDateTime getLastActionAt() { return lastActionAt; }
+    public void setLastActionAt(ZonedDateTime lastActionAt) { this.lastActionAt = lastActionAt; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

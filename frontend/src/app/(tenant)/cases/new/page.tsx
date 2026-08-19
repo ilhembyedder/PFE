@@ -190,8 +190,16 @@ export default function NewCasePage() {
         clientName: form.clientName.trim(),
         contractReference: form.contractReference.trim(),
         vehicleVin: form.vehicleVin.trim().toUpperCase(),
-        contractStartDate: form.contractStartDate || null,
-        contractEndDate: form.contractEndDate || null,
+        contractStartDate: form.contractStartDate
+          ? form.contractStartDate.includes("T")
+            ? form.contractStartDate
+            : `${form.contractStartDate}T00:00:00Z`
+          : null,
+        contractEndDate: form.contractEndDate
+          ? form.contractEndDate.includes("T")
+            ? form.contractEndDate
+            : `${form.contractEndDate}T00:00:00Z`
+          : null,
         initialResidualValueCents: Math.round((residual ?? 0) * 100),
       });
       // Lands on the case, not the registry: working it is the next thing.

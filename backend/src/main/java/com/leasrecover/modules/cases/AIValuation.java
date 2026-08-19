@@ -61,4 +61,35 @@ public class AIValuation extends BaseEntity {
 
     @Column(name = "processed_at")
     private ZonedDateTime processedAt;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public RecoveryCase getRecoveryCase() { return recoveryCase; }
+    public void setRecoveryCase(RecoveryCase recoveryCase) { this.recoveryCase = recoveryCase; }
+    public Document getDocument() { return document; }
+    public void setDocument(Document document) { this.document = document; }
+    public String getExtractedBrand() { return extractedBrand; }
+    public void setExtractedBrand(String extractedBrand) { this.extractedBrand = extractedBrand; }
+    public String getExtractedModel() { return extractedModel; }
+    public void setExtractedModel(String extractedModel) { this.extractedModel = extractedModel; }
+    public Integer getExtractedYear() { return extractedYear; }
+    public void setExtractedYear(Integer extractedYear) { this.extractedYear = extractedYear; }
+    public Integer getExtractedMileage() { return extractedMileage; }
+    public void setExtractedMileage(Integer extractedMileage) { this.extractedMileage = extractedMileage; }
+    public String getExtractedCondition() { return extractedCondition; }
+    public void setExtractedCondition(String extractedCondition) { this.extractedCondition = extractedCondition; }
+    public Long getEstimatedMarketValueCents() { return estimatedMarketValueCents; }
+    public void setEstimatedMarketValueCents(Long estimatedMarketValueCents) { this.estimatedMarketValueCents = estimatedMarketValueCents; }
+    public String getCurrencyCode() { return currencyCode; }
+    public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
+    public Long getDeviationValueCents() { return deviationValueCents; }
+    public void setDeviationValueCents(Long deviationValueCents) { this.deviationValueCents = deviationValueCents; }
+    public BigDecimal getDeviationPercentage() { return deviationPercentage; }
+    public void setDeviationPercentage(BigDecimal deviationPercentage) { this.deviationPercentage = deviationPercentage; }
+    public String getReliabilityIndicator() { return reliabilityIndicator; }
+    public void setReliabilityIndicator(String reliabilityIndicator) { this.reliabilityIndicator = reliabilityIndicator; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public ZonedDateTime getProcessedAt() { return processedAt; }
+    public void setProcessedAt(ZonedDateTime processedAt) { this.processedAt = processedAt; }
 }

@@ -45,4 +45,19 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer version) { this.version = version; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public Boolean getIsDeleted() { return isDeleted; }
+    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public ZonedDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(ZonedDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

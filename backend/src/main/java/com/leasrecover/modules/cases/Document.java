@@ -52,4 +52,23 @@ public class Document extends BaseEntity {
 
     @Column(name = "phase_uploaded_in")
     private String phaseUploadedIn;
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public AppUser getUploader() { return uploader; }
+    public void setUploader(AppUser uploader) { this.uploader = uploader; }
+    public RecoveryCase getRecoveryCase() { return recoveryCase; }
+    public void setRecoveryCase(RecoveryCase recoveryCase) { this.recoveryCase = recoveryCase; }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
+    public Vehicle getVehicle() { return vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public String getPhaseUploadedIn() { return phaseUploadedIn; }
+    public void setPhaseUploadedIn(String phaseUploadedIn) { this.phaseUploadedIn = phaseUploadedIn; }
 }

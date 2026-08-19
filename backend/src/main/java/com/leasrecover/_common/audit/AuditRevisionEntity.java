@@ -31,4 +31,11 @@ public class AuditRevisionEntity {
 
     @Column(name = "user_id")
     private String userId;
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public long getTimestamp() { return timestamp; }
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 }

@@ -27,6 +27,18 @@ public class ThresholdUpdateRequest {
     @DecimalMax(value = "100.00", message = "Critical threshold must not exceed 100.00")
     private BigDecimal aiDeviationCritical;
 
+    public ThresholdUpdateRequest() {}
+
+    public ThresholdUpdateRequest(BigDecimal aiDeviationModerate, BigDecimal aiDeviationCritical) {
+        this.aiDeviationModerate = aiDeviationModerate;
+        this.aiDeviationCritical = aiDeviationCritical;
+    }
+
+    public BigDecimal getAiDeviationModerate() { return aiDeviationModerate; }
+    public void setAiDeviationModerate(BigDecimal aiDeviationModerate) { this.aiDeviationModerate = aiDeviationModerate; }
+    public BigDecimal getAiDeviationCritical() { return aiDeviationCritical; }
+    public void setAiDeviationCritical(BigDecimal aiDeviationCritical) { this.aiDeviationCritical = aiDeviationCritical; }
+
     @AssertTrue(message = "Moderate deviation threshold must be strictly less than critical deviation threshold")
     public boolean isThresholdRangeValid() {
         if (aiDeviationModerate == null || aiDeviationCritical == null) {

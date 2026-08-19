@@ -28,6 +28,30 @@ public class DocumentResponse {
     private String uploaderName;
     private ZonedDateTime createdAt;
 
+    public DocumentResponse() {}
+
+    public DocumentResponse(UUID id, String fileName, String fileUrl, String phaseUploadedIn, String uploaderName, ZonedDateTime createdAt) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+        this.phaseUploadedIn = phaseUploadedIn;
+        this.uploaderName = uploaderName;
+        this.createdAt = createdAt;
+    }
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public String getPhaseUploadedIn() { return phaseUploadedIn; }
+    public void setPhaseUploadedIn(String phaseUploadedIn) { this.phaseUploadedIn = phaseUploadedIn; }
+    public String getUploaderName() { return uploaderName; }
+    public void setUploaderName(String uploaderName) { this.uploaderName = uploaderName; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+
     public static DocumentResponse fromEntity(Document doc, UUID caseId) {
         DocumentResponse response = new DocumentResponse();
         response.setId(doc.getId());

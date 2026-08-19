@@ -20,6 +20,27 @@ public class VehicleResponse {
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public UUID getContractId() { return contractId; }
+    public void setContractId(UUID contractId) { this.contractId = contractId; }
+    public String getVin() { return vin; }
+    public void setVin(String vin) { this.vin = vin; }
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     public static VehicleResponse fromEntity(Vehicle vehicle) {
         if (vehicle == null) return null;
         VehicleResponse response = new VehicleResponse();

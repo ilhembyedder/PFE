@@ -15,6 +15,17 @@ public class NoteResponse {
     private String content;
     private ZonedDateTime createdAt;
 
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public UUID getCaseId() { return caseId; }
+    public void setCaseId(UUID caseId) { this.caseId = caseId; }
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+
     public static NoteResponse fromEntity(Note note) {
         NoteResponse response = new NoteResponse();
         response.setId(note.getId());

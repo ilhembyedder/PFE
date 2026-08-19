@@ -16,4 +16,19 @@ public class ThresholdResponse {
     private UUID tenantId;
     private BigDecimal aiDeviationModerate;
     private BigDecimal aiDeviationCritical;
+
+    public ThresholdResponse() {}
+
+    public ThresholdResponse(UUID tenantId, BigDecimal aiDeviationModerate, BigDecimal aiDeviationCritical) {
+        this.tenantId = tenantId;
+        this.aiDeviationModerate = aiDeviationModerate;
+        this.aiDeviationCritical = aiDeviationCritical;
+    }
+
+    public UUID getTenantId() { return tenantId; }
+    public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+    public BigDecimal getAiDeviationModerate() { return aiDeviationModerate; }
+    public void setAiDeviationModerate(BigDecimal aiDeviationModerate) { this.aiDeviationModerate = aiDeviationModerate; }
+    public BigDecimal getAiDeviationCritical() { return aiDeviationCritical; }
+    public void setAiDeviationCritical(BigDecimal aiDeviationCritical) { this.aiDeviationCritical = aiDeviationCritical; }
 }

@@ -19,6 +19,25 @@ public class CaseAlertResponse {
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
 
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public UUID getCaseId() { return caseId; }
+    public void setCaseId(UUID caseId) { this.caseId = caseId; }
+    public String getAlertType() { return alertType; }
+    public void setAlertType(String alertType) { this.alertType = alertType; }
+    public String getCriticality() { return criticality; }
+    public void setCriticality(String criticality) { this.criticality = criticality; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    public Boolean getIsResolved() { return isResolved; }
+    public void setIsResolved(Boolean isResolved) { this.isResolved = isResolved; }
+    public ZonedDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(ZonedDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     public static CaseAlertResponse fromEntity(CaseAlert alert) {
         CaseAlertResponse response = new CaseAlertResponse();
         response.setId(alert.getId());

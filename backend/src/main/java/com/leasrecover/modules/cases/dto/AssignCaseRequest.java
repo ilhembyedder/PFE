@@ -11,4 +11,7 @@ public class AssignCaseRequest {
 
     @NotNull(message = "Assignee ID is required")
     private UUID assigneeId;
+
+    public UUID getAssigneeId() { return assigneeId; }
+    public void setAssigneeId(UUID assigneeId) { this.assigneeId = assigneeId; }
 }
