@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { href: "/settings/tenant", key: "tenant" },
   { href: "/settings/compliance", key: "compliance" },
+  { href: "/settings/users", key: "users" },
 ] as const;
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {

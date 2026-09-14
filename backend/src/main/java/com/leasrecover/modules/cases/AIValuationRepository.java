@@ -12,6 +12,7 @@ import java.util.UUID;
 @Repository
 public interface AIValuationRepository extends JpaRepository<AIValuation, UUID> {
     List<AIValuation> findByRecoveryCaseId(UUID caseId);
+    Optional<AIValuation> findFirstByRecoveryCaseIdOrderByCreatedAtDesc(UUID caseId);
     Optional<AIValuation> findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(UUID caseId, String status);
     List<AIValuation> findByRecoveryCaseIdInAndStatus(List<UUID> caseIds, String status);
 }

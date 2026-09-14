@@ -57,10 +57,20 @@ public class TenantProvisioningService {
 
     @Transactional
     public void deactivateTenant(UUID tenantId) {
-        Tenant tenant = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new RuntimeException("Tenant not found"));
-        tenant.setStatus("INACTIVE");
-        tenantRepository.save(tenant);
+        if (!tenantRepository.existsById(tenantId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Tenant not found");
+        }
+        tenantRepository.updateTenantStatus(tenantId, "INACTIVE", java.time.ZonedDateTime.now());
+    }
+
+    @Transactional
+    public void activateTenant(UUID tenantId) {
+        if (!tenantRepository.existsById(tenantId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Tenant not found");
+        }
+        tenantRepository.updateTenantStatus(tenantId, "ACTIVE", java.time.ZonedDateTime.now());
     }
 
     @Transactional(readOnly = true)

@@ -15,6 +15,11 @@ public class CaseValuationResponse {
     private BigDecimal deviationPercentage;
     private String reliabilityIndicator;
     private String currencyCode;
+    private String extractedBrand;
+    private String extractedModel;
+    private Integer extractedYear;
+    private Integer extractedMileage;
+    private String extractedCondition;
 
     public UUID getCaseId() { return caseId; }
     public void setCaseId(UUID caseId) { this.caseId = caseId; }
@@ -30,4 +35,14 @@ public class CaseValuationResponse {
     public void setReliabilityIndicator(String reliabilityIndicator) { this.reliabilityIndicator = reliabilityIndicator; }
     public String getCurrencyCode() { return currencyCode; }
     public void setCurrencyCode(String currencyCode) { this.currencyCode = currencyCode; }
+    public String getExtractedBrand() { return extractedBrand; }
+    public void setExtractedBrand(String extractedBrand) { this.extractedBrand = extractedBrand; }
+    public String getExtractedModel() { return extractedModel; }
+    public void setExtractedModel(String extractedModel) { this.extractedModel = extractedModel; }
+    public Integer getExtractedYear() { return extractedYear; }
+    public void setExtractedYear(Integer extractedYear) { this.extractedYear = extractedYear; }
+    public Integer getExtractedMileage() { return extractedMileage; }
+    public void setExtractedMileage(Integer extractedMileage) { this.extractedMileage = extractedMileage; }
+    public String getExtractedCondition() { return extractedCondition; }
+    public void setExtractedCondition(String extractedCondition) { this.extractedCondition = extractedCondition; }
 }

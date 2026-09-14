@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Check, Copy, Loader2, Plus, RefreshCw, ShieldOff } from "lucide-react";
+import { Check, Copy, Loader2, Plus, RefreshCw, ShieldCheck, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, chipIcons } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ import { PageHeader } from "@/components/states/page-header";
 import { DataTable } from "@/components/states/data-table";
 import { NoDataState } from "@/components/states/empty-state";
 import { ErrorState, messageFor } from "@/components/states/error-state";
-import { useDeactivateTenant, useProvisionTenant, useTenants } from "@/lib/query/hooks";
+import { useActivateTenant, useDeactivateTenant, useProvisionTenant, useTenants } from "@/lib/query/hooks";
 import { useTranslations } from "next-intl";
 import { initials } from "@/lib/format";
 import { useFormat, useLabels } from "@/lib/use-format";
@@ -264,10 +264,11 @@ export default function TenantsPage() {
   const labels = useLabels();
   const tenants = useTenants();
   const deactivate = useDeactivateTenant();
+  const activate = useActivateTenant();
 
   const [open, setOpen] = useState(false);
   const [handoff, setHandoff] = useState<Handoff | null>(null);
-  const [confirm, setConfirm] = useState<Tenant | null>(null);
+  const [confirm, setConfirm] = useState<{ tenant: Tenant; action: "activate" | "deactivate" } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const columns = useMemo<ColumnDef<Tenant, unknown>[]>(
@@ -332,12 +333,28 @@ export default function TenantsPage() {
         cell: ({ row }) =>
           row.original.status === "ACTIVE" ? (
             <div className="flex justify-end">
-              <Button variant="ghost" size="sm" onClick={() => setConfirm(row.original)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setConfirm({ tenant: row.original, action: "deactivate" })}
+              >
                 <ShieldOff aria-hidden />
                 {t("deactivate")}
               </Button>
             </div>
-          ) : null,
+          ) : (
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary"
+                onClick={() => setConfirm({ tenant: row.original, action: "activate" })}
+              >
+                <ShieldCheck aria-hidden />
+                {t("activate")}
+              </Button>
+            </div>
+          ),
       },
     ],
     [t, format, labels],
@@ -408,23 +425,33 @@ export default function TenantsPage() {
       <Dialog open={confirm !== null} onOpenChange={(next) => !next && setConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("deactivateTitle", { name: confirm?.name ?? "" })}</DialogTitle>
-            <DialogDescription>{t("deactivateBody")}</DialogDescription>
+            <DialogTitle>
+              {confirm?.action === "activate"
+                ? t("activateTitle", { name: confirm?.tenant.name ?? "" })
+                : t("deactivateTitle", { name: confirm?.tenant.name ?? "" })}
+            </DialogTitle>
+            <DialogDescription>
+              {confirm?.action === "activate" ? t("activateBody") : t("deactivateBody")}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose render={<Button variant="ghost">{tCommon("cancel")}</Button>} />
             <Button
-              variant="destructive"
+              variant={confirm?.action === "activate" ? "default" : "destructive"}
+              disabled={deactivate.isPending || activate.isPending}
               onClick={() => {
                 if (!confirm) return;
                 setError(null);
-                deactivate.mutate(confirm.id, {
+                const mutation = confirm.action === "activate" ? activate : deactivate;
+                mutation.mutate(confirm.tenant.id, {
                   onError: (cause) => setError(messageFor(cause)),
                   onSettled: () => setConfirm(null),
                 });
               }}
             >
-              {t("deactivate")}
+              {confirm?.action === "activate"
+                ? (activate.isPending ? <Loader2 className="animate-spin" aria-hidden /> : t("activate"))
+                : (deactivate.isPending ? <Loader2 className="animate-spin" aria-hidden /> : t("deactivate"))}
             </Button>
           </DialogFooter>
         </DialogContent>

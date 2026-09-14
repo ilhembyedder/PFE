@@ -101,7 +101,7 @@ export async function proxyJson(
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${API_BASE}${path}`, { ...init, headers });
+    upstream = await fetch(`${API_BASE}${path}`, { ...init, headers, cache: "no-store" });
   } catch (error) {
     console.error(`[bff] backend unreachable: ${path}`, error);
     return NextResponse.json<JSend>(

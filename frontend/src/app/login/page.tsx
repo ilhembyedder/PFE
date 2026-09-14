@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,6 +79,7 @@ function LoginForm() {
   const t = useTranslations("login");
   const tApp = useTranslations("app");
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [revealed, setRevealed] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -97,7 +99,9 @@ function LoginForm() {
         password: values.password,
         tenantId: values.mode === "platform" ? null : values.tenantId.trim(),
       });
+      queryClient.clear();
       router.replace(values.mode === "platform" ? "/tenants" : "/cases");
+      router.refresh();
     } catch (error) {
       setFormError(isApiError(error) ? error.message : t("unreachable"));
     }

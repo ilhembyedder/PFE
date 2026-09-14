@@ -133,9 +133,19 @@
 
   "status": {
     "ACTIVE": "Actif",
+    "INACTIVE": "Inactif",
     "SUSPENDED": "Suspendu",
     "TERMINATED": "Résilié",
-    "INACTIVE": "Inactive"
+    "IMPAYE": "Impayé",
+    "CONTENTIEUX": "Contentieux",
+    "SAISI": "Saisi",
+    "EN_COURS": "En cours",
+    "RESILIE": "Résilié",
+    "CLOTURE": "Clôturé",
+    "SOLDE": "Soldé",
+    "PENDING": "En attente",
+    "SUCCESS": "Succès",
+    "FAILED": "Échec"
   },
 
   "login": {
@@ -382,7 +392,7 @@
     "title": "Paramètres",
     "subtitle": "Configuration de votre société et des règles de conformité.",
     "sections": "Sections des paramètres",
-    "tabs": { "tenant": "Société", "compliance": "Conformité" },
+    "tabs": { "tenant": "Société", "compliance": "Conformité", "users": "Équipe" },
     "branding": {
       "title": "Identité de la société",
       "name": "Nom de la société",
@@ -416,6 +426,50 @@
       "moderateBelowCritical": "Le seuil modéré doit être strictement inférieur au seuil critique.",
       "partialDelays": "Les seuils d'écart IA ont été enregistrés, mais les délais n'ont pas pu l'être : {reason}",
       "partialThresholds": "Les délais ont été enregistrés, mais les seuils d'écart IA n'ont pas pu l'être : {reason}"
+    },
+    "users": {
+      "title": "Membres de l'équipe",
+      "subtitle": "Gérez les comptes des administrateurs et des gestionnaires de votre société.",
+      "newUser": "Nouveau collaborateur",
+      "emptyTitle": "Aucun utilisateur enregistré",
+      "emptyBody": "Créez des comptes pour permettre à votre équipe de piloter les dossiers de recouvrement.",
+      "columns": {
+        "user": "Collaborateur",
+        "email": "Adresse e-mail",
+        "role": "Rôle",
+        "status": "Statut",
+        "createdAt": "Créé le"
+      },
+      "active": "Actif",
+      "inactive": "Inactif",
+      "deactivate": "Désactiver",
+      "activate": "Réactiver",
+      "edit": "Modifier",
+      "editTitle": "Modifier {name}",
+      "editHint": "Mettez à jour les informations ou le rôle de cet utilisateur.",
+      "createTitle": "Nouveau collaborateur",
+      "createHint": "Créez un compte pour un gestionnaire ou un administrateur.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "role": "Rôle",
+      "roleAdmin": "Administrateur",
+      "roleAdminHint": "Accès complet aux dossiers, aux paramètres et à la gestion des utilisateurs.",
+      "roleGestionnaire": "Gestionnaire",
+      "roleGestionnaireHint": "Accès complet aux dossiers de recouvrement et aux fonctionnalités métier.",
+      "password": "Mot de passe",
+      "generatePassword": "Générer un mot de passe",
+      "passwordHint": "{min} caractères minimum.",
+      "save": "Enregistrer",
+      "create": "Créer le compte",
+      "deactivateTitle": "Désactiver {name} ?",
+      "deactivateBody": "Cet utilisateur ne pourra plus se connecter. Ses dossiers et actions passées sont conservés.",
+      "activateTitle": "Réactiver {name} ?",
+      "activateBody": "Cet utilisateur pourra à nouveau se connecter à la plateforme.",
+      "firstNameRequired": "Le prénom est requis.",
+      "lastNameRequired": "Le nom de famille est requis.",
+      "emailInvalid": "L'adresse e-mail est invalide.",
+      "passwordTooShort": "Le mot de passe doit comporter au moins {min} caractères."
     }
   },
 
@@ -435,6 +489,9 @@
     "deactivate": "Désactiver",
     "deactivateTitle": "Désactiver {name} ?",
     "deactivateBody": "Ses utilisateurs ne pourront plus se connecter. Les données sont conservées.",
+    "activate": "Réactiver",
+    "activateTitle": "Réactiver {name} ?",
+    "activateBody": "Ses utilisateurs pourront à nouveau se connecter. Les accès et données sont rétablis.",
     "provisionHint": "Provisionne un schéma isolé et le premier compte administrateur.",
     "companySection": "Société",
     "adminSection": "Premier administrateur",

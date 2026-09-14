@@ -153,7 +153,8 @@ export default function NewCasePage() {
 
   const validate = (): string[] => {
     const found: string[] = [];
-    if (!form.clientName.trim()) found.push(t("nameRequired"));
+    const effectiveClientName = matchedClient ? matchedClient.fullNameOrCompany : form.clientName;
+    if (!effectiveClientName.trim()) found.push(t("nameRequired"));
     if (!form.contractReference.trim()) found.push(t("referenceRequired"));
     if (!form.vehicleVin.trim()) found.push(t("vinRequired"));
     // Zero passes the backend's @Min(0) and produces a false "Fiable"
@@ -184,11 +185,23 @@ export default function NewCasePage() {
     setErrors(found);
     if (found.length) return;
 
+    const finalClientName = (matchedClient ? matchedClient.fullNameOrCompany : form.clientName).trim();
+    const finalClientReg = (matchedClient ? (matchedClient.registrationNumber ?? "") : form.clientRegistrationNumber).trim();
+    const finalClientEmail = (matchedClient ? (matchedClient.contactEmail ?? "") : form.clientContactEmail).trim();
+    const finalClientPhone = (matchedClient ? (matchedClient.contactPhone ?? "") : form.clientContactPhone).trim();
+    const finalClientAddress = (matchedClient ? (matchedClient.address ?? "") : form.clientAddress).trim();
+
     try {
       const created = await create.mutateAsync({
         ...form,
-        clientName: form.clientName.trim(),
+        clientName: finalClientName,
+        clientFullName: finalClientName,
+        clientRegistrationNumber: finalClientReg,
+        clientContactEmail: finalClientEmail,
+        clientContactPhone: finalClientPhone,
+        clientAddress: finalClientAddress,
         contractReference: form.contractReference.trim(),
+        contractReferenceNumber: form.contractReference.trim(),
         vehicleVin: form.vehicleVin.trim().toUpperCase(),
         contractStartDate: form.contractStartDate
           ? form.contractStartDate.includes("T")

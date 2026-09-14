@@ -11,8 +11,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class DocumentResponse {
 
     private UUID id;
@@ -27,6 +25,7 @@ public class DocumentResponse {
     private String phaseUploadedIn;
     private String uploaderName;
     private ZonedDateTime createdAt;
+    private Boolean isUsedForAiValuation = false;
 
     public DocumentResponse() {}
 
@@ -51,6 +50,8 @@ public class DocumentResponse {
     public void setUploaderName(String uploaderName) { this.uploaderName = uploaderName; }
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public Boolean getIsUsedForAiValuation() { return isUsedForAiValuation; }
+    public void setIsUsedForAiValuation(Boolean isUsedForAiValuation) { this.isUsedForAiValuation = isUsedForAiValuation; }
 
     public static DocumentResponse fromEntity(Document doc, UUID caseId) {
         DocumentResponse response = new DocumentResponse();

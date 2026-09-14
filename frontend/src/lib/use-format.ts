@@ -60,12 +60,15 @@ export function useLabels() {
   const criticality = useTranslations("criticality");
 
   return useMemo(() => {
-    /** next-intl throws on an unknown key; fall back to the raw value. */
+    /** next-intl logs MISSING_MESSAGE if looking up an unknown key directly; check with .has() first. */
     const safe =
-      (lookup: (key: string) => string) =>
+      (lookup: { (key: string): string; has?: (key: string) => boolean }) =>
       (key: string | null | undefined, fallback = EM_DASH): string => {
         if (!key) return fallback;
         try {
+          if (typeof lookup.has === "function") {
+            return lookup.has(key) ? lookup(key) : key;
+          }
           return lookup(key);
         } catch {
           return key;

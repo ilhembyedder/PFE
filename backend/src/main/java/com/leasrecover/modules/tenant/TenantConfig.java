@@ -41,7 +41,7 @@ public class TenantConfig {
 
     @Version
     @Column(nullable = false)
-    private Integer version = 0;
+    private Integer version;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)

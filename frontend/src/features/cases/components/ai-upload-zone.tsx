@@ -80,9 +80,17 @@ export function AIUploadZone({
   const busy = upload.isPending || stream.state.phase === "running";
 
   if (stream.state.phase === "failed") {
+    const rawMessage = stream.state.message;
+    const displayMessage =
+      rawMessage === "upload.timedOut"
+        ? t("timedOut")
+        : rawMessage.startsWith("upload.")
+        ? t(rawMessage.replace("upload.", "") as any)
+        : rawMessage;
+
     return (
       <div className="space-y-3">
-        <ErrorState error={new Error(stream.state.message)} />
+        <ErrorState error={new Error(displayMessage)} />
         <Button
           variant="outline"
           onClick={() => {

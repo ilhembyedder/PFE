@@ -1,0 +1,101 @@
+%=============================================================================
+% chktex-file 1 chktex-file 8 chktex-file 12 chktex-file 13 chktex-file 24 chktex-file 26
+% CHAPITRE 1 : CONTEXTE GÉNÉRAL DU PROJET ET ÉTAT DE L'ART
+%=============================================================================
+
+\chapter{Contexte Général du Projet et État de l'Art}
+\label{chap:contexte}
+
+\section{Introduction}
+
+Ce chapitre présente le contexte global du projet \textbf{\projectShortTitle}. Il décrit d'abord l'organisme d'accueil \textbf{\hostCompany}, dresse un état des lieux critique des processus de recouvrement actuels au sein des sociétés de leasing, examine l'état de l'art des solutions technologiques disponibles, et détaille enfin la problématique à laquelle notre plateforme SaaS se propose d'apporter une réponse moderne, sécurisée et pérenne.
+
+\section{Présentation de l'Organisme d'Accueil et Contexte du Stage}
+
+\subsection{Présentation de l'Entreprise Teamwill Consulting}
+
+Le projet a été développé au sein de \textbf{\hostCompany}. L'entreprise s'impose comme un leader international incontournable du conseil et de l'intégration de solutions logicielles spécifiquement dédiées aux métiers du crédit et du leasing financier. Acteur technologique de référence du secteur Fintech, Teamwill accompagne les banques, les institutions financières et les bailleurs spécialisés dans la refonte de leurs architectures métiers et la transformation numérique de leurs activités.
+
+\subsection{Contexte du Stage}
+
+Ce projet s'inscrit dans le cadre de mon Projet de Fin d'Études d'ingénieur d'une durée réglementaire de six mois. L'objectif assigné par \hostCompany\ consiste à concevoir et à implémenter la plateforme \projectShortTitle. Ce stage permet d'allier la digitalisation de processus juridiques et financiers complexes à la mise en œuvre de technologies avancées, notamment le développement d'une architecture microservices multi-tenant et l'intégration de modules d'intelligence artificielle (LLM/NLP).
+
+\section{Étude et Critique de l'Existant}
+
+\subsection{Analyse de l'Existant}
+
+Actuellement, les départements de recouvrement des sociétés de leasing opèrent dans un environnement caractérisé par une forte fragmentation des outils numériques. Les processus opérationnels s'organisent principalement autour de fichiers tableurs Excel locaux, d'échanges d'e-mails manuels et de dossiers physiques au format papier.
+
+Cette rupture technologique devient critique lors de la phase de saisie et de valorisation des actifs. Lorsqu'un expert automobile transmet son rapport d'évaluation pour un véhicule repris, ce document se présente sous la forme d'un fichier PDF textuel non structuré. Les informations capitales (caractéristiques mécaniques, kilométrage réel, état général, estimation financière) doivent être extraites manuellement par le gestionnaire de recouvrement. Cette manipulation fastidieuse requiert entre 30 et 60 minutes de travail administratif par dossier, ralentissant considérablement la réactivité opérationnelle des équipes.
+
+\subsection{Critique de l'Existant}
+
+L'analyse approfondie du système traditionnel met en relief trois dysfonctionnements majeurs :
+\begin{itemize}
+    \item \textbf{Dysfonctionnement Organisationnel :} L'absence de centralisation engendre une opacité sur l'état d'avancement des portefeuilles de créances en souffrance. Les gestionnaires manquent d'une visibilité en temps réel pour hiérarchiser efficacement leurs actions et suivre les jalons des dossiers.
+    \item \textbf{Dysfonctionnement Financier :} L'évaluation approximative ou tardive des actifs repris sur le marché secondaire provoque des erreurs d'appréciation. Des véhicules mal évalués entraînent des prix de mise en vente inadéquats, des provisions comptables mal calibrées et des pertes financières directes lors de la liquidation de l'actif.
+    \item \textbf{Dysfonctionnement Réglementaire et Risques :} En phase pré-contentieuse et contentieuse, l'omission ou le retard dans l'envoi d'une pièce légale (telle qu'une mise en demeure officielle) peut vicier la procédure et provoquer son invalidation totale devant les tribunaux. Les outils actuels n'offrent aucun mécanisme de contrôle ou d'alerte automatisé face à ces délais légaux impératifs (notamment en conformité avec le RGPD et la Loi organique n°63-2004).
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Comparaison synthétique entre le processus existant et la solution \projectShortTitle}
+\label{tab:comparaison_existant}
+\begin{tabularx}{\textwidth}{@{}L{3.1cm} L{5.5cm} Y@{}}
+\toprule
+\textbf{Dimension} & \textbf{Processus Traditionnel (Existant)} & \textbf{Plateforme \projectShortTitle} \\
+\midrule
+\textbf{Support de gestion} & Feuilles Excel locales et dossiers papier dispersés. & Base de données PostgreSQL centralisée en architecture SaaS. \\
+\addlinespace
+\textbf{Gestion des délais} & Rappels manuels sur agenda, risque élevé d'omission. & Moteur d'alertes proactif et calcul des échéances légales en temps réel. \\
+\addlinespace
+\textbf{Traitement de l'expertise} & Saisie manuelle lente (30 à 60 min) depuis des PDF scans. & Extraction asynchrone par IA (NLP/LLM) en moins de 30 secondes. \\
+\addlinespace
+\textbf{Arbitrage financier} & Comparaison $\ve$ vs $\vr$ manuelle et intuitive. & Calcul automatisé de l'écart $\Delta = |\ve - \vr|$ avec indicateur de fiabilité. \\
+\addlinespace
+\textbf{Traçabilité \& Audit} & Absence d'historique consolidé et vérifiable. & Journal d'audit (\textit{Audit Trail}) immuable pour chaque mutation. \\
+\addlinespace
+\textbf{Sécurité des données} & Fichiers circulant sans chiffrement. & Chiffrement AES-256 / TLS, isolation multi-tenant stricte. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{État de l'Art Technologique}
+
+Sur le marché des technologies financières, les progiciels de leasing classiques (LMS/ERP) gèrent de manière efficace la phase active des contrats et la facturation courante, mais s'arrêtent dès que survient le défaut de paiement persistant. À l'inverse, les logiciels de recouvrement génériques n'intègrent pas les spécificités des workflows réglementaires du leasing, ni la gestion physique et financière des actifs automobiles saisis.
+
+Par ailleurs, si les technologies d'OCR (\textit{Optical Character Recognition}) traditionnelles parviennent à numériser du texte brut, elles s'avèrent incapables d'en comprendre le contexte sémantique. L'application combinée de modèles de langage (LLM) et de traitement automatique du langage naturel (NLP) pour analyser un rapport d'expertise complexe et le confronter automatiquement à la valeur résiduelle comptable d'un contrat constitue une approche originale absente des solutions logicielles actuelles.
+
+\section{Problématique et Démarche Adoptée}
+
+\subsection{Présentation de la Problématique}
+
+L'écart de performance constaté entre les exigences de conformité juridico-financières et la réalité des traitements manuels nous amène à formaliser la problématique suivante :
+
+\begin{quote}
+\textit{« Comment concevoir et développer une plateforme logicielle SaaS multi-tenant, sécurisée et intégrable, capable d'automatiser l'intégralité du workflow de recouvrement leasing en garantissant le respect strict des délais légaux nationaux et internationaux, tout en exploitant un pipeline d'intelligence artificielle pour optimiser la valorisation financière des actifs repris ? »}
+\end{quote}
+
+\subsection{Proposition de Solution : LeasRecover}
+
+Pour résoudre cette problématique, la plateforme \projectShortTitle\ a été structurée autour de quatre piliers fondamentaux :
+\begin{enumerate}
+    \item \textbf{Workflow Réglementaire Strict :} Automatisation et sécurisation du cycle de vie des dossiers à travers 5 phases séquentielles (Pré-contentieux $\rightarrow$ Mise en demeure $\rightarrow$ Saisie du véhicule $\rightarrow$ Vente $\rightarrow$ Clôture).
+    \item \textbf{Pipeline d'Extraction par IA :} Un microservice asynchrone (FastAPI/Python) s'appuyant sur des modèles LLM/NLP pour analyser les rapports d'expertise, extraire les caractéristiques du véhicule, calculer la déviation financière face à la valeur résiduelle initiale et générer un indicateur de fiabilité tripartite.
+    \item \textbf{Moteur d'Alertes Proactif :} Suivi en temps réel des délais juridiques et détection automatique des dossiers stagnants ou dormants afin de prévenir toute péremption légale.
+    \item \textbf{Isolation SaaS et Traçabilité :} Implémentation d'un modèle multi-tenant garantissant l'étanchéité absolue des données entre entreprises clientes, couplée à un historique d'Audit Trail immuable pour répondre aux exigences de preuve juridique (RGPD / Loi n°63-2004).
+\end{enumerate}
+
+\subsection{Démarche Méthodologique Adoptée}
+
+La réalisation de ce projet industriel en tant que développeur unique a imposé l'adoption d'une démarche itérative Agile inspirée du framework \textbf{Scrum}. Le cycle de développement a été planifié selon une logique d'incréments fonctionnels précis :
+\begin{itemize}
+    \item \textbf{Incrément 1 (Fondations \& Sécurité) :} Initialisation de l'infrastructure multi-tenant (schémas PostgreSQL isolés), sécurisation des API via un pattern Backend-For-Frontend (BFF) avec cookies HttpOnly et gestion de l'identité.
+    \item \textbf{Incrément 2 (Cœur Métier \& Workflow) :} Modélisation des entités métiers (Clients, Contrats, Véhicules), gestion des dossiers contentieux et mise en œuvre du moteur de transitions d'états conditionnel.
+    \item \textbf{Incrément 3 (IA \& Intelligence Documentaire) :} Développement du service Python FastAPI pour l'analyse documentaire, interconnexion asynchrone par webhooks et routage des alertes sur le tableau de bord du gestionnaire.
+\end{itemize}
+
+\section{Conclusion}
+
+Ce premier chapitre a posé le cadre de référence du projet \projectShortTitle\ au sein de \hostCompany. L'étude critique de l'existant a mis en évidence la nécessité impérieuse de rompre avec les processus manuels générateurs de risques et de pertes financières. Le chapitre suivant se focalisera sur la spécification détaillée et l'analyse approfondie des besoins fonctionnels et techniques indispensables à la réussite de la plateforme.

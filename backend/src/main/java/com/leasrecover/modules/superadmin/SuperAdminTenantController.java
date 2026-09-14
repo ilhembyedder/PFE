@@ -43,4 +43,10 @@ public class SuperAdminTenantController {
         tenantProvisioningService.deactivateTenant(id);
         return ResponseEntity.ok(JSendResponse.success(null));
     }
+
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<JSendResponse<Void>> activateTenant(@PathVariable UUID id) {
+        tenantProvisioningService.activateTenant(id);
+        return ResponseEntity.ok(JSendResponse.success(null));
+    }
 }

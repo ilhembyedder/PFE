@@ -69,5 +69,11 @@ export const queryKeys = {
       [...queryKeys.documents.all, entityType, entityId] as const,
   },
 
+  users: {
+    all: ["users"] as const,
+    list: () => [...queryKeys.users.all] as const,
+    detail: (id: string) => [...queryKeys.users.all, id] as const,
+  },
+
   tenants: ["tenants"] as const,
 } as const;

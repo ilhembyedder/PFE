@@ -1,0 +1,60 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 720 >>
+stream
+BT
+/F1 16 Tf
+50 740 Td (CABINET D EXPERTISE AUTOMOBILE) Tj
+/F2 14 Tf
+0 -24 Td (RAPPORT D EXPERTISE TECHNIQUE ET CONSTAT D ETAT) Tj
+/F1 10 Tf
+0 -30 Td (Ref. Rapport: EXP-2026-0894) Tj
+0 -15 Td (Date d examen: 25 Aout 2026) Tj
+0 -25 Td (1. IDENTIFICATION DU VEHICULE) Tj
+0 -15 Td (   - Client / Titulaire: Company Test) Tj
+0 -15 Td (   - Marque: Chery) Tj
+0 -15 Td (   - Modele: Tiggo 3X) Tj
+0 -15 Td (   - Annee de mise en circulation: 2026) Tj
+0 -15 Td (   - Immatriculation: 09654322) Tj
+0 -15 Td (   - Kilometrage au compteur: 45 000 km) Tj
+0 -25 Td (2. EXAMEN TECHNIQUE ET CONSTAT D ETAT) Tj
+0 -15 Td (   - Carrosserie / Peinture: Micro-rayures pare-chocs avant droit) Tj
+0 -15 Td (   - Pneumatiques: Usure reguliere a 40%) Tj
+0 -15 Td (   - Mecanique & Moteur: Bon etat general, aucun voyant d alerte) Tj
+0 -15 Td (   - Habitacle & Sellerie: Propre, pas de deterioration majeure) Tj
+0 -25 Td (3. CONCLUSION DE L EXPERT) Tj
+0 -15 Td (   Le vehicule est en bon etat general de marche.) Tj
+0 -15 Td (   NOTE: Aucune valeur venale chiffre n est fixee par l expert.) Tj
+0 -15 Td (   L evaluation de la valeur venale reelle est confiee au service d IA.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000010 00000 n 
+0000000060 00000 n 
+0000000117 00000 n 
+0000000267 00000 n 
+0000001040 00000 n 
+0000001100 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+1155
+%%EOF

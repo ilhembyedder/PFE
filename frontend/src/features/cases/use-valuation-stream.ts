@@ -64,10 +64,13 @@ export function useValuationStream(caseId: string, enabled: boolean) {
       clearTimeout(ceilingTimer);
 
       if (next.phase === "success") {
-        void client.invalidateQueries({ queryKey: queryKeys.cases.valuation(caseId) });
-        void client.invalidateQueries({ queryKey: queryKeys.cases.prerequisites(caseId) });
-        void client.invalidateQueries({ queryKey: queryKeys.cases.documents(caseId) });
-        void client.invalidateQueries({ queryKey: queryKeys.alerts.all });
+        void client.invalidateQueries({ queryKey: queryKeys.cases.valuation(caseId), refetchType: "all" });
+        void client.invalidateQueries({ queryKey: queryKeys.cases.prerequisites(caseId), refetchType: "all" });
+        void client.invalidateQueries({ queryKey: queryKeys.cases.documents(caseId), refetchType: "all" });
+        void client.invalidateQueries({ queryKey: queryKeys.cases.all, refetchType: "all" });
+        void client.invalidateQueries({ queryKey: queryKeys.alerts.all, refetchType: "all" });
+        void client.refetchQueries({ queryKey: queryKeys.cases.documents(caseId) });
+        void client.refetchQueries({ queryKey: queryKeys.cases.valuation(caseId) });
       }
     };
 
@@ -78,12 +81,19 @@ export function useValuationStream(caseId: string, enabled: boolean) {
         void (async () => {
           try {
             const response = await fetch(`/api/cases/${caseId}/valuation`);
-            if (!response.ok) return;
-            const body = (await response.json()) as {
-              data?: { marketValueCents?: number | null };
-            };
-            if (body.data?.marketValueCents !== undefined && body.data.marketValueCents !== null) {
-              finish({ phase: "success" });
+            if (response.ok) {
+              const body = (await response.json()) as {
+                data?: { marketValueCents?: number | null };
+              };
+              if (body.data?.marketValueCents !== undefined && body.data.marketValueCents !== null) {
+                finish({ phase: "success" });
+              }
+            } else if (response.status === 422 || response.status === 400) {
+              const body = (await response.json()) as { message?: string };
+              finish({
+                phase: "failed",
+                message: body.message || "Le document est illisible ou n'est pas un rapport d'expertise valide.",
+              });
             }
           } catch {
             // Keep polling; the ceiling below decides when to give up.

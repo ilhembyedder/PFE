@@ -128,6 +128,7 @@ export interface CaseDetail {
   currencyCode: string | null;
   assigneeId: string | null;
   assigneeEmail: string | null;
+  assigneeName?: string | null;
   client: CaseClient | null;
   contract: CaseContract | null;
   vehicle: CaseVehicle | null;
@@ -142,6 +143,11 @@ export interface Valuation {
   deviationPercentage: number | string | null;
   reliabilityIndicator: Reliability | null;
   currencyCode: string | null;
+  extractedBrand?: string | null;
+  extractedModel?: string | null;
+  extractedYear?: number | null;
+  extractedMileage?: number | null;
+  extractedCondition?: string | null;
 }
 
 export interface Prerequisites {
@@ -172,6 +178,7 @@ export interface DocumentSummary {
   phaseUploadedIn: string | null;
   uploaderName: string | null;
   createdAt: string;
+  isUsedForAiValuation?: boolean;
 }
 
 export interface Assignee {
@@ -264,6 +271,19 @@ export interface Thresholds {
   tenantId: string;
   aiDeviationModerate: number | string | null;
   aiDeviationCritical: number | string | null;
+}
+
+export interface TenantUser {
+  id: string;
+  tenantId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: "ADMIN" | "GESTIONNAIRE";
+  status: "ACTIVE" | "INACTIVE";
+  lastLogin?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ------------------------------------------------------------------- SSE

@@ -1,5 +1,7 @@
 package com.leasrecover.modules.cases.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,9 +14,13 @@ import lombok.Setter;
 public class CaseUpdateRequest {
 
     @NotBlank(message = "Client full name or company is required")
+    @JsonProperty("clientFullName")
+    @JsonAlias({"clientName", "clientFullName"})
     private String clientFullName;
 
     @NotBlank(message = "Contract reference number is required")
+    @JsonProperty("contractReferenceNumber")
+    @JsonAlias({"contractReference", "contractReferenceNumber"})
     private String contractReferenceNumber;
 
     @NotNull(message = "Initial residual value is required")

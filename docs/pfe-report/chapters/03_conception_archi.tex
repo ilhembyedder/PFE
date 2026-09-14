@@ -1,0 +1,415 @@
+%=============================================================================
+% chktex-file 1 chktex-file 8 chktex-file 12 chktex-file 13 chktex-file 24 chktex-file 26
+% CHAPITRE 3 : CONCEPTION ARCHITECTURALE ET DÉTAILLÉE
+%=============================================================================
+
+\chapter{Conception Architecturale}
+\label{chap:conception}
+
+\section{Introduction}
+
+La conception détaillée constitue le pont indispensable entre la spécification des besoins et l'implémentation logicielle. Ce chapitre expose en profondeur les choix d'ingénierie retenus pour la plateforme \textbf{\projectShortTitle}. Nous présentons l'architecture microservices polyglotte, le patron d'isolation multi-tenant à schémas SQL étanches, la modélisation conceptuelle des données (MCD) et relationnelle (MLD), ainsi que la formulation mathématique du moteur d'arbitrage financier.
+
+\section{Architecture Microservices et Flux}
+
+\subsection{Principes de Conception Découplée}
+
+Afin de concilier la robustesse d'un système d'information financier d'entreprise et l'agilité requise pour l'expérimentation d'algorithmes d'intelligence artificielle, nous avons conçu une architecture polyglotte découpée en services spécialisés :
+
+\begin{enumerate}
+    \item \textbf{Frontend Next.js 16 (React / TypeScript) :} Fournit l'interface utilisateur enrichie avec Ant Design, orchestrée via le pattern \textbf{Backend-For-Frontend (BFF)}. Le serveur Node.js / Next.js gère la session utilisateur par cookies chiffrés \code{HttpOnly}, \code{SameSite=Strict} et \code{Secure}, éliminant tout stockage vulnérable de jetons JWT dans le \textit{localStorage} du navigateur.
+    \item \textbf{Backend Métier Spring Boot 4 (Java 21) :} Constitue le noyau transactionnel de LeasRecover. Il expose une API RESTful sécurisée, applique les règles d'intégrité métier, gère les transitions d'états du workflow de recouvrement et pilote la piste d'audit (\textit{Audit Trail}).
+    \item \textbf{Service d'Intelligence Artificielle FastAPI (Python 3.11+) :} Microservice asynchrone spécialisé dans l'ingestion, le prétraitement et l'analyse sémantique des rapports d'expertise de véhicules (LLM / NLP / PyMuPDF).
+\end{enumerate}
+
+\subsection{Stratégie d'Isolation Multi-Tenant à Schémas Étanches}
+
+Dans un modèle SaaS B2B destiné à des institutions financières concurrentes, la confidentialité absolue des données est une exigence non négociable. Nous avons retenu l'approche \textbf{Multi-Tenancy par Schémas Séparés (\textit{Schema-per-Tenant})} au sein de PostgreSQL 18 :
+\begin{itemize}
+    \item Un schéma public \code{shared_platform} centralise les métadonnées globales de la plateforme (annuaire des tenants, plans d'abonnement, configuration système).
+    \item Chaque tenant (société de leasing cliente) se voit allouer un schéma SQL dédié et hermétique (ex: \code{tenant_alpha}, \code{tenant_beta}) contenant l'ensemble de ses tables opérationnelles (\code{recovery_cases}, \code{vehicles}, \code{contracts}, \code{audit_logs}).
+    \item À chaque requête entrante, un filtre de sécurité Spring Boot extrait l'identifiant du tenant (\code{tenant_id}) depuis le contexte de sécurité et configure dynamiquement le \code{CurrentSchema} de la connexion JDBC via le mécanisme \code{AbstractRoutingDataSource}.
+\end{itemize}
+
+Cette approche offre le niveau d'étanchéité le plus élevé, garantissant l'impossibilité technique d'une fuite de données inter-entreprises tout en simplifiant les sauvegardes et la conformité au RGPD.
+
+\section{Modélisation des Données}
+
+La modélisation des données de \textbf{\projectShortTitle} répond aux plus hauts standards de performance, d'intégrité financière et de traçabilité d'audit. Afin de respecter rigoureusement le principe \textbf{DRY (\textit{Don't Repeat Yourself})}, l'architecture logicielle factorise les propriétés communes d'audit, de verrouillage optimiste et d'isolation multi-tenant au travers de classes de base abstraites exploitant le patron \code{@MappedSuperclass} d'Hibernate :
+\begin{itemize}
+    \item \textbf{BaseEntity :} Classe racine fournissant la clé primaire universelle temporelle (\code{id} en \textbf{UUID v7}, garantissant une indexation B-Tree séquentielle sans fragmentation), les horodatages d'audit (\code{created_at}, \code{updated_at}, \code{created_by}), le contrôle de concurrence optimiste (\code{version}) et le support de la suppression logique (\textit{Soft Delete} via \code{is_deleted} et \code{deleted_at}).
+    \item \textbf{TenantAwareEntity :} Hérite de \code{BaseEntity} et adjoint la clé de partitionnement \code{tenant_id} assurant le filtrage étanche des entités rattachées à un établissement financier.
+\end{itemize}
+
+Afin d'offrir une clarté de lecture maximale, le Modèle Conceptuel de Données (MCD) est décomposé en trois modules fonctionnels complémentaires.
+
+%-----------------------------------------------------------------------------
+\subsection{Module 1 : Administration, Multi-Tenancy et Socle Commun}
+
+Ce module (figure~\ref{fig:mcd_module_admin}) régit la hiérarchie organisationnelle de la plateforme SaaS, l'administration globale et les paramètres d'exploitation spécifiques à chaque société de leasing.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.3cm and 1.8cm,
+    entity/.style={
+        rectangle, draw=primaryblue, fill=white, line width=1pt, rounded corners=3pt,
+        inner sep=4pt, drop shadow={opacity=0.10, shadow xshift=1.5pt, shadow yshift=-1.5pt}
+    },
+    baseentity/.style={
+        rectangle, draw=darkslate!60, fill=lightgrey!70, line width=0.9pt, dashed, rounded corners=3pt,
+        inner sep=4pt
+    },
+    rel/.style={
+        -{Latex[scale=0.9]}, line width=1.1pt, draw=secondaryblue
+    },
+    inherit/.style={
+        -{Triangle[open, scale=0.9]}, line width=1pt, draw=darkslate!70, dashed
+    },
+    card/.style={
+        font=\sffamily\scriptsize\bfseries, fill=white, inner sep=1.5pt, text=darkslate
+    },
+    relname/.style={
+        font=\sffamily\footnotesize\itshape, text=secondaryblue, fill=white, inner sep=1.5pt
+    }
+]
+
+% Row 2 (Central Business Level): SUPER_ADMIN -> TENANT -> TENANT_CONFIG
+\node[entity] (superadmin) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} SUPER\_ADMIN}} \\
+        \multicolumn{1}{c}{\scriptsize\color{darkslate!70}\guillemotleft extends BaseEntity\guillemotright} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        email : String \textit{(Unique)} \\
+        password\_hash : String \\
+        first\_name, last\_name : String \\
+        status : Enum (ACTIVE, SUSPENDED) \\
+        last\_login : Timestamp \\
+    \end{tabular}
+};
+
+\node[entity, right=1.8cm of superadmin] (tenant) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} TENANT}} \\
+        \multicolumn{1}{c}{\scriptsize\color{darkslate!70}\guillemotleft extends BaseEntity\guillemotright} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        name : String \\
+        logo\_url : String \\
+        data\_retention\_months : Integer \\
+        status : Enum (ACTIVE, INACTIVE) \\
+    \end{tabular}
+};
+
+\node[entity, right=1.8cm of tenant] (tenantcfg) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} TENANT\_CONFIG}} \\
+        \multicolumn{1}{c}{\scriptsize\color{darkslate!70}\guillemotleft extends TenantAwareEntity\guillemotright} \\
+        \hline
+        \underline{tenant\_id} : UUID\_v7 \textit{(PK, FK)} \\
+        ai\_deviation\_moderate : Decimal \\
+        ai\_deviation\_critical : Decimal \\
+        dormancy\_threshold\_days : Integer \\
+        phase\_legal\_delays : JSONB \\
+    \end{tabular}
+};
+
+% Row 3 (Bottom): USER under TENANT
+\node[entity, below=1.4cm of tenant] (user) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} USER}} \\
+        \multicolumn{1}{c}{\scriptsize\color{darkslate!70}\guillemotleft extends TenantAwareEntity\guillemotright} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        email : String \textit{(Unique)} \\
+        password\_hash : String \\
+        first\_name, last\_name : String \\
+        role : Enum (ADMIN, GESTIONNAIRE) \\
+        status : Enum (ACTIVE, SUSPENDED) \\
+        last\_login : Timestamp \\
+    \end{tabular}
+};
+
+% Row 1 (Top): MappedSuperclasses
+\node[baseentity, above=1.3cm of superadmin] (base) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{darkslate} \guillemotleft MappedSuperclass\guillemotright\ BaseEntity}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        created\_at, updated\_at : Timestamp \\
+        created\_by : String / UUID\_v7 \\
+        version : Integer \\
+        is\_deleted : Boolean, deleted\_at : Timestamp \\
+    \end{tabular}
+};
+
+\node[baseentity, above=1.3cm of tenantcfg] (tenantbase) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{darkslate} \guillemotleft MappedSuperclass\guillemotright\ TenantAwareEntity}} \\
+        \hline
+        \textit{(Hérite de BaseEntity)} \\
+        tenant\_id : UUID\_v7 \textit{(FK Partition)} \\
+    \end{tabular}
+};
+
+% Heritage Arrows (Dashed Grey)
+\draw[inherit] (tenantbase) -- (base);
+\draw[inherit] (superadmin) -- (base);
+\draw[inherit] (tenant.north) -- (base.south east);
+\draw[inherit] (tenantcfg) -- (tenantbase);
+\draw[inherit] (user.east) -| ++(0.9,0) |- (tenantbase.south);
+
+% Business Relations (Solid Blue Arrows)
+\draw[rel] (superadmin) -- node[above, relname]{administre} node[pos=0.18, above, card]{1..1} node[pos=0.82, above, card]{0..*} (tenant);
+\draw[rel] (tenant) -- node[above, relname]{possède} node[pos=0.18, above, card]{1..1} node[pos=0.82, above, card]{0..1} (tenantcfg);
+\draw[rel] (tenant) -- node[right, relname]{emploie} node[pos=0.18, right, card]{1..1} node[pos=0.82, right, card]{0..*} (user);
+
+\end{tikzpicture}%
+}
+\caption{MCD -- Module 1 : Administration, Multi-Tenancy et Socle d'Héritage}
+\label{fig:mcd_module_admin}
+\end{figure}
+
+Les caractéristiques clés de ce module comprennent :
+\begin{itemize}
+    \item \textbf{TENANT :} Représente l'institution financière cliente opérant en espace isolé.
+    \item \textbf{TENANT\_CONFIG :} Table de configuration 1:1 paramétrant les seuils de déviation IA (\code{ai_deviation_moderate}, \code{ai_deviation_critical}) et les délais légaux maximaux par phase de recouvrement stockés sous format structuré \textbf{JSONB} indexable.
+    \item \textbf{SUPER\_ADMIN \& USER :} Séparation stricte entre les administrateurs de la plateforme SaaS et les collaborateurs métier des bailleurs (\code{ADMIN}, \code{GESTIONNAIRE}).
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\subsection{Module 2 : Cœur Métier du Leasing et Gestion des Actifs}
+
+Le deuxième module (figure~\ref{fig:mcd_module_leasing}) modélise les données contractuelles amont issues du Système d'Information du bailleur (clients débiteurs, contrats de financement et véhicules loués).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.92\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.1cm and 1.6cm,
+    entity/.style={
+        rectangle, draw=primaryblue, fill=white, line width=1pt, rounded corners=3pt,
+        inner sep=4pt, drop shadow={opacity=0.10, shadow xshift=1.5pt, shadow yshift=-1.5pt}
+    },
+    rel/.style={
+        -{Latex[scale=0.9]}, line width=1.1pt, draw=secondaryblue
+    },
+    card/.style={
+        font=\sffamily\scriptsize\bfseries, fill=white, inner sep=1.5pt, text=darkslate
+    },
+    relname/.style={
+        font=\sffamily\footnotesize\itshape, text=secondaryblue, fill=white, inner sep=1.5pt
+    }
+]
+
+% Entities
+\node[entity] (client) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} CLIENT}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        full\_name\_or\_company : String \\
+        registration\_number : String \\
+        contact\_email : String \\
+        contact\_phone : String \\
+        address : Text \\
+    \end{tabular}
+};
+
+\node[entity, right=1.6cm of client] (contract) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} CONTRACT}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        client\_id : UUID\_v7 \textit{(FK)} \\
+        reference\_number : String \textit{(Unique)} \\
+        start\_date, end\_date : Timestamp \\
+        status : Enum (ACTIVE, DEFAULTED, ...) \\
+    \end{tabular}
+};
+
+\node[entity, below=1.2cm of contract] (vehicle) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} VEHICLE}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        contract\_id : UUID\_v7 \textit{(FK)} \\
+        vin : String \textit{(Unique, 17 cars)} \\
+        license\_plate : String \\
+        brand, model : String \\
+        year : Integer \\
+    \end{tabular}
+};
+
+% Relations
+\draw[rel] (client) -- node[above, relname]{signe} node[pos=0.1, above, card]{1..1} node[pos=0.9, above, card]{0..*} (contract);
+\draw[rel] (contract) -- node[right, relname]{concerne} node[pos=0.1, right, card]{1..1} node[pos=0.9, right, card]{0..1} (vehicle);
+
+\end{tikzpicture}%
+}
+\caption{MCD -- Module 2 : Gestion Métier du Leasing et des Véhicules}
+\label{fig:mcd_module_leasing}
+\end{figure}
+
+Chaque contrat de leasing relie de manière univoque un débiteur (\code{CLIENT}) à l'actif financé (\code{VEHICLE}) identifié par son numéro de châssis unique (\code{vin}).
+
+%-----------------------------------------------------------------------------
+\subsection{Module 3 : Recouvrement Contentieux, Documents et Évaluation IA}
+
+Le troisième module (figure~\ref{fig:mcd_module_recovery_ai}) constitue le noyau opérationnel de LeasRecover. Il orchestre les dossiers de recouvrement en contentieux, les documents d'expertise, les annotations des gestionnaires et l'inférence du moteur d'estimation IA.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.2cm and 1.6cm,
+    entity/.style={
+        rectangle, draw=primaryblue, fill=white, line width=1pt, rounded corners=3pt,
+        inner sep=4pt, drop shadow={opacity=0.10, shadow xshift=1.5pt, shadow yshift=-1.5pt}
+    },
+    rel/.style={
+        -{Latex[scale=0.9]}, line width=1.1pt, draw=secondaryblue
+    },
+    card/.style={
+        font=\sffamily\scriptsize\bfseries, fill=white, inner sep=1.5pt, text=darkslate
+    },
+    relname/.style={
+        font=\sffamily\footnotesize\itshape, text=secondaryblue, fill=white, inner sep=1.5pt
+    }
+]
+
+% Central Case Entity (Top Left)
+\node[entity] (case) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} RECOVERY\_CASE}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        assignee\_id : UUID\_v7 \textit{(FK User)} \\
+        contract\_id : UUID\_v7 \textit{(FK Contract)} \\
+        initial\_residual\_value\_cents : BigInt \\
+        currency\_code : String(3) \\
+        current\_phase : Enum (PRE\_CONTENTIEUX, ...) \\
+        phase\_started\_at, last\_action\_at : Timestamp \\
+        status : Enum (ACTIVE, CLOSED, CANCELLED) \\
+    \end{tabular}
+};
+
+% Documents (Top Right)
+\node[entity, right=1.6cm of case] (doc) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} DOCUMENT}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        uploader\_id : UUID\_v7 \textit{(FK User)} \\
+        case\_id : UUID\_v7 \textit{(FK nullable)} \\
+        client\_id, contract\_id, vehicle\_id : UUID\_v7 \\
+        file\_name, file\_url : String \\
+        phase\_uploaded\_in : Enum \textit{(nullable)} \\
+    \end{tabular}
+};
+
+% Note (Bottom Left)
+\node[entity, below=1.2cm of case] (note) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} NOTE}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        case\_id : UUID\_v7 \textit{(FK)} \\
+        author\_id : UUID\_v7 \textit{(FK User)} \\
+        content : Text \\
+    \end{tabular}
+};
+
+% AI Valuation (Bottom Right)
+\node[entity, below=1.2cm of doc] (ai) {
+    \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{\color{primaryblue} AI\_VALUATION}} \\
+        \hline
+        \underline{id} : UUID\_v7 \textit{(PK)} \\
+        tenant\_id : UUID\_v7 \textit{(FK)} \\
+        case\_id : UUID\_v7 \textit{(FK)} \\
+        document\_id : UUID\_v7 \textit{(FK nullable)} \\
+        extracted\_brand, extracted\_model : String \\
+        extracted\_year, extracted\_mileage : Integer \\
+        extracted\_condition : String \\
+        estimated\_market\_value\_cents : BigInt \\
+        deviation\_value\_cents : BigInt \\
+        deviation\_percentage : Decimal \\
+        reliability\_indicator : Enum (RELIABLE, ...) \\
+        status : Enum (PENDING, SUCCESS, FAILED) \\
+        processed\_at : Timestamp \\
+    \end{tabular}
+};
+
+% Relations
+\draw[rel] (case) -- node[above, relname]{contient} node[pos=0.1, above, card]{1..1} node[pos=0.9, above, card]{0..*} (doc);
+\draw[rel] (case) -- node[right, relname]{commenté par} node[pos=0.1, right, card]{1..1} node[pos=0.9, right, card]{0..*} (note);
+\draw[rel] (case) -- node[above, sloped, relname]{évalué par} node[pos=0.1, above, card]{1..1} node[pos=0.9, above, card]{0..*} (ai);
+\draw[rel] (doc) -- node[right, relname]{analysé dans} node[pos=0.1, right, card]{0..1} node[pos=0.9, right, card]{0..1} (ai);
+
+\end{tikzpicture}%
+}
+\caption{MCD -- Module 3 : Recouvrement Contentieux, Pièces Jointes et Estimation IA}
+\label{fig:mcd_module_recovery_ai}
+\end{figure}
+
+Ce module intègre des optimisations financières et techniques déterminantes :
+\begin{itemize}
+    \item \textbf{Typage Monétaire Strict (\code{BigInt}) :} Les montants financiers (\code{initial_residual_value_cents}, \code{estimated_market_value_cents}, \code{deviation_value_cents}) sont enregistrés en centimes afin d'exclure toute erreur d'arrondi en virgule flottante.
+    \item \textbf{Liaison Polymorphique des Documents :} L'entité \code{DOCUMENT} dispose de clés étrangères optionnelles vers le dossier, le contrat, le client ou le véhicule, permettant le rattachement transverse des pièces justificatives.
+    \item \textbf{Piste d'Audit Automatisée via Hibernate Envers :} L'historisation intégrale des modifications de statuts et de phases n'encombre pas le MCD opérationnel : toute entité annotée \code{@Audited} génère automatiquement sa table miroir d'audit (\code{RECOVERY_CASE_AUD}) avec traçabilité de l'auteur et des valeurs modifiées.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\subsection{Modèle Logique des Données (MLD)}
+
+La transcription relationnelle normalisée en Troisième Forme Normale (3NF) avec application de la stratégie \code{@MappedSuperclass} génère les schémas relationnels suivants :
+
+\begin{sloppypar}
+\begin{itemize}
+\raggedright
+    \item \textbf{tenants} (\underline{id}, name, logo\_url, data\_retention\_months, status, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version)
+    \item \textbf{tenant\_configs} (\underline{tenant\_id}\#, ai\_deviation\_moderate, ai\_deviation\_critical, dormancy\_threshold\_days, phase\_legal\_delays, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version)
+    \item \textbf{super\_admins} (\underline{id}, email, password\_hash, first\_name, last\_name, status, last\_login, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version)
+    \item \textbf{users} (\underline{id}, email, password\_hash, first\_name, last\_name, role, status, last\_login, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{tenant\_id}\#)
+    \item \textbf{clients} (\underline{id}, full\_name\_or\_company, registration\_number, contact\_email, contact\_phone, address, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{tenant\_id}\#)
+    \item \textbf{contracts} (\underline{id}, reference\_number, start\_date, end\_date, status, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{client\_id}\#, \textit{tenant\_id}\#)
+    \item \textbf{vehicles} (\underline{id}, vin, license\_plate, brand, model, year, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{contract\_id}\#, \textit{tenant\_id}\#)
+    \item \textbf{recovery\_cases} (\underline{id}, initial\_residual\_value\_cents, currency\_code, current\_phase, phase\_started\_at, last\_action\_at, status, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{contract\_id}\#, \textit{assignee\_id}\#, \textit{tenant\_id}\#)
+    \item \textbf{documents} (\underline{id}, file\_name, file\_url, phase\_uploaded\_in, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{uploader\_id}\#, \textit{case\_id}\#, \textit{client\_id}\#, \textit{contract\_id}\#, \textit{vehicle\_id}\#, \textit{tenant\_id}\#)
+    \item \textbf{notes} (\underline{id}, content, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{case\_id}\#, \textit{author\_id}\#, \textit{tenant\_id}\#)
+    \item \textbf{ai\_valuations} (\underline{id}, extracted\_brand, extracted\_model, extracted\_year, extracted\_mileage, extracted\_condition, estimated\_market\_value\_cents, currency\_code, deviation\_value\_cents, deviation\_percentage, reliability\_indicator, status, processed\_at, is\_deleted, deleted\_at, created\_at, updated\_at, created\_by, version, \textit{case\_id}\#, \textit{document\_id}\#, \textit{tenant\_id}\#)
+\end{itemize}
+\end{sloppypar}
+
+\section{Conception du Moteur d'Arbitrage Financier}
+
+L'arbitrage financier constitue le cœur de la valeur ajoutée décisionnelle de \projectShortTitle. Dès la réception des valeurs extraites par le module d'intelligence artificielle, le système exécute le calcul de la déviation absolue ($\Delta$) et du ratio de couverture ($R$) :
+
+\begin{equation}
+    \Delta = \ve - \vr
+\end{equation}
+\begin{equation}
+    R = \left( \frac{\ve}{\vr} \right) \times 100\%
+\end{equation}
+
+Trois catégories d'arbitrage sont alors automatiquement déterminées par le moteur de règles :
+\begin{enumerate}
+    \item \textbf{Zone Verte -- Arbitrage Favorable ($R \ge 100\%$) :} La valeur vénale marchande de l'actif couvre ou dépasse la valeur résiduelle comptable. La vente peut être immédiatement autorisée sans perte financière pour le bailleur.
+    \item \textbf{Zone Orange -- Écart Modéré ($75\% \le R < 100\%$) :} Une dépréciation modérée est constatée. Une provision pour dépréciation équivalente au montant $|\Delta|$ est automatiquement suggérée au service financier.
+    \item \textbf{Zone Rouge -- Écart Critique ($R < 75\%$) :} Dégradation sévère du véhicule ou kilométrage excessif. Le système déclenche une alerte prioritaire et exige une double approbation hiérarchique avant fixation du prix de réserve de cession.
+\end{enumerate}
+
+\section{Conclusion}
+
+Ce chapitre a approfondi l'architecture logicielle de la plateforme \projectShortTitle. L'isolation par schémas PostgreSQL, le découplage des couches Next.js / Spring Boot / FastAPI, la normalisation du modèle de données (MCD/MLD) et la modélisation mathématique du moteur d'arbitrage financier posent les bases d'une implémentation robuste. Le chapitre suivant présente la réalisation concrète, le code du pipeline IA, les interfaces utilisateurs et la validation expérimentale du système.
+

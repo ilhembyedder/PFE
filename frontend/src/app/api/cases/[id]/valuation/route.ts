@@ -6,3 +6,6 @@ type Params = { id: string };
 export const GET = withAuth<Params>(async ({ session, params }) =>
   proxyJson(session, `/cases/${params.id}/valuation`),
 );
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;

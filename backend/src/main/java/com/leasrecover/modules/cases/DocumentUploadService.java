@@ -8,6 +8,7 @@ import com.leasrecover.modules.client.Client;
 import com.leasrecover.modules.client.ClientRepository;
 import com.leasrecover.modules.contract.Contract;
 import com.leasrecover.modules.contract.ContractRepository;
+import com.leasrecover.modules.notification.ValuationProgressService;
 import com.leasrecover.modules.users.AppUser;
 import com.leasrecover.modules.users.AppUserRepository;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -65,6 +67,7 @@ public class DocumentUploadService {
     private final ClientRepository clientRepository;
     private final ContractRepository contractRepository;
     private final VehicleRepository vehicleRepository;
+    private final ValuationProgressService valuationProgressService;
     private RestTemplate restTemplate;
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
@@ -87,7 +90,8 @@ public class DocumentUploadService {
             CaseAlertService caseAlertService,
             ClientRepository clientRepository,
             ContractRepository contractRepository,
-            VehicleRepository vehicleRepository) {
+            VehicleRepository vehicleRepository,
+            ValuationProgressService valuationProgressService) {
         this.fileStorageConfig = fileStorageConfig;
         this.documentRepository = documentRepository;
         this.recoveryCaseRepository = recoveryCaseRepository;
@@ -97,6 +101,7 @@ public class DocumentUploadService {
         this.clientRepository = clientRepository;
         this.contractRepository = contractRepository;
         this.vehicleRepository = vehicleRepository;
+        this.valuationProgressService = valuationProgressService;
 
         org.springframework.http.client.SimpleClientHttpRequestFactory factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);
@@ -226,7 +231,7 @@ public class DocumentUploadService {
         boolean isExpertiseFile = fileName != null && (
             fileName.toLowerCase().contains("expertise") || fileName.toLowerCase().contains("rapport")
         );
-        return isCaseInSaisiePhase && isSaisiePhase && (isExpertiseTag || (tag == null && isExpertiseFile));
+        return isCaseInSaisiePhase && isSaisiePhase && (isExpertiseTag || isExpertiseFile);
     }
 
     private void triggerAiExtraction(Document document, MultipartFile file, RecoveryCase recoveryCase) {
@@ -245,9 +250,10 @@ public class DocumentUploadService {
         valuation.setDocument(document);
         valuation.setStatus("PENDING");
 
-        final AIValuation savedValuation = aiValuationRepository.save(valuation);
-
         final UUID caseId = recoveryCase.getId();
+        valuationProgressService.resetProgress(caseId);
+
+        final AIValuation savedValuation = aiValuationRepository.save(valuation);
         final UUID tenantId = document.getTenantId();
         final UUID valuationId = savedValuation.getId();
         final String originalFilename = document.getFileName();
@@ -280,6 +286,12 @@ public class DocumentUploadService {
                         caseId, valuationId, e.getMessage());
                 try {
                     updateValuationStatus(valuationId, "FAILED");
+                    java.util.Map<String, Object> ssePayload = new java.util.HashMap<>();
+                    ssePayload.put("caseId", caseId);
+                    ssePayload.put("status", "FAILED");
+                    ssePayload.put("message", "Le document est illisible ou n'est pas un rapport d'expertise valide.");
+                    valuationProgressService.sendProgress(caseId, ssePayload);
+                    valuationProgressService.completeEmitter(caseId);
                 } catch (Exception ex) {
                     log.error("Failed to update AIValuation status to FAILED: {}", ex.getMessage());
                 }
@@ -313,10 +325,50 @@ public class DocumentUploadService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: Case does not belong to active tenant");
         }
 
+        Optional<AIValuation> successfulValuationOpt = aiValuationRepository
+                .findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(caseId, "SUCCESS");
+        UUID aiDocId = successfulValuationOpt.map(v -> v.getDocument() != null ? v.getDocument().getId() : null).orElse(null);
+
         return documentRepository.findAllByRecoveryCaseIdAndIsDeletedFalseOrderByCreatedAtAsc(caseId)
                 .stream()
-                .map(doc -> DocumentResponse.fromEntity(doc, caseId))
+                .map(doc -> {
+                    DocumentResponse res = DocumentResponse.fromEntity(doc, caseId);
+                    if (aiDocId != null && aiDocId.equals(doc.getId())) {
+                        res.setIsUsedForAiValuation(true);
+                    }
+                    return res;
+                })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Soft-delete a document associated with a case.
+     */
+    @Transactional
+    public void deleteDocument(UUID caseId, UUID documentId) {
+        UUID tenantId = TenantContextHolder.getTenantUuid();
+        if (tenantId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No active tenant context found");
+        }
+
+        RecoveryCase recoveryCase = recoveryCaseRepository.findById(caseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found"));
+
+        if (!tenantId.equals(recoveryCase.getTenantId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: Case does not belong to active tenant");
+        }
+
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Document not found"));
+
+        if (!tenantId.equals(document.getTenantId()) || document.getRecoveryCase() == null || !caseId.equals(document.getRecoveryCase().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: Document does not belong to case or tenant");
+        }
+
+        document.setIsDeleted(true);
+        document.setDeletedAt(ZonedDateTime.now());
+        documentRepository.save(document);
+        log.info("Soft-deleted document id={} for caseId={}", documentId, caseId);
     }
 
     /**

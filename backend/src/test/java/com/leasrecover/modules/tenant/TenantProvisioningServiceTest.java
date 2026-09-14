@@ -76,23 +76,40 @@ class TenantProvisioningServiceTest {
     @Test
     void testDeactivateTenant_Success() {
         UUID tenantId = UUID.randomUUID();
-        Tenant tenant = new Tenant();
-        tenant.setId(tenantId);
-        tenant.setStatus("ACTIVE");
 
-        when(tenantRepository.findById(tenantId)).thenReturn(Optional.of(tenant));
+        when(tenantRepository.existsById(tenantId)).thenReturn(true);
 
         tenantProvisioningService.deactivateTenant(tenantId);
 
-        assertEquals("INACTIVE", tenant.getStatus());
-        verify(tenantRepository).save(tenant);
+        verify(tenantRepository).updateTenantStatus(eq(tenantId), eq("INACTIVE"), any());
     }
 
     @Test
     void testDeactivateTenant_NotFound() {
         UUID tenantId = UUID.randomUUID();
-        when(tenantRepository.findById(tenantId)).thenReturn(Optional.empty());
+        when(tenantRepository.existsById(tenantId)).thenReturn(false);
 
-        assertThrows(RuntimeException.class, () -> tenantProvisioningService.deactivateTenant(tenantId));
+        assertThrows(org.springframework.web.server.ResponseStatusException.class,
+                () -> tenantProvisioningService.deactivateTenant(tenantId));
+    }
+
+    @Test
+    void testActivateTenant_Success() {
+        UUID tenantId = UUID.randomUUID();
+
+        when(tenantRepository.existsById(tenantId)).thenReturn(true);
+
+        tenantProvisioningService.activateTenant(tenantId);
+
+        verify(tenantRepository).updateTenantStatus(eq(tenantId), eq("ACTIVE"), any());
+    }
+
+    @Test
+    void testActivateTenant_NotFound() {
+        UUID tenantId = UUID.randomUUID();
+        when(tenantRepository.existsById(tenantId)).thenReturn(false);
+
+        assertThrows(org.springframework.web.server.ResponseStatusException.class,
+                () -> tenantProvisioningService.activateTenant(tenantId));
     }
 }

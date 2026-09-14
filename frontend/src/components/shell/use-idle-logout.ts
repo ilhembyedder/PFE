@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const DEFAULT_TIMEOUT = 15 * 60_000;
 const WARNING_LEAD = 60_000;
@@ -26,6 +27,7 @@ const ACTIVITY = [
  */
 export function useIdleLogout(enabled: boolean) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [warning, setWarning] = useState(false);
   const timers = useRef<{ warn?: ReturnType<typeof setTimeout>; out?: ReturnType<typeof setTimeout> }>({});
 
@@ -35,9 +37,11 @@ export function useIdleLogout(enabled: boolean) {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } finally {
+      queryClient.clear();
       router.replace("/login?expired=1");
+      router.refresh();
     }
-  }, [router]);
+  }, [queryClient, router]);
 
   const schedule = useCallback(() => {
     clearTimeout(timers.current.warn);

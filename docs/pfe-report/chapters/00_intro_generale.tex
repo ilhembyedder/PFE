@@ -1,0 +1,46 @@
+%=============================================================================
+% chktex-file 1 chktex-file 8 chktex-file 12 chktex-file 13 chktex-file 24 chktex-file 26
+% INTRODUCTION GÉNÉRALE
+%=============================================================================
+
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+\markboth{Introduction Générale}{Introduction Générale}
+
+\section*{Contexte et Enjeux Métiers}
+
+Le secteur du crédit-bail financier (\textit{leasing}) joue un rôle indispensable dans le financement des investissements des entreprises et des ménages, leur permettant d'acquérir des actifs matériels et des parcs automobiles sans impacter massivement leur trésorerie courante. Néanmoins, la gestion des risques de défaut de paiement représente un défi opérationnel et réglementaire permanent pour les institutions de crédit et les bailleurs. En effet, dès lors qu'un locataire entre en situation d'impayé persistant, un engrenage juridique, logistique et financier complexe se met en branle, allant des relances amiables initiales jusqu'à la saisie conservatoire et la revente forcée de l'actif gagé.
+
+\section*{État des Lieux et Problématique}
+
+Actuellement, ce processus de recouvrement souffre d'une fragmentation logicielle critique au sein de nombreuses sociétés de leasing. Les gestionnaires opérationnels se retrouvent contraints d'orchestrer ces procédures via un assemblage hétérogène de feuilles de calcul Excel locales, de courriers papier et de systèmes d'archivage non interconnectés. Cette absence de centralisation engendre deux risques majeurs :
+\begin{itemize}
+    \item \textbf{Un risque de perte financière directe :} L'évaluation approximative ou tardive des actifs repris sur le marché secondaire fausse les prix de mise en vente et le calibrage des provisions comptables. Le traitement manuel des rapports d'expertise de véhicules (fichiers PDF non structurés) requiert entre 30 et 60 minutes par dossier, ralentissant considérablement la réactivité des équipes.
+    \item \textbf{Un risque juridique majeur :} En phase pré-contentieuse et judiciaire, l'omission ou le retard dans l'envoi d'une pièce légale (telle qu'une mise en demeure officielle ou une sommation de payer) peut vicier la procédure et provoquer son invalidation totale devant les tribunaux, en vertu des délais légaux stricts imposés par les réglementations nationales et internationales (notamment le RGPD en Europe et la Loi organique n°63-2004 en Tunisie).
+\end{itemize}
+
+Face à ce double défi, la problématique centrale de notre travail s'énonce ainsi :
+
+\begin{quote}
+\textit{« Comment concevoir et développer une plateforme logicielle SaaS multi-tenant, sécurisée et intégrable, capable d'automatiser l'intégralité du workflow de recouvrement leasing en garantissant le respect strict des délais légaux, tout en exploitant un pipeline d'intelligence artificielle pour optimiser la valorisation financière des actifs repris ? »}
+\end{quote}
+
+\section*{Proposition de Solution : La Plateforme \projectShortTitle}
+
+C'est dans ce contexte que s'inscrit le projet \textbf{\projectShortTitle}, conçu et réalisé au sein de \textbf{\hostCompany}. \projectShortTitle{} est une plateforme SaaS (\textit{Software as a Service}) B2B multi-tenant dont l'ambition est de digitaliser intégralement le cycle de vie du recouvrement leasing autour de quatre piliers fondamentaux :
+\begin{enumerate}
+    \item \textbf{Workflow Réglementaire Strict :} Automatisation et sécurisation du cycle de vie des dossiers à travers cinq phases séquentielles rigoureusement encadrées (Pré-contentieux $\rightarrow$ Mise en demeure $\rightarrow$ Saisie du véhicule $\rightarrow$ Vente $\rightarrow$ Clôture).
+    \item \textbf{Pipeline d'Extraction par Intelligence Artificielle :} Un microservice asynchrone s'appuyant sur des modèles de Traitement Automatique du Langage Naturel (NLP) et de grands modèles de langage (LLM) pour analyser les rapports d'expertise, extraire les caractéristiques du véhicule et confronter instantanément la valeur marchande réelle ($\ve$) à la valeur résiduelle comptable ($\vr$).
+    \item \textbf{Moteur d'Alertes et de Pilotage Proactif :} Suivi en temps réel des délais juridiques et détection automatique des dossiers stagnants ou dormants afin de prévenir toute péremption légale.
+    \item \textbf{Isolation SaaS Hermétique et Traçabilité Réglementaire :} Implémentation d'une architecture multi-tenant assurant l'étanchéité absolue des données entre entreprises clientes, couplée à un journal d'audit (\textit{Audit Trail}) immuable.
+\end{enumerate}
+
+\section*{Organisation du Rapport}
+
+Le présent document retrace l'ensemble des étapes de recherche, de modélisation, d'architecture et de réalisation de la plateforme \projectShortTitle. Il est articulé autour de quatre chapitres fondamentaux :
+\begin{itemize}
+    \item \textbf{Chapitre 1 -- Contexte Général du Projet et État de l'Art :} Présente l'organisme d'accueil \hostCompany, dresse l'étude critique de l'existant, examine l'état de l'art technologique et expose la démarche agile retenue.
+    \item \textbf{Chapitre 2 -- Spécification et Analyse des Besoins :} Formalise les exigences fonctionnelles et non-fonctionnelles, identifie les acteurs, présente la modélisation UML (diagrammes de cas d'utilisation par module, diagramme de classes), la planification par sprints et l'architecture logique globale.
+    \item \textbf{Chapitre 3 -- Conception Architecturale et Détaillée :} Approfondit le modèle conceptuel de données (MCD), la stratégie d'isolation multi-tenant, la spécification détaillée des cas d'utilisation (UC1 à UC4) et la formulation du moteur d'arbitrage financier.
+    \item \textbf{Chapitre 4 -- Réalisation, Pipeline IA et Validation :} Décrit l'environnement technologique de production, le fonctionnement du pipeline d'extraction IA, les interfaces utilisateurs clés et la campagne de tests et validation.
+\end{itemize}

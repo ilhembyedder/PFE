@@ -52,7 +52,7 @@ app:
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
   ai-service:
     url: ${AI_SERVICE_URL:http://localhost:8000}
-    webhook-url: ${AI_SERVICE_WEBHOOK_URL:http://backend:8080/api/v1/internal/webhooks/ai-progress}
+    webhook-url: ${AI_SERVICE_WEBHOOK_URL:http://localhost:8080/api/v1/internal/webhooks/ai-progress}
 
 management:
   endpoints:

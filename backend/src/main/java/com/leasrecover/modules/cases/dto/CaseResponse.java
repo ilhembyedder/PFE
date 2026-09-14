@@ -23,6 +23,7 @@ public class CaseResponse {
     private String currencyCode;
     private UUID assigneeId;
     private String assigneeEmail;
+    private String assigneeName;
     
     private ClientDto client;
     private ContractDto contract;
@@ -49,6 +50,8 @@ public class CaseResponse {
     public void setAssigneeId(UUID assigneeId) { this.assigneeId = assigneeId; }
     public String getAssigneeEmail() { return assigneeEmail; }
     public void setAssigneeEmail(String assigneeEmail) { this.assigneeEmail = assigneeEmail; }
+    public String getAssigneeName() { return assigneeName; }
+    public void setAssigneeName(String assigneeName) { this.assigneeName = assigneeName; }
     public ClientDto getClient() { return client; }
     public void setClient(ClientDto client) { this.client = client; }
     public ContractDto getContract() { return contract; }
@@ -139,6 +142,9 @@ public class CaseResponse {
         if (rcase.getAssignee() != null) {
             response.setAssigneeId(rcase.getAssignee().getId());
             response.setAssigneeEmail(rcase.getAssignee().getEmail());
+            String fullName = ((rcase.getAssignee().getFirstName() != null ? rcase.getAssignee().getFirstName() : "") + " " +
+                               (rcase.getAssignee().getLastName() != null ? rcase.getAssignee().getLastName() : "")).trim();
+            response.setAssigneeName(!fullName.isEmpty() ? fullName : rcase.getAssignee().getEmail());
         }
 
         if (rcase.getContract() != null) {

@@ -1,0 +1,159 @@
+%=============================================================================
+% chktex-file 1 chktex-file 8 chktex-file 12 chktex-file 13 chktex-file 24 chktex-file 26
+% RAPPORT DE PROJET DE FIN D'ÉTUDES (PFE) - SESAME
+% Titre : LeasRecover - Plateforme SaaS Multi-Tenant pour le Recouvrement
+% Auteur : Ilhem Benyedder
+%=============================================================================
+
+\documentclass[12pt,a4paper,oneside]{report}
+
+% Configurations and Custom Commands
+\input{config/preamble.tex}
+\input{config/commands.tex}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+%=============================================================================
+% PAGE DE GARDE OFFICIELLE (SESAME - Conforme à Page de garde PFE.doc)
+%=============================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\newgeometry{top=0.75cm, bottom=1.27cm, left=1.27cm, right=1.27cm}
+
+% Background subtle polygonal pattern from Page de garde PFE.doc (Full bleed edge-to-edge)
+\begin{tikzpicture}[remember picture,overlay]
+    \node[inner sep=0pt, outer sep=0pt, anchor=center] at (current page.center) {
+        \includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio=false]{images/cover_pattern.png}
+    };
+\end{tikzpicture}
+
+\begin{center}
+
+    % SESAME Official Header Banner
+    \noindent\includegraphics[width=\linewidth]{images/sesame_header.png}
+
+    \vspace{1.0cm}
+
+    % Main Title (Calibri Light 18pt Bold Centered)
+    {\fontsize{18}{22}\selectfont\bfseries\sffamily RAPPORT DE STAGE DE PROJET DE FIN D'ÉTUDES\par}
+
+    \vspace{0.8cm}
+
+    % Section Intitulé & Auteur (Table 1 from Word doc)
+    \noindent\rule{\linewidth}{0.6pt}\\[0.35cm]
+    {\fontsize{14}{17}\selectfont\sffamily Intitulé du stage}\\[0.3cm]
+    {\fontsize{15}{19}\selectfont\bfseries\sffamily \projectTitle}\\[0.45cm]
+    \rule{\linewidth}{0.6pt}\\[0.35cm]
+    {\fontsize{14}{17}\selectfont\sffamily Réalisé par}\\[0.3cm]
+    {\fontsize{15}{19}\selectfont\bfseries\sffamily \authorName}\\[0.2cm]
+
+    \vspace{0.65cm}
+
+    % Section Entreprise d'accueil avec Logo (Table 2 from Word doc)
+    {\fontsize{14}{17}\selectfont\sffamily Entreprise d'accueil}\\[0.25cm]
+    \IfFileExists{\hostCompanyLogo}{%
+        \includegraphics[height=1.5cm,keepaspectratio]{\hostCompanyLogo}\\[0.2cm]%
+    }{%
+        {\fontsize{11}{14}\selectfont\itshape\color{black!45}[Logo de l'entreprise]\/}\\[0.15cm]%
+    }
+    {\fontsize{13}{16}\selectfont\bfseries\sffamily \hostCompany}\\[0.15cm]
+    {\color{black!35}\makebox[0.6\linewidth]{\dotfill}}
+
+    \vspace{0.65cm}
+
+    % Section Encadrants (Table 3 from Word doc)
+    {\fontsize{14}{17}\selectfont\sffamily Encadrant Entreprise}\\[0.25cm]
+    {\fontsize{13}{16}\selectfont\bfseries\sffamily \industrialAdvisor}\\[0.15cm]
+    {\color{black!35}\makebox[0.45\linewidth]{\dotfill}}\\[0.45cm]
+    {\fontsize{14}{17}\selectfont\sffamily Encadrant SESAME}\\[0.25cm]
+    {\fontsize{13}{16}\selectfont\bfseries\sffamily \academicAdvisor}\\[0.15cm]
+    {\color{black!35}\makebox[0.45\linewidth]{\dotfill}}
+
+    \vfill
+
+    % Année Universitaire (Footer Box from Word doc)
+    {\fontsize{12}{15}\selectfont\bfseries\sffamily Année Universitaire}\\[0.15cm]
+    {\fontsize{12}{15}\selectfont\bfseries\sffamily \academicYear}
+
+\end{center}
+\restoregeometry
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+%=============================================================================
+% FRONT MATTER
+%=============================================================================
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% Dédicaces & Remerciements
+\input{chapters/00_remerciements.tex}
+
+% Résumé & Abstract
+\input{chapters/00_resume_abstract.tex}
+
+% Tables des matières, figures et tableaux
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+% Liste des Acronymes et Abréviations
+\chapter*{Liste des Abréviations}
+\addcontentsline{toc}{chapter}{Liste des Abréviations}
+
+\noindent\begin{tabularx}{\textwidth}{@{}l Y@{}}
+\toprule
+\textbf{Acronyme} & \textbf{Signification} \\
+\midrule
+\textbf{PFE} & Projet de Fin d'Études \\
+\textbf{SaaS} & Software as a Service \\
+\textbf{API} & Application Programming Interface \\
+\textbf{REST} & Representational State Transfer \\
+\textbf{JWT} & JSON Web Token \\
+\textbf{RBAC} & Role-Based Access Control \\
+\textbf{RLS} & Row-Level Security \\
+\textbf{ORM} & Object-Relational Mapping \\
+\textbf{MCD} & Modèle Conceptuel des Données \\
+\textbf{MLD} & Modèle Logique des Données \\
+\textbf{UML} & Unified Modeling Language \\
+\textbf{OCR} & Optical Character Recognition \\
+\textbf{NLP} & Natural Language Processing \\
+\textbf{VIN} & Vehicle Identification Number (Numéro de châssis) \\
+\textbf{$\vr$} & Valeur Résiduelle contractuelle \\
+\textbf{$\ve$} & Valeur d'Expertise marchande \\
+\textbf{ACID} & Atomicité, Cohérence, Isolation, Durabilité \\
+\bottomrule
+\end{tabularx}
+
+\newpage
+
+%=============================================================================
+% MAIN MATTER
+%=============================================================================
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% Introduction Générale
+\input{chapters/00_intro_generale.tex}
+
+% Chapitres
+\input{chapters/01_contexte_existant.tex}
+\input{chapters/02_besoins_analyse.tex}
+\input{chapters/03_conception_archi.tex}
+\input{chapters/04_realisation_tests.tex}
+
+% Conclusion Générale et Perspectives
+\input{chapters/05_conclusion.tex}
+
+%=============================================================================
+% BACK MATTER (BIBLIOGRAPHIE)
+%=============================================================================
+\bibliographystyle{plain}
+\nocite{*}
+\bibliography{biblio}
+
+\end{document}

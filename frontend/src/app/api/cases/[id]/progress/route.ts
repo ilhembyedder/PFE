@@ -16,6 +16,7 @@ export const GET = withAuth<Params>(async ({ session, params }) => {
   try {
     upstream = await fetch(`${API_BASE}/cases/${params.id}/valuation-progress`, {
       headers: backendHeaders(session, { Accept: "text/event-stream" }),
+      cache: "no-store",
     });
   } catch (error) {
     console.error("[bff] valuation stream unreachable", error);

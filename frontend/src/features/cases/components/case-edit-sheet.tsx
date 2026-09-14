@@ -105,7 +105,9 @@ function EditForm({
     try {
       await update.mutateAsync({
         clientName: clientName.trim(),
+        clientFullName: clientName.trim(),
         contractReference: reference.trim(),
+        contractReferenceNumber: reference.trim(),
         initialResidualValueCents: Math.round(residual * 100),
         currencyCode: currency,
       });

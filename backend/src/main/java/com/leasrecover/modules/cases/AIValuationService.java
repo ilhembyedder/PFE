@@ -71,9 +71,9 @@ public class AIValuationService {
     private void processSuccessCallback(AiProgressPayload payload) {
         UUID caseId = payload.getCaseId();
 
-        // 1. Retrieve AIValuation and associated RecoveryCase
-        AIValuation valuation = aiValuationRepository.findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(caseId, "PENDING")
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No PENDING AI valuation found for case " + caseId));
+        // 1. Retrieve latest AIValuation for case
+        AIValuation valuation = aiValuationRepository.findFirstByRecoveryCaseIdOrderByCreatedAtDesc(caseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No AI valuation found for case " + caseId));
 
         RecoveryCase recoveryCase = valuation.getRecoveryCase();
         if (recoveryCase == null) {
@@ -265,8 +265,15 @@ public class AIValuationService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: GESTIONNAIRE or ADMIN role required");
         }
 
-        AIValuation valuation = aiValuationRepository.findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(caseId, "SUCCESS")
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No successful AI valuation found for case " + caseId));
+        Optional<AIValuation> valuationOpt = aiValuationRepository.findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(caseId, "SUCCESS");
+        if (valuationOpt.isEmpty()) {
+            Optional<AIValuation> failedOpt = aiValuationRepository.findFirstByRecoveryCaseIdAndStatusOrderByCreatedAtDesc(caseId, "FAILED");
+            if (failedOpt.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Le document est illisible ou n'est pas un rapport d'expertise valide.");
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No successful AI valuation found for case " + caseId);
+        }
+        AIValuation valuation = valuationOpt.get();
 
         if (!tenantId.equals(valuation.getTenantId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: Valuation does not belong to active tenant");
@@ -283,6 +290,11 @@ public class AIValuationService {
         response.setDeviationPercentage(valuation.getDeviationPercentage());
         response.setReliabilityIndicator(valuation.getReliabilityIndicator());
         response.setCurrencyCode(valuation.getCurrencyCode());
+        response.setExtractedBrand(valuation.getExtractedBrand());
+        response.setExtractedModel(valuation.getExtractedModel());
+        response.setExtractedYear(valuation.getExtractedYear());
+        response.setExtractedMileage(valuation.getExtractedMileage());
+        response.setExtractedCondition(valuation.getExtractedCondition());
 
         return response;
     }

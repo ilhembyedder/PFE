@@ -237,6 +237,14 @@ public class CaseController {
         return ResponseEntity.ok(JSendResponse.success(response));
     }
 
+    @DeleteMapping("/{id}/documents/{docId}")
+    public ResponseEntity<JSendResponse<Void>> deleteDocument(
+            @PathVariable UUID id,
+            @PathVariable UUID docId) {
+        documentUploadService.deleteDocument(id, docId);
+        return ResponseEntity.ok(JSendResponse.success(null));
+    }
+
     @GetMapping("/{id}/documents/{docId}/download")
     public ResponseEntity<Resource> downloadDocument(
             @PathVariable UUID id,

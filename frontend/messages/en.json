@@ -133,9 +133,19 @@
 
   "status": {
     "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
     "SUSPENDED": "Suspended",
     "TERMINATED": "Terminated",
-    "INACTIVE": "Inactive"
+    "IMPAYE": "Unpaid",
+    "CONTENTIEUX": "In litigation",
+    "SAISI": "Repossessed",
+    "EN_COURS": "In progress",
+    "RESILIE": "Terminated",
+    "CLOTURE": "Closed",
+    "SOLDE": "Settled",
+    "PENDING": "Pending",
+    "SUCCESS": "Success",
+    "FAILED": "Failed"
   },
 
   "login": {
@@ -382,7 +392,7 @@
     "title": "Settings",
     "subtitle": "Configuration for your company and its compliance rules.",
     "sections": "Settings sections",
-    "tabs": { "tenant": "Company", "compliance": "Compliance" },
+    "tabs": { "tenant": "Company", "compliance": "Compliance", "users": "Team" },
     "branding": {
       "title": "Company identity",
       "name": "Company name",
@@ -416,6 +426,50 @@
       "moderateBelowCritical": "The moderate threshold must be strictly below the critical one.",
       "partialDelays": "The AI deviation thresholds were saved, but the delays could not be: {reason}",
       "partialThresholds": "The delays were saved, but the AI deviation thresholds could not be: {reason}"
+    },
+    "users": {
+      "title": "Team members",
+      "subtitle": "Manage administrator and case manager accounts for your company.",
+      "newUser": "New team member",
+      "emptyTitle": "No team members found",
+      "emptyBody": "Create accounts to let your team manage vehicle recovery cases.",
+      "columns": {
+        "user": "Team member",
+        "email": "Email address",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Created on"
+      },
+      "active": "Active",
+      "inactive": "Inactive",
+      "deactivate": "Deactivate",
+      "activate": "Reactivate",
+      "edit": "Edit",
+      "editTitle": "Edit {name}",
+      "editHint": "Update information or role for this team member.",
+      "createTitle": "New team member",
+      "createHint": "Create an account for a manager or administrator.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "role": "Role",
+      "roleAdmin": "Administrator",
+      "roleAdminHint": "Full access to recovery cases, company settings and team management.",
+      "roleGestionnaire": "Case Manager",
+      "roleGestionnaireHint": "Full access to recovery cases and operational features.",
+      "password": "Password",
+      "generatePassword": "Generate password",
+      "passwordHint": "{min} characters minimum.",
+      "save": "Save changes",
+      "create": "Create account",
+      "deactivateTitle": "Deactivate {name}?",
+      "deactivateBody": "This user will no longer be able to sign in. Their cases and audit history are retained.",
+      "activateTitle": "Reactivate {name}?",
+      "activateBody": "This user will be able to sign in and manage cases again.",
+      "firstNameRequired": "First name is required.",
+      "lastNameRequired": "Last name is required.",
+      "emailInvalid": "The email address is invalid.",
+      "passwordTooShort": "Password must be at least {min} characters."
     }
   },
 
@@ -435,6 +489,9 @@
     "deactivate": "Deactivate",
     "deactivateTitle": "Deactivate {name}?",
     "deactivateBody": "Its users will no longer be able to sign in. Data is retained.",
+    "activate": "Reactivate",
+    "activateTitle": "Reactivate {name}?",
+    "activateBody": "Its users will be able to sign in again. Access and data are restored.",
     "provisionHint": "Provisions an isolated schema and the first administrator account.",
     "companySection": "Company",
     "adminSection": "First administrator",

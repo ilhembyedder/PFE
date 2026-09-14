@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Sparkles, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslations } from "next-intl";
 import { useFormat } from "@/lib/use-format";
@@ -17,11 +17,13 @@ export function DocumentList({
   isPending,
   downloadHref,
   emptyLabel,
+  onDelete,
 }: {
   documents: DocumentSummary[];
   isPending?: boolean;
   downloadHref: (doc: DocumentSummary) => string;
   emptyLabel?: string;
+  onDelete?: (doc: DocumentSummary) => void;
 }) {
   const t = useTranslations("caseDetail.documents");
   const tCommon = useTranslations("common");
@@ -57,20 +59,41 @@ export function DocumentList({
         <li key={doc.id} className="flex items-center gap-3 py-3">
           <FileText className="text-muted-foreground size-4 shrink-0" aria-hidden />
           <div className="min-w-0 flex-1">
-            <p className="type-body-sm truncate font-medium">{doc.fileName}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="type-body-sm truncate font-medium">{doc.fileName}</p>
+              {doc.isUsedForAiValuation ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shrink-0" title="Document utilisé par l'IA pour la valeur vénale estimée">
+                  <Sparkles className="size-3 text-emerald-600 dark:text-emerald-400" aria-hidden />
+                  Estimation IA retenue
+                </span>
+              ) : null}
+            </div>
             <p className="type-caption text-muted-foreground">
               {doc.uploaderName ? `${doc.uploaderName} · ` : ""}
               <time dateTime={doc.createdAt}>{format.dateTime(doc.createdAt)}</time>
             </p>
           </div>
-          <a
-            href={downloadHref(doc)}
-            download
-            className="text-muted-foreground hover:text-foreground focus-visible:focus-ring grid size-8 shrink-0 place-items-center rounded-md outline-none [&_svg]:size-4"
-            aria-label={`${tCommon("download")} ${doc.fileName}`}
-          >
-            <Download aria-hidden />
-          </a>
+          <div className="flex items-center gap-1 shrink-0">
+            <a
+              href={downloadHref(doc)}
+              download
+              className="text-muted-foreground hover:text-foreground focus-visible:focus-ring grid size-8 shrink-0 place-items-center rounded-md outline-none [&_svg]:size-4"
+              aria-label={`${tCommon("download")} ${doc.fileName}`}
+            >
+              <Download aria-hidden />
+            </a>
+            {onDelete ? (
+              <button
+                type="button"
+                onClick={() => onDelete(doc)}
+                className="text-muted-foreground hover:text-destructive focus-visible:focus-ring grid size-8 shrink-0 place-items-center rounded-md outline-none transition-colors [&_svg]:size-4"
+                aria-label={`Supprimer ${doc.fileName}`}
+                title="Supprimer le document"
+              >
+                <Trash2 aria-hidden />
+              </button>
+            ) : null}
+          </div>
         </li>
       ))}
     </ul>

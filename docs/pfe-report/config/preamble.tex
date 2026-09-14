@@ -1,0 +1,165 @@
+%=============================================================================
+% chktex-file 1 chktex-file 8 chktex-file 12 chktex-file 13 chktex-file 24 chktex-file 26
+% PREAMBLE CONFIGURATION - PFE REPORT
+%=============================================================================
+
+% Language and Encodings
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Fonts and Typography
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\emergencystretch}{2em}
+
+% Page Geometry
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm, headheight=15pt]{geometry}
+\usepackage{emptypage}
+
+% Colors
+\usepackage[table,xcdraw]{xcolor}
+\definecolor{primaryblue}{RGB}{24, 76, 120}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{darkslate}{RGB}{44, 62, 80}
+\definecolor{accentgreen}{RGB}{39, 174, 96}
+\definecolor{accentorange}{RGB}{230, 126, 34}
+\definecolor{accentred}{RGB}{192, 57, 43}
+\definecolor{lightgrey}{RGB}{245, 247, 250}
+\definecolor{bordergrey}{RGB}{220, 224, 230}
+\definecolor{codebg}{RGB}{248, 249, 250}
+
+% Mathematics & Symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Graphics & TikZ
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, shadows, calc, backgrounds, fit, trees}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+% Lists & Formatting
+\usepackage{enumitem}
+\setlist[itemize]{label=\textbullet, leftmargin=1.5em, itemsep=2pt, parsep=1pt}
+\setlist[enumerate]{leftmargin=1.5em, itemsep=2pt, parsep=1pt}
+
+% Code Listings
+\usepackage{listings}
+\lstdefinestyle{customcode}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    breakatwhitespace=true,
+    captionpos=b,
+    frame=single,
+    rulecolor=\color{bordergrey},
+    keywordstyle=\color{primaryblue}\bfseries,
+    commentstyle=\color{accentgreen}\itshape,
+    stringstyle=\color{accentorange},
+    numbers=left,
+    numberstyle=\tiny\color{darkslate!60},
+    stepnumber=1,
+    numbersep=8pt,
+    tabsize=2,
+    showstringspaces=false
+}
+\lstset{style=customcode}
+
+% Callout Boxes
+\usepackage[most]{tcolorbox}
+\newtcolorbox{infobox}[2][]{
+    enhanced,
+    colback=lightgrey,
+    colframe=secondaryblue,
+    coltitle=white,
+    fonttitle=\bfseries\sffamily,
+    title={#2},
+    arc=3mm,
+    boxrule=1pt,
+    left=10pt, right=10pt, top=8pt, bottom=8pt,
+    #1
+}
+
+\newtcolorbox{notebox}[1][]{
+    enhanced,
+    colback=lightgrey,
+    colframe=accentorange,
+    arc=2mm,
+    boxrule=1pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt,
+    #1
+}
+
+% Headers and Footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\nouppercase{\rightmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% Titles & Headings
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{primaryblue}}
+  {\chaptertitlename\ \thechapter}{10pt}{\Huge\bfseries\color{darkslate}}
+\titlespacing*{\chapter}{0pt}{-10pt}{25pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{primaryblue}\raggedright}
+  {\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{18pt}{8pt}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{secondaryblue}\raggedright}
+  {\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{darkslate}\raggedright}
+  {\thesubsubsection}{1em}{}
+
+% Captions
+\usepackage[font=small,labelfont={bf,color=primaryblue},format=hang]{caption}
+\usepackage{subcaption}
+\frenchsetup{SmallCapsFigTabCaptions=false}
+
+% Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    citecolor=secondaryblue,
+    filecolor=darkslate,
+    urlcolor=accentorange,
+    pdfauthor={Ilhem Benyedder},
+    pdftitle={LeasRecover : Plateforme SaaS Multi-Tenant pour la Digitalisation du Recouvrement et l'Expertise des Véhicules en Leasing},
+    pdfsubject={Rapport de Projet de Fin d'Études (PFE)},
+    pdfkeywords={Leasing, Recouvrement, SaaS, Multi-Tenant, Expertise Automobile, OCR, FastAPI, React}
+}

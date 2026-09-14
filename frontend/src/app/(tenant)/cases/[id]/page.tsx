@@ -44,6 +44,7 @@ import {
   useAssignees,
   useCase,
   useCaseDocuments,
+  useDeleteCaseDocument,
   useCaseHistory,
   useCaseNotes,
   useCasePrerequisites,
@@ -252,7 +253,14 @@ function DocumentsTab({
   const t = useTranslations("caseDetail.documents");
   const labels = useLabels();
   const documents = useCaseDocuments(caseId);
+  const deleteDoc = useDeleteCaseDocument(caseId);
   const ref = useRef<HTMLDivElement>(null);
+  const [openPhases, setOpenPhases] = useState<string[]>([currentPhase]);
+  const [prevPhase, setPrevPhase] = useState(currentPhase);
+  if (prevPhase !== currentPhase) {
+    setPrevPhase(currentPhase);
+    setOpenPhases([currentPhase]);
+  }
 
   useEffect(() => {
     if (focusUpload) ref.current?.scrollIntoView({ block: "center" });
@@ -263,7 +271,7 @@ function DocumentsTab({
 
   return (
     <div className="space-y-4" ref={ref}>
-      <Accordion defaultValue={[currentPhase]}>
+      <Accordion value={openPhases} onValueChange={(val: string[]) => setOpenPhases(val)}>
         {PHASES.map((phase) => {
           const docs = byPhase(phase);
           const isCurrent = phase === currentPhase;
@@ -283,6 +291,7 @@ function DocumentsTab({
                   isPending={documents.isPending}
                   downloadHref={(doc) => `/api/cases/${caseId}/documents/${doc.id}/download`}
                   emptyLabel={t("emptyPhase")}
+                  onDelete={(doc) => deleteDoc.mutate(doc.id)}
                 />
                 {/* Only the current phase carries an upload zone. */}
                 {isCurrent ? (
@@ -465,7 +474,15 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 valuation={valuation.data}
                 caseId={caseId}
                 extracted={
-                  data.vehicle
+                  valuation.data?.extractedBrand
+                    ? {
+                        brand: valuation.data.extractedBrand,
+                        model: valuation.data.extractedModel ?? undefined,
+                        year: valuation.data.extractedYear ?? undefined,
+                        mileage: valuation.data.extractedMileage ?? undefined,
+                        condition: valuation.data.extractedCondition ?? undefined,
+                      }
+                    : data.vehicle
                     ? {
                         brand: data.vehicle.brand,
                         model: data.vehicle.model,
@@ -593,17 +610,33 @@ function CaseDetail({ caseId }: { caseId: string }) {
                 }}
               >
                 <SelectTrigger id="assignee" className="w-full">
-                  <SelectValue placeholder={tCases("unassigned")} />
+                  <SelectValue placeholder={tCases("unassigned")}>
+                    {(() => {
+                      if (!data.assigneeId || data.assigneeId === "none") return tCases("unassigned");
+                      const found = (assignees.data ?? []).find((p) => p.id === data.assigneeId);
+                      if (found) {
+                        const name = `${found.firstName ?? ""} ${found.lastName ?? ""}`.trim();
+                        return name || found.email || data.assigneeId;
+                      }
+                      return data.assigneeName ?? data.assigneeEmail ?? tCases("unassigned");
+                    })()}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none" disabled>
                     {tCases("unassigned")}
                   </SelectItem>
-                  {(assignees.data ?? []).map((person) => (
-                    <SelectItem key={person.id} value={person.id}>
-                      {person.firstName} {person.lastName}
-                    </SelectItem>
-                  ))}
+                  {(assignees.data ?? []).map((person) => {
+                    const fullName =
+                      `${person.firstName ?? ""} ${person.lastName ?? ""}`.trim() ||
+                      person.email ||
+                      person.id;
+                    return (
+                      <SelectItem key={person.id} value={person.id}>
+                        {fullName}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
               {assign.isError ? (

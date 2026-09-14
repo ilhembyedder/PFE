@@ -24,6 +24,7 @@ import type {
   PriorityAlert,
   Tenant,
   TenantConfig,
+  TenantUser,
   Thresholds,
   Valuation,
   Vehicle,
@@ -210,9 +211,11 @@ export const usePriorityAlerts = () =>
  * stays on screen and the product looks broken.
  */
 function invalidateCase(client: QueryClient, id: string) {
-  void client.invalidateQueries({ queryKey: queryKeys.cases.detail(id) });
-  void client.invalidateQueries({ queryKey: queryKeys.cases.all });
-  void client.invalidateQueries({ queryKey: queryKeys.alerts.all });
+  void client.invalidateQueries({ queryKey: queryKeys.cases.detail(id), refetchType: "all" });
+  void client.invalidateQueries({ queryKey: queryKeys.cases.documents(id), refetchType: "all" });
+  void client.invalidateQueries({ queryKey: queryKeys.cases.all, refetchType: "all" });
+  void client.invalidateQueries({ queryKey: queryKeys.alerts.all, refetchType: "all" });
+  void client.refetchQueries({ queryKey: queryKeys.cases.documents(id) });
 }
 
 export function useCreateCase() {
@@ -290,6 +293,15 @@ export function useUploadCaseDocument(id: string) {
   return useMutation({
     mutationFn: (formData: FormData) =>
       api.upload<DocumentSummary>(`/api/cases/${id}/documents`, formData),
+    onSuccess: () => invalidateCase(client, id),
+  });
+}
+
+export function useDeleteCaseDocument(id: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (docId: string) =>
+      api.delete<void>(`/api/cases/${id}/documents/${docId}`),
     onSuccess: () => invalidateCase(client, id),
   });
 }
@@ -445,3 +457,73 @@ export function useDeactivateTenant() {
     },
   });
 }
+
+export function useActivateTenant() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      api.put<void>(`/api/super-admin/tenants/${id}/activate`),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: queryKeys.tenants });
+    },
+  });
+}
+
+// ---------------------------------------------------------------- users (admin)
+
+export const useUsers = () =>
+  useQuery({
+    queryKey: queryKeys.users.list(),
+    queryFn: () => api.get<TenantUser[]>("/api/admin/users"),
+  });
+
+export function useCreateUser() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (body: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      role: "ADMIN" | "GESTIONNAIRE";
+    }) => api.post<TenantUser>("/api/admin/users", body),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: queryKeys.users.all });
+      void client.invalidateQueries({ queryKey: queryKeys.assignees });
+    },
+  });
+}
+
+export function useUpdateUser() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      role: "ADMIN" | "GESTIONNAIRE";
+      status: "ACTIVE" | "INACTIVE";
+    }) => api.put<TenantUser>(`/api/admin/users/${id}`, body),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: queryKeys.users.all });
+      void client.invalidateQueries({ queryKey: queryKeys.assignees });
+    },
+  });
+}
+
+export function useDeactivateUser() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      api.put<void>(`/api/admin/users/${id}/deactivate`),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: queryKeys.users.all });
+      void client.invalidateQueries({ queryKey: queryKeys.assignees });
+    },
+  });
+}
+
+

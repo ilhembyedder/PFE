@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession, useTenant } from "@/lib/query/hooks";
 import { initials } from "@/lib/format";
 import { useLabels } from "@/lib/use-format";
@@ -130,12 +131,15 @@ function Identity({ variant, collapsed }: { variant: ShellVariant; collapsed?: b
 function AccountBlock({ collapsed }: { collapsed?: boolean }) {
   const session = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("nav");
   const labels = useLabels();
 
   const signOut = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
     router.replace("/login");
+    router.refresh();
   };
 
   const user = session.data;

@@ -1,5 +1,7 @@
 package com.leasrecover.modules.cases.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +16,8 @@ import java.time.ZonedDateTime;
 public class CaseCreateRequest {
     // Client fields
     @NotBlank(message = "Client full name or company is required")
+    @JsonProperty("clientFullName")
+    @JsonAlias({"clientName", "clientFullName"})
     private String clientFullName;
 
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Client registration number must be alphanumeric")
@@ -27,6 +31,8 @@ public class CaseCreateRequest {
 
     // Contract fields
     @NotBlank(message = "Contract reference number is required")
+    @JsonProperty("contractReferenceNumber")
+    @JsonAlias({"contractReference", "contractReferenceNumber"})
     private String contractReferenceNumber;
 
     @NotNull(message = "Contract start date is required")
