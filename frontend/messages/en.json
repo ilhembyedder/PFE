@@ -149,9 +149,10 @@
   },
 
   "login": {
-    "accountType": "Account type",
-    "tenant": "Company",
-    "platform": "Platform",
+    "tenantTitle": "Company sign-in",
+    "platformTitle": "Platform administration",
+    "switchToPlatform": "Platform administrator? Sign in here",
+    "switchToTenant": "Company user? Sign in here",
     "email": "Email address",
     "password": "Password",
     "tenantId": "Company identifier",
@@ -292,7 +293,6 @@
     "clamped": "> 999%",
     "notComputable": "The contract's residual value is zero. The deviation cannot be calculated.",
     "unusual": "Unusual deviation. Check the contract's residual value.",
-    "fixCase": "Correct the case",
     "none": "No estimate yet. Upload an appraisal report to start the analysis.",
     "goToDocuments": "Go to documents"
   },

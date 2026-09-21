@@ -108,7 +108,7 @@ describe("ValuationCard", () => {
       expect(screen.queryByText("Reliable")).not.toBeInTheDocument();
     });
 
-    it("explains the cause and offers a correction", () => {
+    it("explains the cause", () => {
       render(
         <ValuationCard
           valuation={valuation({ initialResidualValueCents: 0 })}
@@ -117,10 +117,7 @@ describe("ValuationCard", () => {
       );
 
       expect(screen.getByText(/valeur résiduelle du contrat est nulle/)).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Corriger le dossier" })).toHaveAttribute(
-        "href",
-        `/cases/${CASE_ID}?edit=1`,
-      );
+      expect(screen.queryByRole("link", { name: "Corriger le dossier" })).not.toBeInTheDocument();
     });
 
     it("promotes the market value, which is still real", () => {
@@ -170,7 +167,7 @@ describe("ValuationCard", () => {
     it("advises checking the residual value without blocking", () => {
       render(<ValuationCard valuation={extreme} caseId={CASE_ID} />);
       expect(screen.getByText(/Écart inhabituel/)).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Corriger le dossier" })).toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: "Corriger le dossier" })).not.toBeInTheDocument();
     });
 
     it("clamps the display at the stored ceiling", () => {

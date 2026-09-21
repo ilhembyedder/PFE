@@ -173,15 +173,7 @@ export function ValuationCard({
           </p>
           <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
             <Info className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
-            <div>
-              <p className="type-body-sm">{t("notComputable")}</p>
-              <Link
-                href={`/cases/${caseId}?edit=1`}
-                className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
-              >
-                {t("fixCase")}
-              </Link>
-            </div>
+            <p className="type-body-sm">{t("notComputable")}</p>
           </div>
         </>
       ) : (
@@ -213,15 +205,7 @@ export function ValuationCard({
           {extreme ? (
             <div className="bg-warning-surface border-warning-border mt-4 flex gap-2.5 rounded-md border p-3">
               <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
-              <div>
-                <p className="type-body-sm">{t("unusual")}</p>
-                <Link
-                  href={`/cases/${caseId}?edit=1`}
-                  className="type-body-sm text-primary mt-1.5 inline-block font-medium underline underline-offset-4"
-                >
-                  Corriger le dossier
-                </Link>
-              </div>
+              <p className="type-body-sm">{t("unusual")}</p>
             </div>
           ) : null}
 

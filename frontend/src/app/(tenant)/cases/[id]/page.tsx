@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Download,
   Loader2,
-  PenLine,
   StepForward,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,6 @@ import { BlockedNotice } from "@/features/cases/components/blocked-notice";
 import { ValuationCard, ValuationCardSkeleton } from "@/features/cases/components/valuation-card";
 import { AIUploadZone } from "@/features/cases/components/ai-upload-zone";
 import { DocumentList } from "@/features/cases/components/document-list";
-import { CaseEditSheet } from "@/features/cases/components/case-edit-sheet";
 import {
   useAddNote,
   useAdvancePhase,
@@ -320,7 +318,6 @@ function CaseDetail({ caseId }: { caseId: string }) {
   const focus = params.get("focus");
   const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "details";
 
-  const [editing, setEditing] = useState(params.get("edit") === "1");
   const [advanceError, setAdvanceError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
@@ -411,10 +408,6 @@ function CaseDetail({ caseId }: { caseId: string }) {
           <Button variant="outline" onClick={() => void exportPdf()} disabled={downloading}>
             {downloading ? <Loader2 className="animate-spin" aria-hidden /> : <Download aria-hidden />}
             {t("export")}
-          </Button>
-          <Button variant="outline" onClick={() => setEditing(true)}>
-            <PenLine aria-hidden />
-            {t("edit.title")}
           </Button>
           {/* At the terminal phase the action is REPLACED, not disabled. */}
           {terminal ? (
@@ -668,13 +661,6 @@ function CaseDetail({ caseId }: { caseId: string }) {
           </div>
         </aside>
       </div>
-
-      <CaseEditSheet
-        open={editing}
-        onOpenChange={setEditing}
-        caseId={caseId}
-        detail={data}
-      />
     </>
   );
 }

@@ -2,7 +2,6 @@ package com.leasrecover.modules.users.dto;
 
 import com.leasrecover.modules.users.AppUser;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
@@ -10,7 +9,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class UserResponse {
 
     private UUID id;

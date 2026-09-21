@@ -19,6 +19,10 @@
 !/.impeccable/
 !/.github/
 !/.gitignore
+!/scripts/
+!/certs/
+certs/*
+!certs/README.md
 
 # Explicitly Ignore Methodology & Agent Folders
 _bmad/

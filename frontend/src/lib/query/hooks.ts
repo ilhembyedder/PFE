@@ -232,15 +232,6 @@ export function useCreateCase() {
   });
 }
 
-export function useUpdateCase(id: string) {
-  const client = useQueryClient();
-  return useMutation({
-    // No optimism: @Version means the server can reject on a concurrent edit.
-    mutationFn: (body: unknown) => api.put<CaseDetail>(`/api/cases/${id}`, body),
-    onSuccess: () => invalidateCase(client, id),
-  });
-}
-
 /** Optimistic: reassignment is something the server will not refuse. */
 export function useAssignCase(id: string) {
   const client = useQueryClient();

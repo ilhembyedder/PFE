@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -15,6 +13,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-leasrecover}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - leasrecover-network
 
@@ -22,6 +25,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      additional_contexts:
+        certs: ./certs
     container_name: leasrecover-backend
     ports:
       - "8080:8080"
@@ -30,13 +35,17 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-postgres}
       - AI_SERVICE_URL=http://ai-service:8000
+      - AI_SERVICE_WEBHOOK_URL=http://backend:8080/api/v1/internal/webhooks/ai-progress
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
       - UPLOAD_DIR=/app/uploads
       - APP_SECURITY_ALLOW_HEADER_FALLBACK=false
+      - MANAGEMENT_HEALTH_MAIL_ENABLED=false
+      - APP_ALERTS_CRON=${APP_ALERTS_CRON:-0 0 2 * * *}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - leasrecover-network
 
@@ -44,6 +53,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      additional_contexts:
+        certs: ./certs
     container_name: leasrecover-frontend
     ports:
       - "3000:3000"
@@ -61,6 +72,8 @@ services:
     build:
       context: ./ai-service
       dockerfile: Dockerfile
+      additional_contexts:
+        certs: ./certs
     container_name: leasrecover-ai-service
     ports:
       - "8000:8000"

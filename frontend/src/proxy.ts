@@ -27,6 +27,13 @@ const PROTECTED: ReadonlyArray<{ prefix: string; roles?: readonly Role[] }> = [
 const landingFor = (role: Role) =>
   role === "SUPER_ADMIN" ? "/tenants" : "/cases";
 
+/** Each audience has its own login screen; pick the one for the route. */
+const loginFor = (roles?: readonly Role[]) =>
+  roles?.length === 1 && roles[0] === "SUPER_ADMIN" ? "/login/platform" : "/login";
+
+const isLogin = (pathname: string) =>
+  pathname === "/login" || pathname === "/login/platform";
+
 function redirect(request: NextRequest, to: string, clear = false) {
   const response = NextResponse.redirect(new URL(to, request.url));
   if (clear) {
@@ -44,8 +51,8 @@ export async function proxy(request: NextRequest) {
 
   const session = await readSession(request.cookies.get(SESSION_COOKIE)?.value);
 
-  // Signed in already: skip the login screen.
-  if (pathname === "/login" && session) {
+  // Signed in already: skip the login screens.
+  if (isLogin(pathname) && session) {
     return redirect(request, landingFor(session.role));
   }
 
@@ -53,9 +60,10 @@ export async function proxy(request: NextRequest) {
 
   if (!session) {
     const sealed = request.cookies.get(SESSION_COOKIE);
+    const login = loginFor(route.roles);
     // A cookie that exists but does not validate means expired or tampered.
     // Say which, so the login screen can explain rather than appear blank.
-    const to = sealed ? "/login?expired=1" : "/login";
+    const to = sealed ? `${login}?expired=1` : login;
     return redirect(request, to, Boolean(sealed));
   }
 
@@ -69,6 +77,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/login",
+    "/login/platform",
     "/cases/:path*",
     "/leasing/:path*",
     "/settings/:path*",

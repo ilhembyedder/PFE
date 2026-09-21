@@ -1,0 +1,10 @@
+target
+uploads
+.mvn
+mvnw
+mvnw.cmd
+.postman
+postman
+HELP.md
+*.log
+.git

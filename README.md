@@ -664,10 +664,29 @@ Docker + Docker Compose · JDK 21 · Node.js 20+ · Python 3.11
 
 ```bash
 cp .env.example .env
-docker-compose up -d
+# Fill in JWT_SECRET and BFF_COOKIE_SECRET — compose refuses to start without them:
+#   openssl rand -base64 48   → JWT_SECRET
+#   openssl rand -base64 32   → BFF_COOKIE_SECRET
+docker compose up -d --build
 ```
 
-> ⚠️ **This does not currently work end to end.** The frontend reads `BACKEND_URL` but compose sets `BACKEND_API_URL`; `JWT_SECRET` is never passed through; uploads have no volume. See [§11](#11-things-that-will-bite-you-on-day-one).
+Then open `http://localhost:3000`. Backend on `:8080`, AI service on `:8000`, Postgres on `:5432`.
+
+The backend and frontend images are multi-stage builds (jar + JRE, Next.js standalone). The backend waits for Postgres to pass `pg_isready` before starting.
+
+> **Building behind a TLS-intercepting proxy** (corporate proxy, Trend Micro Web Security, …): Maven, npm and pip will fail with certificate errors. Export the proxy's root CA as PEM into `certs/*.crt` — every image build trusts what it finds there. See [`certs/README.md`](certs/README.md).
+
+### Demo data
+
+A fresh database only holds the seeded super admin. To get something to click on:
+
+```bash
+node scripts/seed-dev-data.mjs
+```
+
+It drives the public API (nothing is written to the database directly, except an optional backdating step for alerts) and creates the tenant **Demo Leasing SA** with an admin and two gestionnaires, tenant configuration, three leasing records without a case, and 13 recovery cases spread over the five phases — six of them with an expertise report uploaded and valued by the AI service, covering the RELIABLE / MODERATE_RISK / CRITICAL_RISK indicators. The credentials and the tenant UUID are printed at the end. Re-running skips what already exists.
+
+Five cases are backdated so the alert engine raises dormancy and legal-deadline alerts. The engine runs on `APP_ALERTS_CRON` (02:00 daily by default); set it to `0 */5 * * * *` in `.env` to see the alerts within five minutes.
 
 ### Option B — recommended for development
 

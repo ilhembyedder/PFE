@@ -149,9 +149,10 @@
   },
 
   "login": {
-    "accountType": "Type de compte",
-    "tenant": "Société",
-    "platform": "Plateforme",
+    "tenantTitle": "Connexion société",
+    "platformTitle": "Administration de la plateforme",
+    "switchToPlatform": "Administrateur de la plateforme ? Connectez-vous ici",
+    "switchToTenant": "Utilisateur d'une société ? Connectez-vous ici",
     "email": "Adresse e-mail",
     "password": "Mot de passe",
     "tenantId": "Identifiant de société",
@@ -292,7 +293,6 @@
     "clamped": "> 999 %",
     "notComputable": "La valeur résiduelle du contrat est nulle. L'écart ne peut pas être calculé.",
     "unusual": "Écart inhabituel. Vérifiez la valeur résiduelle du contrat.",
-    "fixCase": "Corriger le dossier",
     "none": "Aucune estimation. Téléversez un rapport d'expertise pour lancer l'analyse.",
     "goToDocuments": "Aller aux documents"
   },

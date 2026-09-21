@@ -135,14 +135,16 @@ function AccountBlock({ collapsed }: { collapsed?: boolean }) {
   const t = useTranslations("nav");
   const labels = useLabels();
 
+  const user = session.data;
+
   const signOut = async () => {
+    // Each audience has its own login screen.
+    const login = user?.role === "SUPER_ADMIN" ? "/login/platform" : "/login";
     await fetch("/api/auth/logout", { method: "POST" });
     queryClient.clear();
-    router.replace("/login");
+    router.replace(login);
     router.refresh();
   };
-
-  const user = session.data;
 
   return (
     <div className="border-sidebar-border border-t p-2">
