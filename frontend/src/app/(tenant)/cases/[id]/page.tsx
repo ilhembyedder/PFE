@@ -11,6 +11,15 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -310,6 +319,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
   const t = useTranslations("caseDetail");
   const tVal = useTranslations("valuation");
   const tCases = useTranslations("cases");
+  const tCommon = useTranslations("common");
   const format = useFormat();
   const labels = useLabels();
   const router = useRouter();
@@ -319,6 +329,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
   const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "details";
 
   const [advanceError, setAdvanceError] = useState<string | null>(null);
+  const [confirmAdvance, setConfirmAdvance] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const stepperRef = useRef<HTMLDivElement>(null);
 
@@ -417,12 +428,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
           ) : (
             <Button
               disabled={blocked || advance.isPending}
-              onClick={() => {
-                setAdvanceError(null);
-                advance.mutate(undefined, {
-                  onError: (cause) => setAdvanceError(messageFor(cause)),
-                });
-              }}
+              onClick={() => setConfirmAdvance(true)}
             >
               {advance.isPending ? (
                 <Loader2 className="animate-spin" aria-hidden />
@@ -438,6 +444,61 @@ function CaseDetail({ caseId }: { caseId: string }) {
           )}
         </div>
       </header>
+
+      {/* Dialog: confirmation before advancing to the next phase */}
+      <Dialog
+        open={confirmAdvance}
+        onOpenChange={(next) => !next && !advance.isPending && setConfirmAdvance(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t("confirmAdvanceTitle", {
+                phase: prerequisites.data?.nextPhase
+                  ? labels.phaseShort(prerequisites.data.nextPhase)
+                  : "",
+              })}
+            </DialogTitle>
+            <DialogDescription>
+              {t("confirmAdvanceBody", {
+                from: labels.phase(phase),
+                to: prerequisites.data?.nextPhase
+                  ? labels.phase(prerequisites.data.nextPhase)
+                  : "",
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="ghost" disabled={advance.isPending}>
+                  {tCommon("cancel")}
+                </Button>
+              }
+            />
+            <Button
+              disabled={advance.isPending}
+              onClick={() => {
+                setAdvanceError(null);
+                advance.mutate(undefined, {
+                  onSuccess: () => setConfirmAdvance(false),
+                  onError: (cause) => {
+                    setAdvanceError(messageFor(cause));
+                    setConfirmAdvance(false);
+                  },
+                });
+              }}
+            >
+              {advance.isPending ? (
+                <Loader2 className="animate-spin" aria-hidden />
+              ) : (
+                <StepForward aria-hidden />
+              )}
+              {t("confirmAdvance")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Stepper and blocker at the top, where they belong. */}
       <div ref={stepperRef} className="space-y-3">

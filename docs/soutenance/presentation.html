@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soutenance PFE — LeasRecover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@300..700&display=swap">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#E8E4DC;font-family:'IBM Plex Sans',Arial,Helvetica,sans-serif}
+  .deck{--scale:1;display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 24px}
+  .shell{position:relative;overflow:hidden;flex:0 0 auto;
+         width:calc(1920px * var(--scale));height:calc(1080px * var(--scale));
+         box-shadow:0 8px 40px rgba(15,32,56,.22)}
+  .wrap{position:absolute;left:0;top:0;transform-origin:top left;transform:scale(var(--scale))}
+  section{width:1920px;height:1080px;position:relative;overflow:hidden;color:#0F2038}
+  section h1,section h2,section h3,section p,section ul,section ol{margin:0}
+  section ul,section ol{padding-left:1.15em}
+  section li{margin:0 0 6px}
+  section aside{display:none}
+  section table{border-collapse:collapse;width:100%}
+  section th,section td{padding:.35em .6em;border:1px solid #DDD6C8;vertical-align:top}
+  section hr{border:none;margin:0}
+  x-shape{display:block}
+  x-shape[kind="arrow-right"]{clip-path:polygon(0 30%,60% 30%,60% 0,100% 50%,60% 100%,60% 70%,0 70%)}
+  x-shape[kind="arrow-left"]{clip-path:polygon(100% 30%,40% 30%,40% 0,0 50%,40% 100%,40% 70%,100% 70%)}
+  x-shape[kind="arrow-down"]{clip-path:polygon(30% 0,70% 0,70% 60%,100% 60%,50% 100%,0 60%,30% 60%)}
+  x-shape[kind="arrow-up"]{clip-path:polygon(30% 100%,70% 100%,70% 40%,100% 40%,50% 0,0 40%,30% 40%)}
+  x-shape[kind="ellipse"]{border-radius:50%}
+  x-shape[kind="diamond"]{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+  .notes{width:min(1120px,92vw);background:#fff;border-left:6px solid #B07D1A;border-radius:8px;
+         padding:20px 26px;font-size:15px;line-height:1.65;color:#2B3A4F;flex:0 0 auto}
+  .notes b{display:block;font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:#8A5E12;margin-bottom:8px;font-weight:600}
+  @media print{
+    html,body{background:#fff}
+    .deck{padding:0;gap:0}
+    .shell{width:1920px;height:1080px;box-shadow:none;page-break-after:always;break-after:page}
+    .wrap{transform:none}
+    .notes{display:none}
+  }
+  @page{size:1920px 1080px;margin:0}
+</style>
+</head>
+<body>
+<div class="deck">
+<div class="shell"><div class="wrap">
+<section id="cover" data-transition="fade" style="background:#0F2038; color:#FAF8F4; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; justify-content:space-between">
+  <div style="display:flex; flex-direction:column; gap:20px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#E0B354">Projet de fin d'études &middot; Année universitaire 2025–2026</p>
+    <hr style="width:200px; border-top:3px solid #E0B354">
+  </div>
+  <div style="display:flex; flex-direction:column; gap:36px">
+    <h1 style="font-family:'Source Serif 4', Georgia, serif; font-size:132px; font-weight:400; line-height:1.0">LeasRecover</h1>
+    <p style="font-size:42px; line-height:1.35; color:#BFCBDA; width:1420px">Plateforme SaaS multi-tenant de pilotage du recouvrement automobile en leasing, avec confrontation automatisée des rapports d'expertise</p>
+  </div>
+  <div style="display:flex; gap:88px">
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Élaboré par</p>
+      <p style="font-size:32px; font-weight:600">Ilhem Ben Yedder</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Encadrant académique</p>
+      <p style="font-size:32px; font-weight:600">[Nom et prénom]</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Encadrant professionnel</p>
+      <p style="font-size:32px; font-weight:600">[Nom et prénom]</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Établissement</p>
+      <p style="font-size:32px; font-weight:600">[Nom de l'école]</p>
+    </div>
+  </div>
+  <aside>Bonjour Madame, Monsieur, membres du jury. Je m'appelle Ilhem Ben Yedder et je vais vous présenter mon projet de fin d'études : LeasRecover, une plateforme SaaS multi-tenant qui digitalise le recouvrement des véhicules en leasing et automatise la confrontation des rapports d'expertise avec la valeur résiduelle contractuelle. Je remercie mes encadrants pour leur accompagnement. Durée visée : 20 minutes. Ne pas lire la slide, enchaîner rapidement sur le plan.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="plan" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+  <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Plan de la soutenance</h2>
+  <div style="display:flex; gap:80px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:36px">
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">01</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Contexte et problématique</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">Le recouvrement en leasing, le point de rupture du processus</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">02</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Objectifs et méthodologie</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">La méthode BMAD et les artefacts de spécification produits</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">03</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Architecture et technologies</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">Les quatre services, la pile technique et les dépendances</p>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:36px">
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">04</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Le cœur technique</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">Multi-tenant, sécurité, moteur de workflow et d'alertes</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">05</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Le pipeline de valorisation</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">Traitement asynchrone, extraction et indicateur de fiabilité</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:28px">
+        <p style="font-family:'Source Serif 4', Georgia, serif; font-size:44px; color:#B07D1A; width:60px">06</p>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+          <h3 style="font-size:34px; font-weight:600">Tests, bilan et perspectives</h3>
+          <p style="font-size:26px; line-height:1.4; color:#4A5568">Ce qui est livré, ce qui reste à construire</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">2</p>
+  <aside>Annoncer le plan en une phrase par bloc, sans le lire mot à mot. Insister : « je consacrerai le cœur de l'exposé aux points 3, 4 et 5, qui portent l'essentiel de la contribution technique. » Ne pas dépasser 45 secondes sur cette slide.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="contexte" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:44px">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">01 &middot; Contexte</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Le recouvrement d'un véhicule en leasing</h2>
+  </div>
+  <p style="font-size:30px; line-height:1.45; color:#4A5568; width:1500px">Lorsqu'un client cesse de payer ses loyers, la société de leasing engage une procédure en cinq phases pour récupérer puis revendre le véhicule gagé. Chaque phase est encadrée par un délai légal.</p>
+  <div style="display:flex; gap:32px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <h3 style="font-size:30px; font-weight:600">Le métier aujourd'hui</h3>
+      <p style="font-size:26px; line-height:1.5; color:#4A5568">Les dossiers de contentieux sont suivis dans des fichiers Excel et sur papier. L'historique d'un dossier se reconstitue à la main, dossier par dossier.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <h3 style="font-size:30px; font-weight:600">Le point de rupture</h3>
+      <p style="font-size:26px; line-height:1.5; color:#4A5568">Un expert externe produit un rapport PDF non structuré. Un gestionnaire doit y lire la valeur vénale et la comparer à la valeur résiduelle du contrat.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <h3 style="font-size:30px; font-weight:600">Le volume</h3>
+      <p style="font-size:26px; line-height:1.5; color:#4A5568">40 à 80 dossiers actifs par gestionnaire, 300 à plus de 1 000 par société de leasing. Le geste manuel se répète à chaque dossier.</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">3</p>
+  <aside>Poser le décor métier en 60 secondes. Le jury n'est pas forcément familier du leasing : définir « valeur résiduelle » = la valeur inscrite au contrat d'origine, censée être celle du véhicule à la fin du contrat ; c'est la référence comptable. Définir « valeur vénale » = ce que le véhicule vaut réellement sur le marché, selon l'expert. Tout le produit tourne autour de l'écart entre ces deux chiffres. Chiffres issus du product brief BMAD.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="probleme" data-transition="push" style="background:#0F2038; color:#FAF8F4; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; justify-content:space-between">
+  <div style="display:flex; flex-direction:column; gap:28px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#E0B354">La problématique</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:72px; font-weight:400; line-height:1.15; width:1560px">La comparaison entre la valeur du marché et la valeur inscrite au contrat se fait encore à la main, dossier par dossier.</h2>
+  </div>
+  <div style="display:flex; gap:40px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; border-top:3px solid #E0B354; padding:32px 0 0">
+      <h3 style="font-size:32px; font-weight:600; color:#E0B354">Pertes financières</h3>
+      <p style="font-size:26px; line-height:1.5; color:#BFCBDA">Des véhicules sur- ou sous-évalués conduisent à des prix de vente mal calibrés et à des provisions comptables insuffisantes.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; border-top:3px solid #E0B354; padding:32px 0 0">
+      <h3 style="font-size:32px; font-weight:600; color:#E0B354">Décisions non outillées</h3>
+      <p style="font-size:26px; line-height:1.5; color:#BFCBDA">Sans confrontation systématique marché / résiduel, aucun responsable ne peut juger la qualité des estimations financières passées.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; border-top:3px solid #E0B354; padding:32px 0 0">
+      <h3 style="font-size:32px; font-weight:600; color:#E0B354">Délais légaux manqués</h3>
+      <p style="font-size:26px; line-height:1.5; color:#BFCBDA">Aucune alerte automatique sur les échéances réglementaires : mise en demeure, saisie, vente. Le dépassement se découvre après coup.</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#8FA0B5">4</p>
+  <aside>C'est la slide pivot : ralentir, marquer un silence après la phrase en gros. Les trois conséquences viennent directement du product brief. Si le jury demande d'où viennent ces constats : entretiens et cadrage produit formalisés dans le document product-brief du dossier _bmad-output. Ne pas annoncer de pourcentage de gain non mesuré.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="objectifs" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:48px">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">02 &middot; Objectifs</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Quatre objectifs pour le projet</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:32px">
+    <div style="display:flex; gap:28px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:52px; color:#B07D1A; width:60px">1</p>
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <h3 style="font-size:32px; font-weight:600">Digitaliser le processus complet</h3>
+        <p style="font-size:26px; line-height:1.5; color:#4A5568">Cinq phases séquentielles, un historique immuable et horodaté par dossier, un export PDF opposable.</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:28px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:52px; color:#B07D1A; width:60px">2</p>
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <h3 style="font-size:32px; font-weight:600">Automatiser la confrontation</h3>
+        <p style="font-size:26px; line-height:1.5; color:#4A5568">Le dépôt du rapport d'expertise déclenche l'extraction, le calcul de l'écart et un indicateur de fiabilité.</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:28px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:52px; color:#B07D1A; width:60px">3</p>
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <h3 style="font-size:32px; font-weight:600">Alerter avant l'échéance</h3>
+        <p style="font-size:26px; line-height:1.5; color:#4A5568">Un moteur d'alertes détecte les délais légaux imminents ou dépassés et les dossiers laissés dormants.</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:28px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:36px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:52px; color:#B07D1A; width:60px">4</p>
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <h3 style="font-size:32px; font-weight:600">Servir plusieurs sociétés</h3>
+        <p style="font-size:26px; line-height:1.5; color:#4A5568">Une seule application, des données strictement isolées, des seuils et une identité visuelle propres à chaque société.</p>
+      </div>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">5</p>
+  <aside>Ces quatre objectifs se lisent directement dans le PRD : 41 exigences fonctionnelles et 22 non fonctionnelles. Préciser le hors-périmètre volontaire du MVP : génération automatique des courriers légaux, accès direct de l'expert ou de l'avocat, personnalisation du workflow par société, connecteurs aux fichiers d'immatriculation, analytique avancée, intégration API dans un progiciel tiers. Annoncer ce hors-périmètre soi-même désamorce la question du jury.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="methodo" data-transition="fade" style="background:#F2EEE6; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:44px">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">02 &middot; Méthodologie</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Spécifier avant de coder : la méthode BMAD</h2>
+  </div>
+  <p style="font-size:30px; line-height:1.45; color:#4A5568; width:1560px">BMAD Method v6.1 est un cadre de développement piloté par des agents spécialisés. Chaque agent porte un rôle d'équipe et produit un livrable écrit, validé avant de passer au suivant.</p>
+  <div style="display:flex; gap:20px; align-items:stretch">
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-size:24px; font-weight:600; color:#B07D1A">Phase 1</p>
+      <h3 style="font-size:30px; font-weight:600">Analyse</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Agent analyste : cadrage du besoin, personas, périmètre du MVP.</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:36px; height:18px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-size:24px; font-weight:600; color:#B07D1A">Phase 2</p>
+      <h3 style="font-size:30px; font-weight:600">Planification</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Agent product manager : PRD, exigences numérotées, épopées.</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:36px; height:18px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-size:24px; font-weight:600; color:#B07D1A">Phase 3</p>
+      <h3 style="font-size:30px; font-weight:600">Conception</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Agents architecte et UX : architecture, MCD, diagrammes, spécification d'interface.</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:36px; height:18px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-size:24px; font-weight:600; color:#B07D1A">Phase 4</p>
+      <h3 style="font-size:30px; font-weight:600">Réalisation</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Agents scrum master, développeur et QA : une story à la fois, critères d'acceptation vérifiés.</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">6</p>
+  <aside>Point différenciant à assumer : le projet n'a pas été codé au fil de l'eau, il a été spécifié d'abord. Modules BMAD installés dans le dépôt : core et bmm (le cœur méthode), cis pour les ateliers de créativité, tea pour l'architecture de tests, wds pour le design system. Tous les livrables sont versionnés dans _bmad-output et consultables. Si le jury demande « qu'apporte BMAD par rapport à Scrum ? » : la traçabilité exigence → story → code, et le fait que chaque story porte ses propres critères d'acceptation écrits avant l'implémentation.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="artefacts" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:44px">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">02 &middot; Méthodologie</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Les livrables de spécification produits</h2>
+  </div>
+  <table style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:26px; color:#0F2038; border:1px solid #DDD6C8">
+    <tr style="background:#0F2038">
+      <th style="width:34%; color:#FAF8F4; text-align:left; font-weight:600">Livrable</th>
+      <th style="width:14%; color:#FAF8F4; text-align:left; font-weight:600">Volume</th>
+      <th style="width:52%; color:#FAF8F4; text-align:left; font-weight:600">Ce qu'il fixe</th>
+    </tr>
+    <tr>
+      <td>Product brief</td>
+      <td>1 document</td>
+      <td>Personas, problème, périmètre et hors-périmètre du MVP</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Cahier des charges (PRD)</td>
+      <td>41 + 22</td>
+      <td>41 exigences fonctionnelles, 22 non fonctionnelles, numérotées</td>
+    </tr>
+    <tr>
+      <td>Document d'architecture</td>
+      <td>1 document</td>
+      <td>Découpage en services, contrats d'API, conventions de code</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>MCD et diagramme de classes</td>
+      <td>2 modèles</td>
+      <td>Entités, cardinalités, schéma relationnel par société</td>
+    </tr>
+    <tr>
+      <td>Diagrammes de cas d'utilisation</td>
+      <td>1 global + 4</td>
+      <td>Acteurs, rôles et frontières du système</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Spécification UX</td>
+      <td>9 écrans</td>
+      <td>Parcours, états, composants et règles d'affichage</td>
+    </tr>
+    <tr>
+      <td>Épopées et stories</td>
+      <td>7 + 27</td>
+      <td>Une fiche par story, avec ses critères d'acceptation</td>
+    </tr>
+  </table>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">Tous ces documents sont versionnés dans le dépôt, sous <b>_bmad-output/</b></p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">7</p>
+  <aside>Insister sur la traçabilité : chaque ligne de code se rattache à une story, chaque story à une exigence numérotée du PRD. C'est ce qui a permis de vérifier la couverture fonctionnelle avant de déclarer le MVP terminé. Le rapport d'implementation-readiness contient la matrice de couverture exigence par exigence. Si le jury demande à voir un document, proposer le PRD ou une fiche de story ; elles sont dans le dépôt.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="archi" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px">
+  <h2 style="position:absolute; left:128px; top:128px; width:1664px; font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Architecture : quatre services conteneurisés</h2>
+
+  <div style="position:absolute; left:200px; top:210px; width:680px; height:120px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:8px">
+    <h3 style="font-size:30px; font-weight:600">Navigateur</h3>
+    <p style="font-size:24px; line-height:1.4; color:#4A5568">Aucun jeton d'authentification n'y est stocké</p>
+  </div>
+  <x-shape kind="arrow-down" style="position:absolute; left:530px; top:336px; width:20px; height:30px; background:#B07D1A"></x-shape>
+  <p style="position:absolute; left:920px; top:320px; width:320px; font-size:24px; line-height:1.4; color:#8A5E12">Cookie HttpOnly chiffré (AES-256-GCM)</p>
+
+  <div style="position:absolute; left:200px; top:372px; width:680px; height:154px; background:#FFFFFF; border:2px solid #0F2038; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:8px">
+    <h3 style="font-size:30px; font-weight:600">Next.js 16.1.6 &mdash; interface et couche BFF</h3>
+    <p style="font-size:24px; line-height:1.4; color:#4A5568">App Router · React 19 · TypeScript · 29 gestionnaires de routes serveur</p>
+  </div>
+  <x-shape kind="arrow-down" style="position:absolute; left:530px; top:532px; width:20px; height:30px; background:#B07D1A"></x-shape>
+  <p style="position:absolute; left:920px; top:512px; width:320px; font-size:24px; line-height:1.4; color:#8A5E12">En-tête Bearer JWT + X-Tenant-ID</p>
+
+  <div style="position:absolute; left:200px; top:568px; width:680px; height:154px; background:#FFFFFF; border:2px solid #0F2038; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:8px">
+    <h3 style="font-size:30px; font-weight:600">Spring Boot 3.4.3 &mdash; noyau métier</h3>
+    <p style="font-size:24px; line-height:1.4; color:#4A5568">Java 21 · Spring Security · JPA/Hibernate · Flyway · filtres multi-tenant</p>
+  </div>
+  <x-shape kind="arrow-down" style="position:absolute; left:530px; top:728px; width:20px; height:30px; background:#B07D1A"></x-shape>
+  <p style="position:absolute; left:920px; top:710px; width:320px; font-size:24px; line-height:1.4; color:#8A5E12">JDBC &mdash; schéma commuté à chaque requête</p>
+
+  <div style="position:absolute; left:200px; top:764px; width:680px; height:154px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:8px">
+    <h3 style="font-size:30px; font-weight:600">PostgreSQL 16</h3>
+    <p style="font-size:24px; line-height:1.4; color:#4A5568">Un schéma public + un schéma isolé par société cliente</p>
+  </div>
+
+  <x-connector x1="880" y1="645" x2="1280" y2="645" head="both" route="straight" style="color:#1F6F63; border-width:3px"></x-connector>
+
+  <div style="position:absolute; left:1280px; top:568px; width:512px; height:154px; background:#FFFFFF; border:2px solid #1F6F63; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:8px">
+    <h3 style="font-size:30px; font-weight:600; color:#1F6F63">FastAPI 0.135.1</h3>
+    <p style="font-size:24px; line-height:1.4; color:#4A5568">Python 3.11 · microservice d'extraction asynchrone</p>
+  </div>
+  <div style="position:absolute; left:1280px; top:740px; width:512px; height:178px; background:#E7EFEC; border-radius:16px; padding:20px">
+    <p style="font-size:24px; line-height:1.4; color:#1B4A43">Renvoie trois webhooks de progression au backend (30 %, 70 %, 100 %), relayés jusqu'au navigateur par un flux SSE temps réel.</p>
+  </div>
+
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">Orchestration Docker Compose &middot; réseau bridge dédié &middot; volumes persistants</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">8</p>
+  <aside>Slide clé. Suivre le flux de haut en bas. Le point à souligner : la couche BFF. Le navigateur ne reçoit jamais le JWT ; il reçoit un cookie chiffré que seul le serveur Next.js sait déchiffrer, et c'est ce serveur qui rejoue l'appel vers Spring Boot avec le vrai jeton. Conséquence : une faille XSS dans l'interface ne permet pas de voler la session. Deuxième point : le service d'extraction est volontairement découplé, il communique par HTTP et webhook, il peut être remplacé ou déployé ailleurs sans toucher au reste. Si le jury demande pourquoi PostgreSQL 16 et non 18 : l'image stable 18 n'était pas disponible au moment du cadrage, et aucune fonctionnalité du projet n'en dépend ; le choix est documenté dans le fichier docker-compose.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="stack" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:44px">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">03 &middot; Technologies</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">La pile technique, couche par couche</h2>
+  </div>
+  <table style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:24px; color:#0F2038; border:1px solid #DDD6C8">
+    <tr style="background:#0F2038">
+      <th style="width:20%; color:#FAF8F4; text-align:left; font-weight:600">Couche</th>
+      <th style="width:38%; color:#FAF8F4; text-align:left; font-weight:600">Technologie retenue</th>
+      <th style="width:42%; color:#FAF8F4; text-align:left; font-weight:600">Pourquoi ce choix</th>
+    </tr>
+    <tr>
+      <td>Interface</td>
+      <td>Next.js 16.1.6 · React 19.2.3 · TS 6.0</td>
+      <td>Rendu hybride, typage strict de bout en bout</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Design</td>
+      <td>Tailwind CSS 4.3 · shadcn/ui · Base UI</td>
+      <td>Jetons de style, composants accessibles</td>
+    </tr>
+    <tr>
+      <td>Couche BFF</td>
+      <td>Next.js Route Handlers (Node.js)</td>
+      <td>Le JWT ne parvient jamais au navigateur</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Noyau métier</td>
+      <td>Spring Boot 3.4.3 · Java 21 (LTS)</td>
+      <td>Transactions, workflow, routage multi-tenant</td>
+    </tr>
+    <tr>
+      <td>Persistance</td>
+      <td>PostgreSQL 16 · Hibernate · Flyway</td>
+      <td>Un schéma isolé par société cliente</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Extraction</td>
+      <td>FastAPI 0.135 · Python 3.11</td>
+      <td>Microservice asynchrone et découplé</td>
+    </tr>
+    <tr>
+      <td>Conteneurisation</td>
+      <td>Docker · Docker Compose</td>
+      <td>4 services, builds multi-étapes, portabilité</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Versionnage</td>
+      <td>Git · GitHub</td>
+      <td>Historique, branches, revues par pull request</td>
+    </tr>
+  </table>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">9</p>
+  <aside>Ne pas lire le tableau ligne à ligne. Commenter trois choix seulement : Java 21 parce que c'est la version LTS exigée par Spring Boot 3.4 et qu'elle apporte les threads virtuels, utilisés pour ne pas bloquer une requête pendant l'appel au service d'extraction ; TypeScript en remplacement du JavaScript initial, pour un typage strict des contrats d'API ; Python pour le service d'extraction, parce que c'est l'écosystème naturel du traitement documentaire et que le découplage permet de le faire évoluer seul. Les trois slides suivantes détaillent les bibliothèques, comme demandé.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="deps-front" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">03 &middot; Technologies &middot; 1/3</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Bibliothèques du frontend</h2>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Socle applicatif</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Next.js 16.1.6 (App Router, Turbopack) · React 19.2.3 · React DOM 19.2.3 · TypeScript 6.0.3</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Design system</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Tailwind CSS 4.3.3 · @tailwindcss/postcss · shadcn 4.15.0 · @base-ui/react 1.6.0 · lucide-react 1.27.0 (icônes) · class-variance-authority 0.7.1 · clsx 2.1.1 · tailwind-merge 3.6.0 · tw-animate-css 1.4.0</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Données et requêtes</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">@tanstack/react-query 5.101.4 (cache, invalidation, outils de développement) · @tanstack/react-table 8.21.3 (tri, pagination, filtres du registre de dossiers)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Formulaires et validation</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">react-hook-form 7.83.0 · @hookform/resolvers 5.5.7 · zod 3.25.76 (schémas de validation partagés entre le client et la couche BFF)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Confort d'usage</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">next-intl 4.13.4 (français / anglais) · next-themes 0.4.6 (thème clair et sombre) · sonner 2.0.7 (notifications)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Tests et qualité</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Jest 30.4.2 + jest-environment-jsdom · Testing Library (react 16.3, dom, jest-dom, user-event) · ESLint 9 + eslint-config-next · vérification de contraste automatisée</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">125 fichiers TypeScript &middot; 66 composants &middot; 29 gestionnaires de routes serveur</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">10</p>
+  <aside>Ne citer à voix haute que les quatre bibliothèques structurantes : React Query pour l'état serveur (cache, invalidation après chaque mutation, pas de gestion manuelle du chargement), React Table pour le registre paginé côté serveur, React Hook Form avec Zod pour valider les formulaires deux fois — dans le navigateur et dans la couche BFF avec le même schéma — et next-intl pour la localisation français/anglais. Laisser la slide affichée un peu plus longtemps : le jury lit le reste. Si on demande pourquoi shadcn plutôt qu'une bibliothèque de composants classique : les composants sont copiés dans le dépôt, donc modifiables, et le rendu suit les jetons du design system au lieu d'imposer un thème.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="deps-back" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">03 &middot; Technologies &middot; 2/3</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Dépendances du backend</h2>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Socle</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Spring Boot 3.4.3 (POM parent) · Java 21 LTS · Maven avec wrapper · maven-compiler-plugin 3.13.0 · spring-boot-maven-plugin</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Web et supervision</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">spring-boot-starter-web (API REST) · spring-boot-starter-validation (Jakarta Bean Validation) · spring-boot-starter-actuator (sondes de santé) · spring-boot-devtools</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Persistance et audit</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">spring-boot-starter-data-jpa (Hibernate ORM) · hibernate-envers (historique immuable) · Flyway core + flyway-database-postgresql · pilote JDBC PostgreSQL</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Sécurité</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">spring-boot-starter-security (filtres, hachage BCrypt) · JJWT 0.12.5 — jjwt-api, jjwt-impl, jjwt-jackson (jetons signés HS256)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Documents et courriels</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">OpenPDF 2.0.2 (export PDF du dossier complet, format A4) · spring-boot-starter-mail (JavaMailSender, notification SMTP)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Productivité et tests</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Lombok 1.18.36 (processeur d'annotations) · spring-boot-starter-test (JUnit 5, Mockito, AssertJ) · spring-security-test</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">105 classes Java &middot; 29 classes de test &middot; 7 migrations Flyway versionnées</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">11</p>
+  <aside>Trois dépendances méritent un commentaire. Hibernate Envers : c'est lui qui produit l'historique immuable du dossier, sans une seule ligne de code de journalisation — chaque modification crée une révision horodatée et attribuée à un utilisateur. Flyway : les migrations sont versionnées et rejouables, celles du schéma public au démarrage, celles d'un schéma société à la création de la société. JJWT : signature HS256, jeton de 24 heures, et le secret est exigé au démarrage, l'application refuse de se lancer sans lui. OpenPDF plutôt qu'iText pour des raisons de licence : OpenPDF est sous LGPL/MPL, iText impose l'AGPL ou une licence commerciale.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="deps-ia" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">03 &middot; Technologies &middot; 3/3</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Service d'extraction, données et infrastructure</h2>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Service d'extraction</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">FastAPI 0.135.1 · Uvicorn (édition standard) · Pydantic v2 avec validation d'adresse électronique · python-multipart (réception du fichier) · requests et httpx (webhooks) · Python 3.11</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Bibliothèque standard</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">zlib (décompression des flux du PDF) · re (expressions régulières d'extraction) · logging · time</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Base de données</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">PostgreSQL 16 (image officielle) · schéma public pour la plateforme, un schéma tenant_&lt;identifiant&gt; par société · colonnes JSONB pour les délais légaux configurables</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Conteneurisation</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Docker · Docker Compose (4 services, réseau bridge dédié, volumes nommés, sonde pg_isready, surcharge de développement) · Dockerfiles multi-étapes</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Outillage</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Git et GitHub · Postman (collections d'API) · Node.js (script de jeu de données de démonstration) · LaTeX (rédaction du rapport)</p>
+    </div>
+    <div style="display:flex; gap:32px">
+      <h3 style="width:380px; font-size:28px; font-weight:600; color:#8A5E12">Configuration</h3>
+      <p style="flex:1; font-size:26px; line-height:1.5; color:#24354D">Variables d'environnement · les secrets JWT_SECRET et BFF_COOKIE_SECRET sont exigés au démarrage, sans valeur par défaut</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">4 conteneurs &middot; 1 réseau &middot; 2 volumes persistants &middot; démarrage par une seule commande</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">12</p>
+  <aside>Le point à faire remarquer : le service d'extraction est délibérément léger. Il n'embarque aucune bibliothèque lourde de traitement documentaire, parce que le lot de travail du MVP portait sur l'architecture de la chaîne, pas sur le moteur lui-même. J'y reviens dans quatre slides. Sur la conteneurisation : une seule commande, docker compose up, démarre les quatre services ; le backend attend que PostgreSQL réponde à la sonde avant de démarrer. Les images backend et frontend sont construites en plusieurs étapes pour ne livrer que l'exécutable et son moteur d'exécution.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="multitenant" data-transition="fade" style="background:#F2EEE6; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">04 &middot; Le cœur technique</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Un schéma de base de données par société</h2>
+  </div>
+  <div style="display:flex; gap:24px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#B07D1A">1 · Authentification</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le filtre JWT valide le jeton et construit le profil appelant : identifiant, société, rôle.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#B07D1A">2 · Filtre tenant</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Vérifie que la société est active, que le rôle autorise la route, et refuse au super-administrateur l'accès aux dossiers.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#B07D1A">3 · Contexte</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Dépose le nom du schéma cible dans un contexte de fil d'exécution, toujours vidé en fin de requête.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#B07D1A">4 · Connexion</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Hibernate commute le schéma à l'acquisition de la connexion et le remet à public à la libération.</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:24px">
+    <div style="width:520px; display:flex; flex-direction:column; gap:10px; background:#0F2038; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#E0B354">Schéma public</h3>
+      <p style="font-size:24px; line-height:1.5; color:#BFCBDA">Sociétés clientes, super-administrateurs, configuration globale</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:10px; background:#1F6F63; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600; color:#FAF8F4">Un schéma tenant_&lt;identifiant&gt; par société</h3>
+      <p style="font-size:24px; line-height:1.5; color:#D6EAE5">Utilisateurs, clients, contrats, véhicules, dossiers, documents, notes, valorisations, alertes, configuration, tables d'audit — créés par Flyway à la mise en service de la société</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">13</p>
+  <aside>C'est la contribution technique la plus dense du projet. Le message : l'isolation ne repose pas sur une colonne tenant_id qu'un développeur pourrait oublier dans une clause WHERE. Elle est portée par le schéma PostgreSQL lui-même : deux sociétés ne partagent aucune table. Une requête mal écrite ne peut pas franchir la frontière. Trois défenses superposées : le filtre qui refuse l'accès, le schéma qui isole physiquement, et une revérification dans la couche service. Question probable : « pourquoi pas une base par société ? » Réponse : coût d'exploitation et de migration proportionnel au nombre de sociétés, alors qu'un schéma par société garde une seule instance à superviser et à sauvegarder. Autre question probable : « comment migrez-vous le schéma d'une société existante ? » Réponse honnête : aujourd'hui les migrations d'un schéma société ne s'exécutent qu'à sa création ; une boucle de rattrapage sur les sociétés déjà en service reste à écrire, c'est identifié dans la revue de code.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="securite" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">04 &middot; Le cœur technique</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">La sécurité, mesure par mesure</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px">
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Session scellée</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le jeton est chiffré en AES-256-GCM dans un cookie HttpOnly, SameSite=Strict. Le chiffrement étant authentifié, un cookie forgé ne se déchiffre pas.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Aucun jeton exposé</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Rien n'est écrit dans le stockage local du navigateur. Une faille de type XSS dans l'interface ne permet pas de dérober la session.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Jetons signés</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Signature HS256 par JJWT, validité de 24 heures. Le secret est exigé au démarrage : sans lui, l'application refuse de se lancer.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Mots de passe</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Hachage BCrypt par Spring Security, avec sel automatique. Aucun mot de passe n'est stocké en clair ni réversible.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Cloisonnement des rôles</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Trois rôles : super-administrateur, administrateur de société, gestionnaire. Le super-administrateur est explicitement privé d'accès aux dossiers.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Déconnexion automatique</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Quinze minutes d'inactivité suffisent à fermer la session, durée configurable par déploiement.</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">LeasRecover &middot; Soutenance PFE</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">14</p>
+  <aside>Développer surtout la première carte, c'est le choix d'architecture le plus défendable du projet. Expliquer le raisonnement : dans une application classique, le JWT est stocké dans le navigateur ; s'il est volé, l'attaquant devient l'utilisateur. Ici le navigateur ne détient qu'un cookie chiffré, inutilisable ailleurs que sur le serveur Next.js, et inaccessible au JavaScript de la page. Si le jury demande ce qui reste à durcir avant une mise en production, répondre franchement, la liste est écrite dans la revue de code : authentifier le webhook interne, rendre obligatoire la résolution de la société à partir du profil authentifié plutôt que d'un en-tête, changer les identifiants de démonstration et faire tourner le secret de messagerie. Assumer : une revue de code a été menée et a produit un registre de correctifs priorisés.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="workflow" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:36px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">04 &middot; Le cœur technique</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Cinq phases verrouillées, quatre alertes automatiques</h2>
+  </div>
+  <div style="display:flex; gap:16px; align-items:stretch">
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:14px; padding:20px 16px">
+      <h3 style="font-size:26px; font-weight:600">Pré-contentieux</h3>
+      <p style="font-size:24px; color:#8A5E12">15 jours</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:32px; height:16px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:14px; padding:20px 16px">
+      <h3 style="font-size:26px; font-weight:600">Mise en demeure</h3>
+      <p style="font-size:24px; color:#8A5E12">30 jours</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:32px; height:16px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#FFFFFF; border:2px solid #1F6F63; border-radius:14px; padding:20px 16px">
+      <h3 style="font-size:26px; font-weight:600">Saisie</h3>
+      <p style="font-size:24px; color:#1F6F63">45 jours · expertise</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:32px; height:16px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:14px; padding:20px 16px">
+      <h3 style="font-size:26px; font-weight:600">Vente</h3>
+      <p style="font-size:24px; color:#8A5E12">60 jours</p>
+    </div>
+    <x-shape kind="arrow-right" style="width:32px; height:16px; background:#B07D1A; align-self:center"></x-shape>
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px; background:#0F2038; border-radius:14px; padding:20px 16px">
+      <h3 style="font-size:26px; font-weight:600; color:#FAF8F4">Clôture</h3>
+      <p style="font-size:24px; color:#E0B354">terminale</p>
+    </div>
+  </div>
+  <p style="font-size:26px; line-height:1.4; color:#4A5568">Progression strictement séquentielle : aucun retour en arrière, aucun saut de phase. Le passage en Vente exige une valorisation aboutie. Les délais sont configurables par société.</p>
+  <table style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:24px; color:#0F2038; border:1px solid #DDD6C8">
+    <tr style="background:#0F2038">
+      <th style="width:28%; color:#FAF8F4; text-align:left; font-weight:600">Alerte</th>
+      <th style="width:40%; color:#FAF8F4; text-align:left; font-weight:600">Règle de déclenchement</th>
+      <th style="width:32%; color:#FAF8F4; text-align:left; font-weight:600">Se résout automatiquement</th>
+    </tr>
+    <tr>
+      <td>Dormance — critique</td>
+      <td>Aucune action depuis 30 jours (seuil configurable)</td>
+      <td>Note, affectation ou dépôt de document</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Échéance — avertissement</td>
+      <td>Moins de 2 jours avant la fin du délai légal</td>
+      <td>Passage à la phase suivante</td>
+    </tr>
+    <tr>
+      <td>Échéance — critique</td>
+      <td>Délai légal de la phase dépassé</td>
+      <td>Passage à la phase suivante</td>
+    </tr>
+    <tr style="background:#F2EEE6">
+      <td>Écart véhicule</td>
+      <td>Données extraites différentes du véhicule au contrat</td>
+      <td>Une extraction ultérieure concorde</td>
+    </tr>
+  </table>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">15</p>
+  <aside>Deux mécanismes à expliquer. Premièrement, la progression est un automate : la phase suivante est refusée tant que ses prérequis ne sont pas réunis, et l'interface affiche un cadenas avec la liste de ce qui manque plutôt qu'un message d'erreur après coup. Deuxièmement, les alertes se referment toutes seules : ce sont des alertes qui guérissent. Une alerte de dormance disparaît dès qu'une action est consignée sur le dossier, une alerte d'échéance dès que la phase avance. Un balayage quotidien programmé à deux heures du matin parcourt toutes les sociétés actives et met les alertes à jour. Si le jury demande pourquoi aucun retour en arrière : c'est une exigence métier, le processus de recouvrement est juridiquement séquentiel ; la correction d'une erreur passe par une annotation tracée, pas par une réécriture de l'historique.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="audit" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">04 &middot; Le cœur technique</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Un historique que personne ne peut réécrire</h2>
+  </div>
+  <div style="display:flex; gap:24px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600">Révisions automatiques</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Hibernate Envers crée une révision à chaque modification du dossier, horodatée et attribuée à son auteur.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600">Aucun code dédié</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le mécanisme est déclaratif : pas une seule ligne de journalisation écrite à la main, donc rien à oublier.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600">Chronologie reconstituée</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Les révisions successives sont comparées deux à deux, puis fusionnées avec les notes des gestionnaires.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:26px; font-weight:600">Restitution opposable</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Chronologie affichée dans l'onglet Historique et export PDF A4 du dossier complet, généré par OpenPDF.</p>
+    </div>
+  </div>
+  <div style="background:#F2EEE6; border-left:8px solid #B07D1A; border-radius:10px; padding:26px 30px">
+    <p style="font-size:26px; line-height:1.4; color:#24354D">L'enjeu métier : en cas de contestation, la société doit pouvoir prouver qui a fait quoi, et quand, sur un dossier de contentieux.</p>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">16</p>
+  <aside>Préciser honnêtement le périmètre : seule l'entité dossier de recouvrement est auditée par Envers. Les documents, les valorisations et les utilisateurs ne le sont pas encore ; c'est une extension identifiée dans les perspectives. Justifier le choix : le dossier concentre les données susceptibles d'être contestées — phase, valeur résiduelle, affectation, statut. Si le jury demande comment le nom de l'utilisateur arrive dans la révision : un écouteur de révision lit le contexte d'utilisateur que le filtre a rempli au début de la requête.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="pipeline" data-transition="fade" style="background:#F2EEE6; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:36px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">05 &middot; Le pipeline de valorisation</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Du dépôt du PDF à l'indicateur de fiabilité</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px">
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">1 · </span>Dépôt du rapport</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le gestionnaire dépose le PDF d'expertise sur le dossier, en phase Saisie.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">2 · </span>Appel non bloquant</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le backend transmet le fichier au service d'extraction sur un fil d'exécution virtuel.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">3 · </span>Accusé immédiat</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le service répond 202 Accepted, puis poursuit le traitement en tâche de fond.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">4 · </span>Progression</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Trois webhooks jalonnent le traitement : lecture 30 %, extraction 70 %, calcul 100 %.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">5 · </span>Confrontation</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Le backend calcule l'écart avec la valeur résiduelle et applique les seuils de la société.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600"><span style="color:#B07D1A">6 · </span>Restitution directe</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Un flux SSE traverse la couche BFF : l'interface commente chaque étape en direct.</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:24px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:6px; background:#E7EFEC; border-left:8px solid #1F6F63; border-radius:10px; padding:22px 26px">
+      <h3 style="font-size:26px; font-weight:600; color:#1B4A43">Fiable — écart inférieur à 10 %</h3>
+      <p style="font-size:24px; color:#2C5E56">Mise en vente sans contre-expertise</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:6px; background:#F7EEDC; border-left:8px solid #B07D1A; border-radius:10px; padding:22px 26px">
+      <h3 style="font-size:26px; font-weight:600; color:#6E4A0D">Risque modéré — de 10 à 20 %</h3>
+      <p style="font-size:24px; color:#7C5714">Arbitrage demandé au gestionnaire</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:6px; background:#F7E7E7; border-left:8px solid #9B2C2C; border-radius:10px; padding:22px 26px">
+      <h3 style="font-size:26px; font-weight:600; color:#7A2222">Risque critique — plus de 20 %</h3>
+      <p style="font-size:24px; color:#8A2A2A">Alerte de dépréciation d'actif</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">17</p>
+  <aside>Insister sur le caractère asynchrone : à aucun moment l'utilisateur n'attend devant un écran figé. Le backend rend la main immédiatement, et la progression remonte par webhook puis par flux SSE. Préciser que les seuils de 10 et 20 pour cent sont des valeurs par défaut, configurables par société depuis l'écran de paramétrage — c'est une exigence du PRD, pas une constante dans le code. Mentionner aussi la robustesse : en cas d'échec, un webhook d'erreur remonte un message clair et l'interface propose de relancer le traitement ; l'interface prévoit également un délai de garde si aucun événement n'arrive. Enchaîner directement sur la slide suivante, qui détaille ce que fait réellement le moteur.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="extraction" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:28px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">05 &middot; Le pipeline de valorisation</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Ce que fait réellement le moteur d'extraction</h2>
+  </div>
+  <div style="display:flex; gap:32px; align-items:stretch">
+    <div style="flex:60; display:flex; flex-direction:column; gap:16px; background:#FFFFFF; border:2px solid #1F6F63; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600; color:#1F6F63">Implémenté et exécuté à chaque dépôt</h3>
+      <ul style="font-size:24px; line-height:1.5; color:#24354D">
+        <li>Décompression des flux du PDF avec zlib et récupération des opérateurs de texte</li>
+        <li>Extraction par expressions régulières : marque, modèle, année, kilométrage, état</li>
+        <li>Détection d'avaries graves par dictionnaire de termes métier</li>
+        <li>Barème de valorisation : prix de base par marque, décote d'âge, pénalité kilométrique, abattement en cas d'avarie</li>
+        <li>Arrondi au multiple de 50 € et restitution du montant en centimes</li>
+      </ul>
+    </div>
+    <div style="flex:40; display:flex; flex-direction:column; gap:16px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600; color:#9B2C2C">Pas encore couvert</h3>
+      <ul style="font-size:24px; line-height:1.5; color:#24354D">
+        <li>Aucun appel à un modèle de langage</li>
+        <li>Aucun OCR : un rapport scanné en image reste illisible</li>
+        <li>Aucune analyse de mise en page ni de tableaux</li>
+        <li>Le rapport doit suivre le gabarit de champs attendu</li>
+      </ul>
+    </div>
+  </div>
+  <div style="background:#0F2038; border-radius:16px; padding:28px 32px">
+    <p style="font-size:26px; line-height:1.4; color:#FAF8F4">Choix assumé du MVP : le livrable est la chaîne de traitement asynchrone, contractualisée par webhook. Le moteur d'extraction se remplace sans toucher au reste du système.</p>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">18</p>
+  <aside>Slide de transparence. La jouer de front, c'est ce qui désamorce la question piège. Formulation proposée : « le module est souvent présenté comme un module d'intelligence artificielle ; je préfère être précise. Aujourd'hui il ne fait appel à aucun modèle de langage. C'est un moteur déterministe : analyse du PDF, extraction par expressions régulières, puis un barème de valorisation. Ce choix était inscrit dans la story cinq-un du découpage : le lot de travail du MVP portait sur la chaîne asynchrone, pas sur le moteur. » Détails du barème si on les demande : prix de base par marque, décote de 8 pour cent par année d'âge avec un plancher à 25 pour cent de la valeur, pénalité de 350 euros par tranche de 10 000 kilomètres au-delà du kilométrage attendu, abattement de 80 pour cent en cas d'avarie grave détectée. Avantage à revendiquer : déterministe, donc explicable, reproductible et auditable — ce qui compte dans un contexte de provision comptable. Limite à reconnaître : sensible au format du rapport.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="llm" data-transition="fade" style="background:#F2EEE6; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:32px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">05 &middot; Le pipeline de valorisation</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Modèles de langage et outils d'IA mobilisés</h2>
+  </div>
+  <div style="display:flex; gap:32px; align-items:stretch">
+    <div style="flex:60; display:flex; flex-direction:column; gap:18px; background:#FFFFFF; border:2px solid #0F2038; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600; color:#0F2038">Pour concevoir et construire le projet</h3>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#8A5E12">BMAD Method v6.1.0</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">Cadre de développement piloté par agents. Modules installés : core, bmm, cis 0.1.8, tea 1.7.0, wds 0.3.0.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#8A5E12">Agents mobilisés</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">Analyste · product manager · architecte · UX designer · scrum master · développeur · QA · architecte de tests</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#8A5E12">Google Antigravity</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">Environnement de développement agentique, déclaré comme IDE dans le manifeste BMAD du dépôt.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#8A5E12">Claude — Claude Code, modèle Opus</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">Assistant de codage : refonte de l'interface en TypeScript, revue de code complète, localisation français / anglais.</p>
+      </div>
+    </div>
+    <div style="flex:40; display:flex; flex-direction:column; gap:18px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600; color:#1F6F63">Prévus dans le produit</h3>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#1F6F63">Clés d'API réservées</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">OPENAI_API_KEY et ANTHROPIC_API_KEY figurent dans le fichier d'exemple, mais ne sont connectées à aucun appel à ce jour.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        <h3 style="font-size:26px; font-weight:600; color:#1F6F63">Intégration cible</h3>
+        <p style="font-size:24px; line-height:1.5; color:#24354D">Extraction structurée à sortie JSON contrainte, avec repli automatique sur le moteur déterministe en cas d'échec.</p>
+      </div>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">Tous les livrables produits par ces agents sont versionnés dans le dépôt</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">19</p>
+  <aside>Distinguer nettement les deux colonnes, c'est tout l'enjeu de cette slide. À gauche : les modèles de langage ont servi d'outil de travail, pour spécifier, concevoir et coder. À droite : le produit lui-même n'appelle aucun modèle à ce jour, les clés sont des emplacements réservés. Assumer l'usage d'outils agentiques comme une compétence, pas comme un aveu : « j'ai piloté ces agents, j'ai relu, corrigé et validé chaque livrable, et je peux justifier chaque ligne. » Si le jury demande ce que j'ai écrit moi-même, répondre sur le fond : les choix d'architecture, le modèle multi-tenant, la stratégie de session, le barème de valorisation et l'arbitrage de chaque story sont des décisions que j'ai prises et que je peux défendre. Préparer une réponse à « est-ce encore votre travail ? » : oui, au même titre qu'un développeur qui utilise un compilateur, un débogueur et une bibliothèque ; la valeur est dans la conception, la vérification et l'intégration.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="demo" data-transition="push" style="background:#0F2038; color:#FAF8F4; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; justify-content:space-between">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#E0B354">Démonstration</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:80px; font-weight:400; line-height:1.1; width:1500px">Le parcours complet, en direct</h2>
+  </div>
+  <div style="display:flex; gap:32px">
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; border-top:3px solid #E0B354; padding:28px 0 0">
+      <h3 style="font-size:28px; font-weight:600; color:#E0B354">1 · Connexion</h3>
+      <p style="font-size:24px; line-height:1.5; color:#BFCBDA">Identifiant de société, courriel, mot de passe. Session scellée dans un cookie chiffré.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; border-top:3px solid #E0B354; padding:28px 0 0">
+      <h3 style="font-size:28px; font-weight:600; color:#E0B354">2 · Centre de commandement</h3>
+      <p style="font-size:24px; line-height:1.5; color:#BFCBDA">Alertes prioritaires en tête, puis le registre des dossiers filtrable et paginé.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; border-top:3px solid #E0B354; padding:28px 0 0">
+      <h3 style="font-size:28px; font-weight:600; color:#E0B354">3 · Dépôt de l'expertise</h3>
+      <p style="font-size:24px; line-height:1.5; color:#BFCBDA">Le rapport PDF déclenche le pipeline ; la progression s'affiche étape par étape.</p>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:12px; border-top:3px solid #E0B354; padding:28px 0 0">
+      <h3 style="font-size:28px; font-weight:600; color:#E0B354">4 · Écart et historique</h3>
+      <p style="font-size:24px; line-height:1.5; color:#BFCBDA">Indicateur de fiabilité, passage de phase verrouillé, chronologie et export PDF.</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#8FA0B5">20</p>
+  <aside>Démonstration de cinq minutes maximum, répétée au moins trois fois avant le jour J. Préparatifs obligatoires : lancer la pile complète au moins dix minutes avant, exécuter le script de jeu de données de démonstration, ouvrir les onglets à l'avance, se connecter d'avance sur un second navigateur pour ne pas perdre de temps. Régler la tâche d'alertes sur un passage toutes les cinq minutes afin que les alertes soient visibles. Avoir un rapport d'expertise PDF prêt sur le bureau, au bon gabarit. Plan de repli impératif : une capture vidéo de la démonstration, enregistrée à l'avance, à projeter si la machine ou le réseau font défaut. Ne jamais tenter de déboguer en direct devant le jury ; basculer sur la vidéo et commenter.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="tests" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">06 &middot; Validation</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Stratégie de tests et vérifications</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:28px">
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Backend &mdash; 29 classes de test</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">JUnit 5, Mockito et AssertJ sur les règles de transition de phase, le calcul d'écart, le moteur d'alertes et l'isolation multi-tenant. Tests de sécurité avec spring-security-test.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Frontend &mdash; 8 suites Jest</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Testing Library sur les composants et les utilitaires, dont le scellement du cookie de session, le formatage monétaire et la couche BFF.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Service d'extraction</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Tests du point d'entrée d'extraction : validation du fichier, réponse 202, déclenchement de la tâche de fond et remontée d'erreur.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <h3 style="font-size:28px; font-weight:600">Chaîne de vérification</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Une commande enchaîne le typage, l'analyse statique sans aucun avertissement toléré, les tests, la compilation et la vérification des contrastes d'accessibilité.</p>
+    </div>
+  </div>
+  <p style="position:absolute; left:128px; bottom:64px; font-size:24px; color:#75808F">Tests manuels des parcours complets sur un jeu de 13 dossiers répartis sur les cinq phases</p>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">21</p>
+  <aside>Rester factuelle : annoncer le nombre de classes de test et ce qu'elles couvrent, sans avancer de taux de couverture ni de taux de précision non mesurés. Si le jury demande un chiffre de précision de l'extraction, répondre : « je n'ai pas conduit de campagne de mesure sur un corpus de rapports réels ; ce serait la première étape avant toute mise en production, et c'est inscrit dans mes perspectives. » Mentionner ce qui manque et que j'assume : pas de chaîne d'intégration continue, pas de tests de bout en bout automatisés ; les parcours ont été validés manuellement sur un jeu de données de démonstration reproductible, créé par script.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="bilan" data-transition="fade" style="background:#F2EEE6; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:44px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">06 &middot; Bilan</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Ce qui est livré</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:28px">
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">41 + 22</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">exigences fonctionnelles et non fonctionnelles, toutes tracées</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">7 / 27</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">épopées et stories, chacune avec ses critères d'acceptation</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">4</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">services conteneurisés, démarrés par une seule commande</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">230</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">fichiers de code : 105 classes Java, 125 fichiers TypeScript</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">3 · 5 · 4</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">rôles, phases de workflow et types d'alerte automatique</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:32px">
+      <p style="font-family:'Source Serif 4', Georgia, serif; font-size:76px; font-weight:400; color:#B07D1A; line-height:1.0">2</p>
+      <p style="font-size:26px; line-height:1.4; color:#4A5568">langues d'interface, français et anglais, thème clair et sombre</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">22</p>
+  <aside>Ne commenter que trois chiffres. Le 41 plus 22 : toutes les exigences du cahier des charges sont couvertes et traçables jusqu'au code. Le 4 : la plateforme se déploie par une seule commande, sur n'importe quelle machine disposant de Docker. Le 3 fois 5 fois 4 : c'est le cœur métier, trois rôles cloisonnés, cinq phases verrouillées, quatre alertes qui se déclenchent et se referment toutes seules. Rester sobre : ce sont des indicateurs de périmètre, pas des indicateurs de performance.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="perspectives" data-transition="fade" style="background:#FAF8F4; color:#0F2038; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:40px">
+  <div style="display:flex; flex-direction:column; gap:12px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#8A5E12">06 &middot; Perspectives</p>
+    <h2 style="font-family:'Source Serif 4', Georgia, serif; font-size:60px; font-weight:400; line-height:1.1">Ce qui reste à construire</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:28px">
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:2px solid #1F6F63; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600; color:#1F6F63">Brancher un modèle de langage</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Extraction structurée à sortie JSON contrainte, repli déterministe conservé, et mesure de précision sur un corpus réel de rapports.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600">Reconnaissance optique</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Traiter les rapports scannés, aujourd'hui illisibles par le moteur.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600">Industrialiser la livraison</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Chaîne d'intégration continue : tests, analyse statique et construction des images à chaque proposition de modification.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600">Étendre l'audit</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Porter l'historique immuable au-delà du dossier : documents, valorisations et comptes utilisateurs.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600">Durcir avant production</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Authentifier le webhook interne, renouveler les secrets, fermer le repli par en-tête et compléter la garde de routes.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:1px solid #DDD6C8; border-radius:16px; padding:28px">
+      <h3 style="font-size:28px; font-weight:600">Élargir le périmètre</h3>
+      <p style="font-size:24px; line-height:1.5; color:#4A5568">Génération automatique des courriers légaux et tableaux de bord analytiques, explicitement hors du MVP.</p>
+    </div>
+  </div>
+  <p style="position:absolute; right:128px; bottom:64px; font-size:24px; color:#75808F">23</p>
+  <aside>Présenter ces perspectives comme une feuille de route maîtrisée, pas comme une liste de manques. Formulation : « ces six chantiers sont identifiés, priorisés et documentés dans la revue de code du dépôt ; le premier est celui qui apporte le plus de valeur métier. » La carte encadrée en vert est la suite naturelle du projet : c'est elle qu'il faut commenter en priorité. Sur le durcissement avant production, assumer la démarche : avoir conduit une revue de sécurité et en avoir tiré un registre priorisé est un résultat du projet, pas un aveu de faiblesse.</aside>
+</section>
+</div></div>
+<div class="shell"><div class="wrap">
+<section id="merci" data-transition="push" style="background:#0F2038; color:#FAF8F4; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; justify-content:space-between">
+  <div style="display:flex; flex-direction:column; gap:20px">
+    <p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#E0B354">LeasRecover &middot; Projet de fin d'études</p>
+    <hr style="width:200px; border-top:3px solid #E0B354">
+  </div>
+  <div style="display:flex; flex-direction:column; gap:32px">
+    <h1 style="font-family:'Source Serif 4', Georgia, serif; font-size:112px; font-weight:400; line-height:1.05">Merci de votre attention</h1>
+    <p style="font-size:44px; line-height:1.3; color:#E0B354">Je suis à votre disposition pour vos questions</p>
+  </div>
+  <div style="display:flex; gap:88px">
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Candidate</p>
+      <p style="font-size:32px; font-weight:600">Ilhem Ben Yedder</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <p style="font-size:24px; letter-spacing:1px; text-transform:uppercase; color:#8FA0B5">Code source et spécifications</p>
+      <p style="font-size:32px; font-weight:600">Dépôt Git du projet, dossier _bmad-output</p>
+    </div>
+  </div>
+  <aside>Terminer debout, face au jury, sans revenir en arrière dans les slides. Garder sous la main, dans une autre fenêtre : le PRD, le diagramme de classes, le MCD et la revue de code, au cas où une question exigerait de montrer un document. Ne pas paraphraser le rapport pendant les questions : répondre court, puis proposer d'ouvrir le document correspondant.</aside>
+</section>
+</div></div>
+</div>
+<script>
+(function () {
+  function makeHead(color, weight, side) {
+    var h = document.createElement('div');
+    var s = Math.max(6, weight * 3);
+    h.style.cssText =
+      'position:absolute;top:' + (weight / 2 - s) + 'px;width:0;height:0;' +
+      'border-top:' + s + 'px solid transparent;border-bottom:' + s + 'px solid transparent;' +
+      (side === 'right'
+        ? 'right:0;border-left:' + s + 'px solid ' + color + ';'
+        : 'left:0;border-right:' + s + 'px solid ' + color + ';');
+    return h;
+  }
+
+  // <x-connector> is a runtime element: draw it with plain DOM so the file works offline.
+  document.querySelectorAll('x-connector').forEach(function (c) {
+    var x1 = +c.getAttribute('x1'), y1 = +c.getAttribute('y1');
+    var x2 = +c.getAttribute('x2'), y2 = +c.getAttribute('y2');
+    var color = c.style.color || '#333333';
+    var weight = parseInt(c.style.borderWidth, 10) || 2;
+    var head = c.getAttribute('head') || 'none';
+    var horizontal = Math.abs(x2 - x1) >= Math.abs(y2 - y1);
+    var box = document.createElement('div');
+    box.style.cssText = horizontal
+      ? 'position:absolute;left:' + Math.min(x1, x2) + 'px;top:' + (Math.min(y1, y2) - weight / 2) + 'px;' +
+        'width:' + Math.abs(x2 - x1) + 'px;height:' + weight + 'px;background:' + color + ';'
+      : 'position:absolute;left:' + (Math.min(x1, x2) - weight / 2) + 'px;top:' + Math.min(y1, y2) + 'px;' +
+        'width:' + weight + 'px;height:' + Math.abs(y2 - y1) + 'px;background:' + color + ';';
+    if (horizontal) {
+      if (head === 'end' || head === 'both') box.appendChild(makeHead(color, weight, 'right'));
+      if (head === 'start' || head === 'both') box.appendChild(makeHead(color, weight, 'left'));
+    }
+    c.parentNode.replaceChild(box, c);
+  });
+
+  // Lift the speaker notes out of each slide so they read on screen and vanish on print.
+  document.querySelectorAll('section > aside').forEach(function (aside) {
+    var shell = aside.closest('.shell');
+    if (!shell) return;
+    var note = document.createElement('div');
+    note.className = 'notes';
+    var label = document.createElement('b');
+    label.textContent = "Notes d'orateur";
+    note.appendChild(label);
+    note.appendChild(document.createTextNode(aside.textContent));
+    shell.parentNode.insertBefore(note, shell.nextSibling);
+    aside.remove();
+  });
+
+  function fit() {
+    var available = Math.min(document.documentElement.clientWidth - 48, 1600);
+    document.querySelector('.deck').style.setProperty('--scale', String(available / 1920));
+  }
+  fit();
+  window.addEventListener('resize', fit);
+})();
+</script>
+</body>
+</html>
